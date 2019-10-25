@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.model.PizzaDetails.Sauce;
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "sauce")
+@Api(value = "Set of endpoints for Creating, Retrieving, Updating and Deleting of Sauces.")
 @RestController
 @RequestMapping("/sauce")
 public class SauceController {
@@ -42,22 +43,25 @@ public class SauceController {
 //    this.request = request;
 //  }
 
+  @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+  @ApiOperation("Returns list of all Persons in the system.")
+  public List getAllSauces() {
+    return repository.findAll();
+  }
+
+  @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "adds a sauce", tags={ "admins", })
-  @RequestMapping(value = "/",
-      method = RequestMethod.POST)
-  public Sauce createSauce(@Valid @RequestBody Sauce sauce) {
+  public Sauce createSauce(@ApiParam("Sauce information for a new sauce") @Valid @RequestBody Sauce sauce) {
     repository.save(sauce);
     return sauce;
   }
 
+  @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
   @ApiOperation(value = "searches for a sauce", nickname = "searchSauce", response = Sauce.class, tags = {"developers",})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Sauce.class),
       @ApiResponse(code = 400, message = "bad input parameter")})
-  @RequestMapping(value = "/{name}",
-      produces = {"application/json"},
-      method = RequestMethod.GET)
-  public Sauce searchSauce(@PathVariable("name") String name) {
+  public Sauce searchSauce(@ApiParam("Name of sauce to get. Cannot be empty.") @PathVariable("name") String name) {
     return repository.findByName(name);
   }
 }
