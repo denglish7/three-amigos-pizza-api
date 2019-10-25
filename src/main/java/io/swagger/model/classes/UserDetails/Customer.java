@@ -39,7 +39,7 @@ public class Customer extends User{
     this.customerPhone = customerPhone;
   }
 
-  public Order placeOrder() {
-    return new Order();
-  }
+//  public Order placeOrder() {
+//    return new Order();
+//  }
 }
