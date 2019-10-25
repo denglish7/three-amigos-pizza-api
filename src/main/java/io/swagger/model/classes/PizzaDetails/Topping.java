@@ -1,5 +1,8 @@
 package io.swagger.model.classes.PizzaDetails;
 
+import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.NotNull;
+
 public class Topping {
   String name;
   Integer toppingId;
@@ -17,6 +20,8 @@ public class Topping {
     this.isVegetarian = isVegetarian;
   }
 
+  @ApiModelProperty(example = "Mushrooms", required = true)
+  @NotNull
   public String getName() {
     return name;
   }
@@ -25,6 +30,8 @@ public class Topping {
     this.name = name;
   }
 
+  @ApiModelProperty(example = "5", required = true)
+  @NotNull
   public Integer getToppingId() {
     return toppingId;
   }
@@ -33,6 +40,8 @@ public class Topping {
     this.toppingId = toppingId;
   }
 
+  @ApiModelProperty(example = "1", required = true)
+  @NotNull
   public Integer getQuantity() {
     return quantity;
   }
@@ -41,6 +50,8 @@ public class Topping {
     this.quantity = quantity;
   }
 
+  @ApiModelProperty(example = "1.50", required = true)
+  @NotNull
   public Double getPrice() {
     return price;
   }
@@ -49,6 +60,8 @@ public class Topping {
     this.price = price;
   }
 
+  @ApiModelProperty(example = "true", required = true)
+  @NotNull
   public Boolean getDairyFree() {
     return isDairyFree;
   }
@@ -57,6 +70,8 @@ public class Topping {
     isDairyFree = dairyFree;
   }
 
+  @ApiModelProperty(example = "true", required = true)
+  @NotNull
   public Boolean getVegetarian() {
     return isVegetarian;
   }
