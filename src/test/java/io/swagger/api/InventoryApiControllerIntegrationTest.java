@@ -1,6 +1,7 @@
 package io.swagger.api;
 
-import io.swagger.model.InventoryItem;
+import io.swagger.reference.InventoryApi;
+import io.swagger.reference.InventoryItem;
 
 import java.util.*;
 
