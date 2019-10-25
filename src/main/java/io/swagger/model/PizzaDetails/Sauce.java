@@ -17,7 +17,6 @@ public class Sauce {
   @JsonProperty("name")
   private String name;
 
-  @Indexed
   @JsonProperty("price")
   private Double price;
 
