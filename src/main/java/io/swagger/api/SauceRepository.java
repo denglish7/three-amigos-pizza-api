@@ -11,6 +11,4 @@ public interface SauceRepository extends MongoRepository<Sauce, String> {
 
   Sauce findByName(String name);
 
-  Void addSauce(String name, Double price);
-
 }
