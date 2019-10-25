@@ -44,20 +44,20 @@ public class SauceController {
 //  }
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-  @ApiOperation("Returns list of all Persons in the system.")
+  @ApiOperation(value = "Returns list of all Sauces in the system.", response = Sauce.class, responseContainer = "List", tags = {"developers",})
   public List getAllSauces() {
     return repository.findAll();
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "adds a sauce", tags={ "admins", })
+  @ApiOperation(value = "Creates a sauce", tags={ "admins", })
   public Sauce createSauce(@ApiParam("Sauce information for a new sauce") @Valid @RequestBody Sauce sauce) {
     repository.save(sauce);
     return sauce;
   }
 
   @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
-  @ApiOperation(value = "searches for a sauce", nickname = "searchSauce", response = Sauce.class, tags = {"developers",})
+  @ApiOperation(value = "Searches for a sauce by name", nickname = "searchSauce", response = Sauce.class, tags = {"developers",})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Sauce.class),
       @ApiResponse(code = 400, message = "bad input parameter")})
