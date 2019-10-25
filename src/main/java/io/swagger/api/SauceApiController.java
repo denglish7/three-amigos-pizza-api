@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiParam;
 import io.swagger.model.classes.PizzaDetails.Sauce;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class SauceApiController implements SauceApi {
@@ -25,6 +27,11 @@ public class SauceApiController implements SauceApi {
   public SauceApiController(ObjectMapper objectMapper, HttpServletRequest request) {
     this.objectMapper = objectMapper;
     this.request = request;
+  }
+
+  public ResponseEntity<Void> addSauce(@ApiParam(value = "Sauce to add" ) @Valid @RequestBody Sauce body) {
+    String accept = request.getHeader("Accept");
+    return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
   }
 
   public ResponseEntity<Sauce> searchSauce(@Valid String searchString) {

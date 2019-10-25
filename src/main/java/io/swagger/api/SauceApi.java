@@ -8,12 +8,16 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.model.classes.PizzaDetails.Sauce;
 import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Api(value = "sauce")
 public interface SauceApi {
+
+  @ApiOperation(value = "adds a sauce", tags={ "admins", })
+  ResponseEntity<Void> addSauce(@ApiParam(value = "Sauce to add" ) @Valid @RequestBody Sauce body);
 
   @ApiOperation(value = "searches for a sauce", nickname = "searchSauce", response = Sauce.class, tags = {"developers",})
   @ApiResponses(value = {
