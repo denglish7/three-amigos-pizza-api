@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface SauceApi {
 
   @ApiOperation(value = "adds a sauce", tags={ "admins", })
+  @RequestMapping(value = "/sauce",
+      method = RequestMethod.POST)
   ResponseEntity<Void> addSauce(@ApiParam(value = "Sauce to add" ) @Valid @RequestBody Sauce body);
 
   @ApiOperation(value = "searches for a sauce", nickname = "searchSauce", response = Sauce.class, tags = {"developers",})
