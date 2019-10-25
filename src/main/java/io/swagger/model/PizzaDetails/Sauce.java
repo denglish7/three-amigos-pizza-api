@@ -1,16 +1,23 @@
-package io.swagger.model.classes.PizzaDetails;
+package io.swagger.model.PizzaDetails;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.validation.annotation.Validated;
 
+@Document("Sauce")
 @Validated
 public class Sauce {
+
+  @Id
   @JsonProperty("name")
   private String name;
 
+  @Indexed
   @JsonProperty("price")
   private Double price;
 

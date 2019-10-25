@@ -1,7 +1,7 @@
-package io.swagger.model.classes.OrderDetails;
+package io.swagger.model.OrderDetails;
 
-import io.swagger.model.classes.PizzaDetails.Pizza;
-import io.swagger.model.classes.Specials.Special;
+import io.swagger.model.Specials.Special;
+import io.swagger.model.PizzaDetails.Pizza;
 
 import java.util.List;
 

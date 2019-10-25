@@ -1,4 +1,4 @@
-package io.swagger.model.classes.StoreDetails;
+package io.swagger.model.StoreDetails;
 
 public class DeliveryDriver {
   String driverName;

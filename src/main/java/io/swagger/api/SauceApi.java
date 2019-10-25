@@ -5,16 +5,19 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.model.classes.PizzaDetails.Sauce;
+import io.swagger.model.PizzaDetails.Sauce;
 import javax.validation.Valid;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+@Repository
 @Api(value = "sauce")
-public interface SauceApi {
+public interface SauceApi extends MongoRepository {
 
   @ApiOperation(value = "adds a sauce", tags={ "admins", })
   @RequestMapping(value = "/sauce",

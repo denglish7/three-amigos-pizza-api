@@ -1,4 +1,4 @@
-package io.swagger.model.classes.OrderDetails;
+package io.swagger.model.OrderDetails;
 
 import java.util.Objects;
 

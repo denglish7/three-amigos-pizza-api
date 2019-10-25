@@ -1,6 +1,4 @@
-package io.swagger.model.classes.UserDetails;
-
-import io.swagger.model.classes.OrderDetails.Order;
+package io.swagger.model.UserDetails;
 
 public class Customer extends User{
   Integer customerId;

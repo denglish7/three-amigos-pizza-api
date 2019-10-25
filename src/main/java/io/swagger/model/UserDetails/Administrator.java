@@ -1,4 +1,4 @@
-package io.swagger.model.classes.UserDetails;
+package io.swagger.model.UserDetails;
 
 public class Administrator extends User {
   String adminName;

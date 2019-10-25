@@ -1,7 +1,7 @@
-package io.swagger.model.classes.StoreDetails;
+package io.swagger.model.StoreDetails;
 
-import io.swagger.model.classes.OrderDetails.Address;
-import io.swagger.model.classes.OrderDetails.Order;
+import io.swagger.model.OrderDetails.Address;
+import io.swagger.model.OrderDetails.Order;
 
 public class Store {
   Integer storeId;

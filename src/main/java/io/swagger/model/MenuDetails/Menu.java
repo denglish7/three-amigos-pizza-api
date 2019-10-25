@@ -1,8 +1,8 @@
-package io.swagger.model.classes.MenuDetails;
+package io.swagger.model.MenuDetails;
 
-import io.swagger.model.classes.PizzaDetails.Pizza;
-import io.swagger.model.classes.Specials.Special;
-import io.swagger.model.classes.StoreDetails.Store;
+import io.swagger.model.Specials.Special;
+import io.swagger.model.PizzaDetails.Pizza;
+import io.swagger.model.StoreDetails.Store;
 
 import java.util.Set;
 

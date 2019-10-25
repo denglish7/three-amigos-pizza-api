@@ -1,4 +1,4 @@
-package io.swagger.model.classes.PizzaDetails;
+package io.swagger.model.PizzaDetails;
 
 public class Topping {
   String name;
