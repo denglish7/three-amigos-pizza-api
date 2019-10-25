@@ -10,12 +10,18 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-09-27T20:56:20.347Z[GMT]")
 public interface ToppingApi {
+
+  @ApiOperation(value = "adds a topping", tags={ "admins", })
+  @RequestMapping(value = "/topping",
+      method = RequestMethod.POST)
+  ResponseEntity<Void> addTopping(@ApiParam(value = "Topping to add" ) @Valid @RequestBody Topping body);
 
   @ApiOperation(value = "searches toppings", nickname = "searchToppings", notes = "By passing in the appropriate options, you can search for available toppings in the system ", response = Topping.class, responseContainer = "List", tags={ "developers", })
   @ApiResponses(value = {
