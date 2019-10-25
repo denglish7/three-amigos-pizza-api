@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.model.InventoryItem;
 import io.swagger.model.classes.PizzaDetails.Topping;
 import java.util.List;
 import javax.validation.Valid;

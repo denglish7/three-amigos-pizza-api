@@ -3,7 +3,7 @@ package io.swagger.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiParam;
-import io.swagger.model.InventoryItem;
+
 import io.swagger.model.classes.PizzaDetails.Topping;
 import java.io.IOException;
 import java.util.List;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class ToppingApiController implements ToppingApi {
 
-  private static final Logger log = LoggerFactory.getLogger(InventoryApiController.class);
+  private static final Logger log = LoggerFactory.getLogger(ToppingApiController.class);
 
   private final ObjectMapper objectMapper;
 
