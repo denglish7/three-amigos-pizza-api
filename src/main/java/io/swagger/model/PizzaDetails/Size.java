@@ -1,47 +1,87 @@
 package io.swagger.model.PizzaDetails;
 
-public class Size {
-  String name;
-  Integer diameter;
-  Integer numberOfServings;
-  Double price;
+import io.swagger.annotations.ApiModelProperty;
+import org.springframework.data.annotation.Id;
 
-  public Size(String name, Integer diameter, Integer numberOfServings, Double price) {
+public class Size {
+  @Id
+  private String name;
+  private Integer diameter;
+  private Integer numberOfServings;
+  private Integer numberOfSlices;
+  private Double basePrice;
+
+  public Size(String name, Integer diameter, Integer numberOfServings,
+      Integer numberOfSlices, Double basePrice) {
     this.name = name;
     this.diameter = diameter;
     this.numberOfServings = numberOfServings;
-    this.price = price;
+    this.numberOfSlices = numberOfSlices;
+    this.basePrice = basePrice;
+  }
+
+  /**
+   * Get name
+   * @return name
+   */
+  @ApiModelProperty(example = "Large", required = true)
+  public String getName() {
+    return name;
   }
 
   public void setName(String name) {
     this.name = name;
   }
 
+  /**
+   * Get diameter in inches
+   * @return diameter in inches
+   */
+  @ApiModelProperty(example = "18", required = true)
+  public Integer getDiameter() {
+    return diameter;
+  }
+
   public void setDiameter(Integer diameter) {
     this.diameter = diameter;
+  }
+
+  /**
+   * Get number of servings
+   * @return number of servings
+   */
+  @ApiModelProperty(example = "4", required = true)
+  public Integer getNumberOfServings() {
+    return numberOfServings;
   }
 
   public void setNumberOfServings(Integer numberOfServings) {
     this.numberOfServings = numberOfServings;
   }
 
-  public void setPrice(Double price) {
-    this.price = price;
+  /**
+   * Get number of slices
+   * @return number of slices
+   */
+  @ApiModelProperty(example = "8")
+  public Integer getNumberOfSlices() {
+    return numberOfSlices;
   }
 
-  public String getName() {
-    return name;
+  public void setNumberOfSlices(Integer numberOfSlices) {
+    this.numberOfSlices = numberOfSlices;
   }
 
-  public Integer getDiameter() {
-    return diameter;
+  /**
+   * Get base price
+   * @return base price
+   */
+  @ApiModelProperty(example = "12.0", required = true)
+  public Double getBasePrice() {
+    return basePrice;
   }
 
-  public Integer getNumberOfServings() {
-    return numberOfServings;
-  }
-
-  public Double getPrice() {
-    return price;
+  public void setBasePrice(Double basePrice) {
+    this.basePrice = basePrice;
   }
 }

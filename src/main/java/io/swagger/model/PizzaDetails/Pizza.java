@@ -30,7 +30,6 @@ public class Pizza {
    * Get _id
    * @return _id string
    */
-  @ApiModelProperty(example = "5349b4ddd2781d08c09890f3")
   public String get_id() {
     return _id.toString();
   }
@@ -56,7 +55,7 @@ public class Pizza {
    * Get size
    * @return Size object
    */
-  @ApiModelProperty(example = "Large")
+  @ApiModelProperty(example = "")
   public Size getSize() {
     return size;
   }
@@ -82,13 +81,23 @@ public class Pizza {
    * Get toppings
    * @return list of toppings
    */
-  @ApiModelProperty(example = "[topping1, topping2]")
+  @ApiModelProperty(example = "")
   public List<Topping> getToppings() {
     return toppings;
   }
 
   public void setToppings(List<Topping> toppings) {
     this.toppings = toppings;
+  }
+
+  public void addTopping(Topping topping) {
+    this.toppings.add(topping);
+  }
+
+  public void removeTopping(Topping topping) {
+    if (this.toppings.contains(topping)) {
+      this.toppings.remove(topping);
+    }
   }
 
   /**

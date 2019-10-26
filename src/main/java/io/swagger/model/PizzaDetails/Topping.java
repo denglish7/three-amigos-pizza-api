@@ -1,22 +1,26 @@
 package io.swagger.model.PizzaDetails;
 
-public class Topping {
-  String name;
-  Integer toppingId;
-  Integer quantity;
-  Double price;
-  Boolean isDairyFree;
-  Boolean isVegetarian;
+import io.swagger.annotations.ApiModelProperty;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-  public Topping(String name, Integer toppingId, Integer quantity, Double price, Boolean isDairyFree, Boolean isVegetarian) {
+@Document(collection = "toppings")
+public class Topping {
+
+  @Id
+  private String name;
+  private Double pricePerUnit;
+
+  public Topping(String name, Double pricePerUnit) {
     this.name = name;
-    this.toppingId = toppingId;
-    this.quantity = quantity;
-    this.price = price;
-    this.isDairyFree = isDairyFree;
-    this.isVegetarian = isVegetarian;
+    this.pricePerUnit = pricePerUnit;
   }
 
+  /**
+   * Get name
+    * @return name
+   */
+  @ApiModelProperty(example = "mushrooms", required = true)
   public String getName() {
     return name;
   }
@@ -25,45 +29,16 @@ public class Topping {
     this.name = name;
   }
 
-  public Integer getToppingId() {
-    return toppingId;
+  /**
+   * Get price
+   * @return price
+   */
+  @ApiModelProperty(example = "1.0", required = true)
+  public Double getPricePerUnit() {
+    return pricePerUnit;
   }
 
-  public void setToppingId(Integer toppingId) {
-    this.toppingId = toppingId;
+  public void setPricePerUnit(Double pricePerUnit) {
+    this.pricePerUnit = pricePerUnit;
   }
-
-  public Integer getQuantity() {
-    return quantity;
-  }
-
-  public void setQuantity(Integer quantity) {
-    this.quantity = quantity;
-  }
-
-  public Double getPrice() {
-    return price;
-  }
-
-  public void setPrice(Double price) {
-    this.price = price;
-  }
-
-  public Boolean getDairyFree() {
-    return isDairyFree;
-  }
-
-  public void setDairyFree(Boolean dairyFree) {
-    isDairyFree = dairyFree;
-  }
-
-  public Boolean getVegetarian() {
-    return isVegetarian;
-  }
-
-  public void setVegetarian(Boolean vegetarian) {
-    isVegetarian = vegetarian;
-  }
-
-
 }
