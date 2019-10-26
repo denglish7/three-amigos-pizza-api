@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.model.PizzaDetails.Pizza;
+import io.swagger.model.PizzaDetails.Sauce;
+import io.swagger.model.PizzaDetails.Size;
+import io.swagger.model.PizzaDetails.Topping;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -24,6 +27,9 @@ public class PizzaController {
   @Autowired
   private PizzaRepository repository;
 
+  @Autowired
+  private SauceRepository sauceRepository;
+
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Pizza.class, responseContainer = "List", tags = {"developers",})
   public List getAllPizzas() {
@@ -32,7 +38,10 @@ public class PizzaController {
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a pizza", tags={ "admins", })
-  public Pizza createPizza(@ApiParam("Pizza information") @Valid @RequestBody Pizza pizza) {
+  public Pizza createPizza(@ApiParam("Pizza information") String name, @RequestBody Size size,
+      String sauceName, @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
+    Sauce sauce = sauceRepository.findByName(sauceName);
+    Pizza pizza = new Pizza(name, size, sauce, toppings, isGlutenFree);
     repository.save(pizza);
     return pizza;
   }

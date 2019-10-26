@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Document(collection = "pizzas")
-public class Pizza implements Serializable {
+public class Pizza {
   @Id
   private String name;
 
@@ -22,6 +22,7 @@ public class Pizza implements Serializable {
   public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
       @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
     this.name = name;
+
     this.size = size;
     this.sauce = sauce;
     this.toppings = toppings;

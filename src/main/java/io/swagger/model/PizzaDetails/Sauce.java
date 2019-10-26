@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Document(collection = "sauces")
-public class Sauce implements Serializable {
+public class Sauce {
 
   @Id
   private String name;

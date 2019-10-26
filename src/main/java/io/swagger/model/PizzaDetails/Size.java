@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import org.springframework.data.annotation.Id;
 
-public class Size implements Serializable {
+public class Size {
   @Id
   private String name;
 
