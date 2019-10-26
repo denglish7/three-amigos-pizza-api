@@ -1,5 +1,6 @@
 package io.swagger;
 
+import io.swagger.model.PizzaDetails.Sauce;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
@@ -11,13 +12,14 @@ import org.springframework.context.annotation.ComponentScan;
 
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@SpringBootApplication(exclude={MongoAutoConfiguration.class, MongoDataAutoConfiguration.class})
+@SpringBootApplication//(exclude={MongoAutoConfiguration.class}) //, MongoDataAutoConfiguration.class})
 @EnableSwagger2
 @ComponentScan(basePackages = { "io.swagger", "io.swagger.api" , "io.swagger.configuration"})
 public class Swagger2SpringBoot implements CommandLineRunner {
 
     @Override
     public void run(String... arg0) throws Exception {
+       // Sauce sauce = new Sauce("red", 2.0);
         if (arg0.length > 0 && arg0[0].equals("exitcode")) {
             throw new ExitException();
         }
