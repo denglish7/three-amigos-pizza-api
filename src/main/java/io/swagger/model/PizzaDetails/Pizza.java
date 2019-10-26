@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.List;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,22 +14,24 @@ public class Pizza {
   @Id
   private String name;
 
+  @DBRef
   private Size size;
+  @DBRef
   private Sauce sauce;
+  @DBRef
   private List<Topping> toppings;
   private Boolean isGlutenFree;
-  private Double totalPrice;
 
-  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
-      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
-    this.name = name;
-
-    this.size = size;
-    this.sauce = sauce;
-    this.toppings = toppings;
-    this.isGlutenFree = isGlutenFree;
-    this.totalPrice = this.calculatePrice();
-  }
+//  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
+//      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
+//    this.name = name;
+//
+//    this.size = size;
+//    this.sauce = sauce;
+//    this.toppings = toppings;
+//    this.isGlutenFree = isGlutenFree;
+//    this.totalPrice = this.calculatePrice();
+//  }
 
   private Double calculatePrice() {
     Double price = size.getBasePrice();
@@ -40,7 +43,7 @@ public class Pizza {
   }
 
   public Double getTotalPrice() {
-    return totalPrice;
+    return this.calculatePrice();
   }
 
   /**

@@ -24,9 +24,6 @@ public class PizzaController {
   @Autowired
   private PizzaRepository repository;
 
-  @Autowired
-  private SauceRepository sauceRepository;
-
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Pizza.class, responseContainer = "List", tags = {"developers",})
   public List getAllPizzas() {
