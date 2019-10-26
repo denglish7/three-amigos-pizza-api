@@ -56,7 +56,7 @@ public class Pizza implements Serializable {
    * Get size
    * @return Size object
    */
-  @ApiModelProperty(example = "Large")
+  @ApiModelProperty(example = "")
   public Size getSize() {
     return size;
   }

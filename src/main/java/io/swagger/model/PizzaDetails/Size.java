@@ -1,9 +1,10 @@
 package io.swagger.model.PizzaDetails;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import org.springframework.data.annotation.Id;
 
-public class Size {
+public class Size implements Serializable {
   @Id
   private String name;
   private Integer diameter;

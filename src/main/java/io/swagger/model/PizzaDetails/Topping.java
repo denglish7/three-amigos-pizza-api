@@ -1,11 +1,12 @@
 package io.swagger.model.PizzaDetails;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "toppings")
-public class Topping {
+public class Topping implements Serializable {
 
   @Id
   private String name;
