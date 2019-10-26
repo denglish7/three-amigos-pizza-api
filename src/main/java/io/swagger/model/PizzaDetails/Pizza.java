@@ -1,18 +1,16 @@
 package io.swagger.model.PizzaDetails;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
 import java.util.List;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "pizzas")
-public class Pizza {
+public class Pizza implements Serializable {
   @Id
   private String name;
-  @DBRef
   private Size size;
-  @DBRef
   private Sauce sauce;
   private List<Topping> toppings;
   private Boolean isGlutenFree;
