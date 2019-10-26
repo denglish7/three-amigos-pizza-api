@@ -1,3 +1,6 @@
+/** A class we can use for custom mongo configuration */
+
+
 //package io.swagger.configuration;
 //
 //import com.mongodb.MongoClient;
@@ -10,7 +13,7 @@
 //import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 //
 //@Configuration
-//public class AppConfig extends AbstractMongoConfiguration {
+//public class MongoConfig extends AbstractMongoConfiguration {
 //
 //  private MongoClient mongoClient;
 //

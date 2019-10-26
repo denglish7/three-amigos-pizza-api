@@ -1,4 +1,4 @@
-/** This class is hella important for some reason */
+/** This class is important for some reason */
 
 package io.swagger;
 

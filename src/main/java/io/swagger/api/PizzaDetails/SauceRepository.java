@@ -1,4 +1,4 @@
-package io.swagger.api;
+package io.swagger.api.PizzaDetails;
 
 import io.swagger.model.PizzaDetails.Sauce;
 import java.util.List;
