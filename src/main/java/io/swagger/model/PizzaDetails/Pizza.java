@@ -9,33 +9,34 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "pizzas")
 public class Pizza {
   @Id
-  private ObjectId _id;
   private String name;
   private Size size;
   private Sauce sauce;
   private List<Topping> toppings;
   private Boolean isGlutenFree;
+  private Double totalPrice;
 
   public Pizza(String name, Size size, Sauce sauce,
       List<Topping> toppings, Boolean isGlutenFree) {
-    this._id = new ObjectId();
     this.name = name;
     this.size = size;
     this.sauce = sauce;
     this.toppings = toppings;
     this.isGlutenFree = isGlutenFree;
+    this.totalPrice = this.calculatePrice();
   }
 
-  /**
-   * Get _id
-   * @return _id string
-   */
-  public String get_id() {
-    return _id.toString();
+  private Double calculatePrice() {
+    Double price = size.getBasePrice();
+    price += this.sauce.getPrice();
+    for (Topping t : this.toppings) {
+      price += t.getPricePerUnit();
+    }
+    return price;
   }
 
-  public void set_id(String newID) {
-    this._id = new ObjectId(newID);
+  public Double getTotalPrice() {
+    return totalPrice;
   }
 
   /**
