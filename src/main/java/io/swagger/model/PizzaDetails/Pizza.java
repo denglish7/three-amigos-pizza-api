@@ -1,7 +1,9 @@
 package io.swagger.model.PizzaDetails;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.api.PizzaDetails.SizeRepository;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,10 +17,13 @@ public class Pizza {
   private Boolean isGlutenFree;
   private Double totalPrice;
 
-  public Pizza(String name, Size size, Sauce sauce,
+  @Autowired
+  private SizeRepository sizeRepository;
+
+  public Pizza(String name, String sizeName, Sauce sauce,
       List<Topping> toppings, Boolean isGlutenFree) {
     this.name = name;
-    this.size = size;
+    this.size = sizeRepository.findByName(sizeName);
     this.sauce = sauce;
     this.toppings = toppings;
     this.isGlutenFree = isGlutenFree;
@@ -55,14 +60,14 @@ public class Pizza {
    * Get size
    * @return Size object
    */
-  @ApiModelProperty(example = "")
+  @ApiModelProperty(example = "Large")
   public Size getSize() {
     return size;
   }
 
-  public void setSize(Size size) {
-    this.size = size;
-  }
+//  public void setSize(Size size) {
+//    this.size = size;
+//  }
 
   /**
    * Get sauce
