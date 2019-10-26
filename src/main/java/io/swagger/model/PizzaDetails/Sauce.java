@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.validation.annotation.Validated;
 
 
-@Document("Sauce")
+@Document(collection = "Sauce")
 public class Sauce {
 
   @Id
