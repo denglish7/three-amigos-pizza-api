@@ -5,19 +5,15 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.validation.annotation.Validated;
 
+
 @Document("Sauce")
-@Validated
 public class Sauce {
 
   @Id
-  @JsonProperty("name")
   private String name;
-
-  @JsonProperty("price")
   private Double price;
 
   public Sauce(String name, Double price) {
@@ -30,13 +26,9 @@ public class Sauce {
    * @return name
    **/
   @ApiModelProperty(example = "Red", required = true)
-  @NotNull
-
-  @Valid
   public String getName() {
     return name;
   }
-
   public void setName(String name) {
     this.name = name;
   }
@@ -46,12 +38,9 @@ public class Sauce {
    * @return price
    **/
   @ApiModelProperty(example = "1.3", required = true)
-  @NotNull
-
   public Double getPrice() {
     return price;
   }
-
   public void setPrice(Double price) {
     this.price = price;
   }

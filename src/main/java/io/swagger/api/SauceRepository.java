@@ -1,6 +1,5 @@
 package io.swagger.api;
 
-import io.swagger.annotations.Api;
 import io.swagger.model.PizzaDetails.Sauce;
 import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
