@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 public class Size implements Serializable {
   @Id
   private String name;
+
   private Integer diameter;
   private Integer numberOfServings;
   private Integer numberOfSlices;

@@ -11,6 +11,7 @@ public class Sauce implements Serializable {
 
   @Id
   private String name;
+
   private Double price;
 
   public Sauce(String name, Double price) {

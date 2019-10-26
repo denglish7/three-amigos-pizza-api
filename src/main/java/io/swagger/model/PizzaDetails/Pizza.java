@@ -5,19 +5,22 @@ import java.io.Serializable;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Document(collection = "pizzas")
 public class Pizza implements Serializable {
   @Id
   private String name;
+
   private Size size;
   private Sauce sauce;
   private List<Topping> toppings;
   private Boolean isGlutenFree;
   private Double totalPrice;
 
-  public Pizza(String name, Size size, Sauce sauce,
-      List<Topping> toppings, Boolean isGlutenFree) {
+  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
+      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
     this.name = name;
     this.size = size;
     this.sauce = sauce;

@@ -10,6 +10,7 @@ public class Topping implements Serializable {
 
   @Id
   private String name;
+
   private Double pricePerUnit;
 
   public Topping(String name, Double pricePerUnit) {
