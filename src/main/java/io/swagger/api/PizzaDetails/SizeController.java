@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.model.PizzaDetails.Size;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +42,8 @@ public class SizeController {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Size.class),
       @ApiResponse(code = 400, message = "bad input parameter")})
-  public Size searchSize(@ApiParam("Name of size to get. Cannot be empty.") @PathVariable("name") String name) {
-    return repository.findByName(name);
+  public Optional searchSize(@ApiParam("Name of size to get. Cannot be empty.") @PathVariable("name") String name) {
+    return repository.findById(name);
   }
 
 }
