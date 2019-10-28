@@ -34,9 +34,15 @@ public class ToppingController {
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a Topping", tags={ "admins", })
-  public Topping createTopping(@ApiParam("Topping information") @Valid @RequestBody Topping Topping) {
-    return repository.save(Topping);
-    //return Topping;
+  public ResponseEntity createTopping(@ApiParam("Topping information") @Valid @RequestBody Topping topping) {
+//    if (topping.getName() )
+
+    if (topping.getName() == null || topping.getPricePerUnit() == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    } else {
+      return ResponseEntity.ok(repository.save(topping));
+      //return ResponseEntity.ok(topping.getName() + "saved to database.");
+    }
   }
 
   @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
