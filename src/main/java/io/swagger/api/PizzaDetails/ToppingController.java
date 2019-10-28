@@ -34,12 +34,13 @@ public class ToppingController {
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a Topping", tags={ "admins", })
-  public ResponseEntity createTopping(@ApiParam("Topping information") @Valid @RequestBody Topping topping) {
+//  public ResponseEntity createTopping(@ApiParam("Topping information") @Valid @RequestBody Topping topping) {
+  public ResponseEntity createTopping(@ApiParam("Topping Name") String name, @ApiParam("Topping price") Double price) {
 //    if (topping.getName() )
-
-    if (topping.getName() == null || topping.getPricePerUnit() == null) {
+    if (name == null || price == null) {
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     } else {
+      Topping topping = new Topping(name, price);
       return ResponseEntity.ok(repository.save(topping));
       //return ResponseEntity.ok(topping.getName() + "saved to database.");
     }
