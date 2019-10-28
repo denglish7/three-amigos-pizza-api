@@ -43,6 +43,7 @@ public class Pizza {
     return price;
   }
 
+  @ApiModelProperty(hidden = true)
   public Double getTotalPrice() {
     return this.totalPrice;
   }
