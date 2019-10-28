@@ -43,9 +43,9 @@ public class Pizza {
     return price;
   }
 
-//  //public Double getTotalPrice() {
-//    return this.calculatePrice();
-//  }
+  public Double getTotalPrice() {
+    return this.totalPrice;
+  }
 
   /**
    * Get name
