@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +44,14 @@ public class ToppingController {
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Topping.class),
       @ApiResponse(code = 400, message = "bad input parameter")})
-  public Optional<Topping> searchTopping(@ApiParam("Name of topping to get. Cannot be empty.") @PathVariable("name") String name) {
-    return repository.findById(name);
+  public ResponseEntity searchTopping(@ApiParam("Name of topping to get. Cannot be empty.") @PathVariable("name") String name) {
+    Topping topping = repository.findByName(name);
+    if (topping == null) {
+      //return ResponseEntity(H);
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    } else {
+      return ResponseEntity.ok(topping);
+    }
   }
 
 }
