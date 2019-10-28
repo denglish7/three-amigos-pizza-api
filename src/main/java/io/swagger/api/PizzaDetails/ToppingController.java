@@ -35,8 +35,8 @@ public class ToppingController {
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a Topping", tags={ "admins", })
   public Topping createTopping(@ApiParam("Topping information") @Valid @RequestBody Topping Topping) {
-    repository.save(Topping);
-    return Topping;
+    return repository.save(Topping);
+    //return Topping;
   }
 
   @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
@@ -47,7 +47,7 @@ public class ToppingController {
   public ResponseEntity searchTopping(@ApiParam("Name of topping to get. Cannot be empty.") @PathVariable("name") String name) {
     Topping topping = repository.findByName(name);
     if (topping == null) {
-      //return ResponseEntity(H);
+      //return ResponseEntity.notFound();
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     } else {
       return ResponseEntity.ok(topping);
