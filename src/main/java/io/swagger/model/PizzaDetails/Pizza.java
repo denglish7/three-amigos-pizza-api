@@ -25,8 +25,9 @@ public class Pizza {
   @ApiModelProperty(hidden=true)
   private Double totalPrice;
 
-  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
-      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
+//  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
+//      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
+public Pizza(String name, Size size, Sauce sauce, List<Topping> toppings, Boolean isGlutenFree) {
     this.name = name;
 
     this.size = size;
