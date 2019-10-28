@@ -21,17 +21,18 @@ public class Pizza {
   @DBRef
   private List<Topping> toppings;
   private Boolean isGlutenFree;
+  private Double totalPrice;
 
-//  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
-//      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
-//    this.name = name;
-//
-//    this.size = size;
-//    this.sauce = sauce;
-//    this.toppings = toppings;
-//    this.isGlutenFree = isGlutenFree;
-//    this.totalPrice = this.calculatePrice();
-//  }
+  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
+      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
+    this.name = name;
+
+    this.size = size;
+    this.sauce = sauce;
+    this.toppings = toppings;
+    this.isGlutenFree = isGlutenFree;
+    this.totalPrice = this.calculatePrice();
+  }
 
   private Double calculatePrice() {
     Double price = size.getBasePrice();
@@ -42,9 +43,9 @@ public class Pizza {
     return price;
   }
 
-  public Double getTotalPrice() {
-    return this.calculatePrice();
-  }
+//  //public Double getTotalPrice() {
+//    return this.calculatePrice();
+//  }
 
   /**
    * Get name
