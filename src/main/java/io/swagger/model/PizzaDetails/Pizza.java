@@ -14,11 +14,11 @@ public class Pizza {
   @Id
   private String name;
 
-  //@DBRef
+  @DBRef
   private Size size;
-  //@DBRef
+  @DBRef
   private Sauce sauce;
-  //@DBRef
+  @DBRef
   private List<Topping> toppings;
   private Boolean isGlutenFree;
   private Double totalPrice;
