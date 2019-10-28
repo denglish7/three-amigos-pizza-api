@@ -1,5 +1,6 @@
 package io.swagger.model.PizzaDetails;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Pizza {
   @DBRef
   private List<Topping> toppings;
   private Boolean isGlutenFree;
+  @ApiModelProperty(hidden=true)
   private Double totalPrice;
 
   public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
@@ -43,7 +45,6 @@ public class Pizza {
     return price;
   }
 
-  @ApiModelProperty(hidden = true)
   public Double getTotalPrice() {
     return this.totalPrice;
   }
