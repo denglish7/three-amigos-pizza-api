@@ -1,5 +1,7 @@
 package io.swagger.model.OrderDetails;
 
+import io.swagger.model.StoreDetails.Address;
+
 public class DeliveryOrder {
   Address customerAddress;
   Integer customerPhone;

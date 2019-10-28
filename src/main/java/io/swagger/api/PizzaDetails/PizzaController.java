@@ -27,15 +27,14 @@ public class PizzaController {
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Pizza.class, responseContainer = "List", tags = {"developers",})
-  public List getAllPizzas() {
+  public List<Pizza> getAllPizzas() {
     return repository.findAll();
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a pizza", tags={ "admins", })
   public Pizza createPizza(@ApiParam("Pizza information") @Valid @RequestBody Pizza pizza) {
-    repository.save(pizza);
-    return pizza;
+    return repository.save(pizza);
   }
 
   @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)

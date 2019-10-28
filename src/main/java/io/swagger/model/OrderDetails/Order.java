@@ -1,5 +1,6 @@
 package io.swagger.model.OrderDetails;
 
+import io.swagger.model.StoreDetails.Address;
 import java.time.LocalDateTime;
 
 public class Order {
