@@ -2,6 +2,7 @@ package io.swagger.model.PizzaDetails;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,8 +10,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Topping {
 
   @Id
+  @NotNull
   private String name;
 
+  @NotNull
   private Double pricePerUnit;
 
   public Topping(String name, Double pricePerUnit) {
