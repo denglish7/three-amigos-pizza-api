@@ -75,15 +75,18 @@ public class PizzaController {
   public ResponseEntity updatePizzaSizeById(@ApiParam("_id of pizza to update.") @PathVariable("_id") String _id, @ApiParam("Name of size to set pizza to.") @PathVariable("size") String sizeName) {
     //Optional pizza = repository.findById(_id);
     Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
-    Query sizeQuery = new Query();
-    sizeQuery.addCriteria(Criteria.where("name").is(sizeName));
-    Size size = mongoTemplate.findOne(sizeQuery, Size.class);
+    if (pizza == null) {
+      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+//    Query sizeQuery = new Query();
+//    sizeQuery.addCriteria(Criteria.where("name").is(sizeName));
+//    Size size = mongoTemplate.findOne(sizeQuery, Size.class);
+    Size size = mongoTemplate.findById(sizeName, Size.class);
     if (pizza == null || size == null) {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     } else {
       pizza.setSize(size);
-      mongoTemplate.save(pizza);
-      return ResponseEntity.ok(pizza);
+      return ResponseEntity.ok(mongoTemplate.save(pizza));
     }
   }
 }
