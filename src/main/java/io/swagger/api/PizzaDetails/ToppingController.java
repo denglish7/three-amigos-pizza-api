@@ -25,6 +25,8 @@ public class ToppingController {
 
   @Autowired
   private ToppingRepository repository;
+  @Autowired
+  private PizzaRepository pizzaRepository;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Toppings in the system.", response = Topping.class, responseContainer = "List", tags = {"developers",})
@@ -36,7 +38,6 @@ public class ToppingController {
   @ApiOperation(value = "Creates a Topping", tags={ "admins", })
   public Topping createTopping(@ApiParam("Topping information") @Valid @RequestBody Topping topping) {
     return repository.save(topping);
-    //return ResponseEntity.ok(topping.getName() + "saved to database.");
   }
 
   @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
@@ -47,10 +48,9 @@ public class ToppingController {
   public ResponseEntity searchTopping(@ApiParam("Name of topping to get. Cannot be empty.") @PathVariable("name") String name) {
     Topping topping = repository.findByName(name);
     if (topping == null) {
-      //return ResponseEntity.notFound();
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     } else {
-      return ResponseEntity.ok(topping);
+      return ResponseEntity.ok(topping + pizzaRepository.findAll().toString());
     }
   }
 
