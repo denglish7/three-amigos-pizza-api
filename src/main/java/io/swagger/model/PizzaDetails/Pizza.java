@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "pizzas")
 public class Pizza {
 
+  @ApiModelProperty(hidden=true)
   private String _id;
   private String name;
   @DBRef
