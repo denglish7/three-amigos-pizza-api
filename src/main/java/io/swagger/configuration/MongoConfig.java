@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.mongodb.config.AbstractMongoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 
 @Configuration
@@ -26,52 +24,30 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
   @Bean
   public MongoClient mongoClient() {
+
     if (this.mongoclient == null) {
-      this.mongoclient = new MongoClient(env.getProperty("spring.data.mongodb.uri"));
+      MongoClientURI uri = new MongoClientURI(this.getURIName());
+      this.mongoclient = new MongoClient(uri);
     }
+
     return this.mongoclient;
   }
 
   @Bean
   public MongoTemplate mongoTemplate() throws Exception {
     if (this.mongoTemplate == null) {
-      this.mongoTemplate = new MongoTemplate(mongoClient(), this.getDatabaseName());
+      this.mongoTemplate = new MongoTemplate(this.mongoClient(), this.getDatabaseName());
     }
     return this.mongoTemplate;
   }
 
   @Bean
-  protected String getDatabaseName(){
+  protected String getDatabaseName() {
     return env.getProperty("spring.data.mongodb.database");
   }
+
+  private String getURIName() {
+    return env.getProperty("spring.data.mongodb.uri");
+  }
 }
-//@Configuration
-//public class MongoConfig extends AbstractMongoConfiguration {
-//
-//  private MongoClient mongoClient;
-//
-////  @Bean
-////  public MongoClient mongoClient() {
-////    MongoClientURI uri = new MongoClientURI("mongodb+srv://amigosUser:amigosPassword@cluster0-zj3zt.azure.mongodb.net/test?retryWrites=true&w=majority");
-////    if (this.mongoClient == null) {
-////      this.mongoClient = new MongoClient(uri);
-////    }
-////    return mongoClient;
-////  }
-//
-//
-//  @Override
-//  public MongoClient mongoClient() {
-//    MongoClientURI uri = new MongoClientURI("mongodb+srv://amigosUser:amigosPassword@cluster0-zj3zt.azure.mongodb.net/test?retryWrites=true&w=majority"
-//        + " Copy");
-//    if (this.mongoClient == null) {
-//      this.mongoClient = new MongoClient(uri);
-//    }
-//    return this.mongoClient;
-//  }
-//
-//  @Override
-//  protected String getDatabaseName() {
-//    return "test";
-//  }
-//}
+
