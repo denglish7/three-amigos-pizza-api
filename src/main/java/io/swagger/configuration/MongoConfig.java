@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 
 @Configuration
-public class MongoConfig {
+public class MongoConfig extends AbstractMongoConfiguration {
 
   @Autowired
   private Environment env;
@@ -25,7 +25,7 @@ public class MongoConfig {
   private MongoTemplate mongoTemplate;
 
   @Bean
-  public MongoClient mongo() {
+  public MongoClient mongoClient() {
     if (this.mongoclient == null) {
       this.mongoclient = new MongoClient(env.getProperty("spring.data.mongodb.uri"));
     }
@@ -35,7 +35,7 @@ public class MongoConfig {
   @Bean
   public MongoTemplate mongoTemplate() throws Exception {
     if (this.mongoTemplate == null) {
-      this.mongoTemplate = new MongoTemplate(mongo(), this.getDatabaseName());
+      this.mongoTemplate = new MongoTemplate(mongoClient(), this.getDatabaseName());
     }
     return this.mongoTemplate;
   }
