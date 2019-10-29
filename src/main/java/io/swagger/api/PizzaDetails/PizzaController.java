@@ -1,19 +1,11 @@
 package io.swagger.api.PizzaDetails;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import io.swagger.model.PizzaDetails.Pizza;
 import io.swagger.model.PizzaDetails.Size;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Api
@@ -65,9 +58,9 @@ public class PizzaController {
     }
   }
 
-  @RequestMapping(path = "/id={_id}/{sizeName}", method = RequestMethod.POST)
+  @RequestMapping(path = "/id={_id}", method = RequestMethod.PUT)
   @ApiOperation(value = "Changes the size of a pizza", tags = {"admins",})
-  public ResponseEntity updatePizzaSizeById(@ApiParam("_id of pizza to update.") @PathVariable("_id") String _id, @ApiParam("Name of size to set pizza to.") @PathVariable("sizeName") String sizeName) {
+  public ResponseEntity updatePizzaSizeById(@PathVariable("_id") String _id, @RequestParam(value="sizeName") String sizeName) {
     Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
     Size size = mongoTemplate.findById(sizeName, Size.class);
     if (pizza == null || size == null) {

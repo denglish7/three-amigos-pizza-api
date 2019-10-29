@@ -1,4 +1,4 @@
-//package io.swagger.api;
+//package io.swagger.bs;
 //
 //import javax.xml.bind.annotation.XmlTransient;
 //
@@ -15,7 +15,7 @@
 //    String type;
 //    String message;
 //
-//    public ApiResponseMessage(){}
+//    public ApiResponseMessage() {}
 //
 //    public ApiResponseMessage(int code, String message){
 //        this.code = code;
