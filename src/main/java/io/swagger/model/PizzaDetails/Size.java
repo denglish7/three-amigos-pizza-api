@@ -4,8 +4,11 @@ import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "sizes")
 public class Size {
+
   @Id
   private String name;
   @NotNull

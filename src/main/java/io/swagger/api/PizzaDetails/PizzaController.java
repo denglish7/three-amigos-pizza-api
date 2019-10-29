@@ -1,15 +1,24 @@
 package io.swagger.api.PizzaDetails;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.model.PizzaDetails.Pizza;
+import io.swagger.model.PizzaDetails.Size;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +34,9 @@ public class PizzaController {
 
   @Autowired
   private PizzaRepository repository;
+
+  @Autowired
+  private MongoTemplate mongoTemplate;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Pizza.class, responseContainer = "List", tags = {"developers",})
@@ -48,10 +60,26 @@ public class PizzaController {
   @ApiOperation(value = "Searches for pizza by _id", response = Pizza.class, tags = {"developers",})
   public ResponseEntity searchPizzasById(@ApiParam("_id of pizza to get.") @PathVariable("_id") String _id) {
     Optional pizza = repository.findById(_id);
-    if (pizza.isPresent()) {
-      return ResponseEntity.ok(pizza);
-    } else {
+    if (!pizza.isPresent()) {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
+    } else {
+      return ResponseEntity.ok(pizza);
+    }
+  }
+
+  @RequestMapping(path = "/id={_id}/{size}", method = RequestMethod.GET, produces = {"application/json"})
+  @ApiOperation(value = "Searches for pizza by _id", response = Pizza.class, tags = {"developers",})
+  public ResponseEntity searchPizzasById(@ApiParam("_id of pizza to update.") @PathVariable("_id") String _id, @ApiParam("Name of size to set pizza to.") @PathVariable("size") String sizeName) {
+    //Optional pizza = repository.findById(_id);
+    Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
+    Query sizeQuery = new Query();
+    sizeQuery.addCriteria(Criteria.where("name").is(sizeName));
+    Size size = mongoTemplate.findOne(sizeQuery, Size.class);
+    if (pizza == null || size == null) {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    } else {
+      pizza.setSize(size);
+      return ResponseEntity.ok(pizza);
     }
   }
 }
