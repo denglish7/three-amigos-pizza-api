@@ -27,7 +27,6 @@ public class ToppingController {
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Toppings in the system.", response = Topping.class, responseContainer = "List", tags = {"developers",})
-  @ApiResponses(value = {@ApiResponse(code = 200, message = "all toppings", response = Topping.class, responseContainer = "List")})
   public List getAllToppings() {
     return repository.findAll();
   }
