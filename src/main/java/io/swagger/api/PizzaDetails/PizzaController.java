@@ -44,7 +44,7 @@ public class PizzaController {
     return repository.findAllByName(name);
   }
 
-  @RequestMapping(path = "/{_id}", method = RequestMethod.GET, produces = {"application/json"})
+  @RequestMapping(path = "/id={_id}", method = RequestMethod.GET, produces = {"application/json"})
   @ApiOperation(value = "Searches for pizza by _id", response = Pizza.class, tags = {"developers",})
   public ResponseEntity searchPizzasById(@ApiParam("_id of pizza to get.") @PathVariable("_id") String _id) {
     Optional pizza = repository.findById(_id);
