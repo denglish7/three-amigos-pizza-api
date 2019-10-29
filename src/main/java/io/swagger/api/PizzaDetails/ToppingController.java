@@ -26,8 +26,6 @@ public class ToppingController {
   @Autowired
   private ToppingRepository repository;
 
-  private PizzaController pc = new PizzaController();
-
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Toppings in the system.", response = Topping.class, responseContainer = "List", tags = {"developers",})
   public List getAllToppings() {
@@ -50,7 +48,7 @@ public class ToppingController {
     if (topping == null) {
       return new ResponseEntity(HttpStatus.BAD_REQUEST);
     } else {
-      return ResponseEntity.ok(topping + pc.searchPizza("Cheese").toString());
+      return ResponseEntity.ok(topping);
     }
   }
 
