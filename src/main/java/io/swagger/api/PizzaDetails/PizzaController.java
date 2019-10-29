@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Api(value = "Set of endpoints for Creating, Retrieving, Updating and Deleting of Pizzas.")
+@Api
 @RestController
 @RequestMapping("/pizza")
 public class PizzaController {
@@ -37,13 +38,20 @@ public class PizzaController {
     return repository.save(pizza);
   }
 
-  @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
-  @ApiOperation(value = "Searches for a pizza by name", nickname = "searchPizza", response = Pizza.class, tags = {"developers",})
-  @ApiResponses(value = {
-      @ApiResponse(code = 200, message = "search results matching criteria", response = Pizza.class),
-      @ApiResponse(code = 400, message = "bad input parameter")})
-  public Optional searchPizza(@ApiParam("Name of pizza to get. Cannot be empty.") @PathVariable("name") String name) {
-    return repository.findById(name);
+  @RequestMapping(path = "/{name}", method = RequestMethod.GET, produces = {"application/json"})
+  @ApiOperation(value = "Searches for pizzas by name", response = Pizza.class, responseContainer = "List", tags = {"developers",})
+  public List<Pizza> searchPizzasByName(@ApiParam("Name of pizza to get.") @PathVariable("name") String name) {
+    return repository.findAllByName(name);
   }
 
+  @RequestMapping(path = "/{_id}", method = RequestMethod.GET, produces = {"application/json"})
+  @ApiOperation(value = "Searches for pizza by _id", response = Pizza.class, tags = {"developers",})
+  public ResponseEntity searchPizzasById(@ApiParam("_id of pizza to get.") @PathVariable("_id") String _id) {
+    Optional pizza = repository.findById(_id);
+    if (pizza.isPresent()) {
+      return ResponseEntity.ok(pizza);
+    } else {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+  }
 }

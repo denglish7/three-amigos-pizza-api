@@ -2,6 +2,7 @@ package io.swagger.model.PizzaDetails;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
+import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,7 +12,7 @@ public class Sauce {
 
   @Id
   private String name;
-
+  @NotNull
   private Double price;
 
   public Sauce(String name, Double price) {

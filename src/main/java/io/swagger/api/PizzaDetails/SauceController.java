@@ -9,6 +9,8 @@ import io.swagger.model.PizzaDetails.Sauce;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,17 +34,21 @@ public class SauceController {
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a sauce", tags={ "admins", })
   public Sauce createSauce(@ApiParam("Sauce information for a new sauce") @Valid @RequestBody Sauce sauce) {
-    repository.save(sauce);
-    return sauce;
+    return repository.save(sauce);
   }
 
-  @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
-  @ApiOperation(value = "Searches for a sauce by name", nickname = "searchSauce", response = Sauce.class, tags = {"developers",})
+  @RequestMapping(path = "/{name}", method = RequestMethod.GET, produces = {"application/json"})
+  @ApiOperation(value = "Searches for a sauce by name", response = Sauce.class, tags = {"developers",})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Sauce.class),
-      @ApiResponse(code = 400, message = "bad input parameter")})
-  public Sauce searchSauce(@ApiParam("Name of sauce to get. Cannot be empty.") @PathVariable("name") String name) {
-    return repository.findByName(name);
+      @ApiResponse(code = 404, message = "sauce not found")})
+  public ResponseEntity searchSauceByName(@ApiParam("Name of sauce to get.") @PathVariable("name") String name) {
+    Sauce sauce = repository.findByName(name);
+    if (sauce == null) {
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
+    } else {
+      return ResponseEntity.ok(sauce);
+    }
   }
 }
 

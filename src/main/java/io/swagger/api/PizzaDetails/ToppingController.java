@@ -38,14 +38,14 @@ public class ToppingController {
   }
 
   @RequestMapping(path = "/{name}", produces = {"application/json"}, method = RequestMethod.GET)
-  @ApiOperation(value = "Searches for a topping by name", nickname = "searchTopping", response = Topping.class, tags = {"developers",})
+  @ApiOperation(value = "Searches for a topping by name", response = Topping.class, tags = {"developers",})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Topping.class),
-      @ApiResponse(code = 400, message = "bad input parameter")})
-  public ResponseEntity searchTopping(@ApiParam("Name of topping to get. Cannot be empty.") @PathVariable("name") String name) {
+      @ApiResponse(code = 404, message = "item not found")})
+  public ResponseEntity searchToppingByName(@ApiParam("Name of topping to get.") @PathVariable("name") String name) {
     Topping topping = repository.findByName(name);
     if (topping == null) {
-      return new ResponseEntity(HttpStatus.BAD_REQUEST);
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
     } else {
       return ResponseEntity.ok(topping);
     }

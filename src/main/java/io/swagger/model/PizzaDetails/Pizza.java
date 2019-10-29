@@ -1,20 +1,16 @@
 package io.swagger.model.PizzaDetails;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Document(collection = "pizzas")
 public class Pizza {
-  @Id
-  private String name;
 
+  private String _id;
+  private String name;
   @DBRef
   private Size size;
   @DBRef
@@ -25,11 +21,9 @@ public class Pizza {
   @ApiModelProperty(hidden=true)
   private Double totalPrice;
 
-//  public Pizza(String name, @RequestBody Size size, @RequestBody Sauce sauce,
-//      @RequestBody List<Topping> toppings, Boolean isGlutenFree) {
-public Pizza(String name, Size size, Sauce sauce, List<Topping> toppings, Boolean isGlutenFree) {
+public Pizza(String _id, String name, Size size, Sauce sauce, List<Topping> toppings, Boolean isGlutenFree) {
+    this._id = _id;
     this.name = name;
-
     this.size = size;
     this.sauce = sauce;
     this.toppings = toppings;
@@ -37,17 +31,28 @@ public Pizza(String name, Size size, Sauce sauce, List<Topping> toppings, Boolea
     this.totalPrice = this.calculatePrice();
   }
 
-  private Double calculatePrice() {
-    Double price = size.getBasePrice();
-    price += this.sauce.getPrice();
-    for (Topping t : this.toppings) {
-      price += t.getPricePerUnit();
-    }
-    return price;
+  /**
+   * Get _id
+   * @return _id
+   */
+  public String get_id() {
+    return _id;
   }
 
+  public void set_id(String _id) {
+    this._id = _id;
+  }
+
+  /**
+   * Get totalPrice
+   * @return totalPrice
+   */
   public Double getTotalPrice() {
     return this.totalPrice;
+  }
+
+  public void setTotalPrice(Double totalPrice) {
+    this.totalPrice = totalPrice;
   }
 
   /**
@@ -67,59 +72,84 @@ public Pizza(String name, Size size, Sauce sauce, List<Topping> toppings, Boolea
    * Get size
    * @return Size object
    */
-  @ApiModelProperty(example = "")
+  @ApiModelProperty
   public Size getSize() {
     return size;
   }
 
   public void setSize(Size size) {
     this.size = size;
+    this.setTotalPrice(this.calculatePrice());
   }
 
   /**
    * Get sauce
    * @return Sauce object
    */
-  @ApiModelProperty(example = "")
+  @ApiModelProperty
   public Sauce getSauce() {
     return sauce;
   }
 
   public void setSauce(Sauce sauce) {
     this.sauce = sauce;
+    this.setTotalPrice(this.calculatePrice());
   }
 
   /**
    * Get toppings
    * @return list of toppings
    */
-  @ApiModelProperty(example = "")
+  @ApiModelProperty
   public List<Topping> getToppings() {
     return toppings;
   }
 
   public void setToppings(List<Topping> toppings) {
     this.toppings = toppings;
+    this.setTotalPrice(this.calculatePrice());
   }
 
   public void addTopping(Topping topping) {
     this.toppings.add(topping);
+    this.setTotalPrice(this.calculatePrice());
   }
 
   public void removeTopping(Topping topping) {
     this.toppings.remove(topping);
+    this.setTotalPrice(this.calculatePrice());
   }
 
   /**
    * Get isGlutenFree
    * @return isGlutenFree
    */
-  @ApiModelProperty(example = "true")
+  @ApiModelProperty
   public Boolean getGlutenFree() {
     return isGlutenFree;
   }
 
   public void setGlutenFree(Boolean glutenFree) {
     isGlutenFree = glutenFree;
+  }
+
+  /**
+   * Helper method for calculating price of pizza.
+   * @return Double price, or null if size not set.
+   */
+  private Double calculatePrice() {
+    if (this.size == null) {
+      return null;
+    }
+    Double price = size.getBasePrice();
+    if (this.sauce != null) {
+      price += this.sauce.getPrice();
+    }
+    if (this.toppings != null) {
+      for (Topping t : this.toppings) {
+        price += t.getPricePerUnit();
+      }
+    }
+    return price;
   }
 }
