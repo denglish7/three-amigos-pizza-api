@@ -76,7 +76,7 @@ public class PizzaController {
     sizeQuery.addCriteria(Criteria.where("name").is(sizeName));
     Size size = mongoTemplate.findOne(sizeQuery, Size.class);
     if (pizza == null || size == null) {
-      ResponseEntity.notFound();
+      return new ResponseEntity(HttpStatus.NOT_FOUND);
     } else {
       pizza.setSize(size);
       return ResponseEntity.ok(pizza);
