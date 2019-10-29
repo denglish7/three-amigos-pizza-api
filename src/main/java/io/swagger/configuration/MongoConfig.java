@@ -24,12 +24,10 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
   @Bean
   public MongoClient mongoClient() {
-
     if (this.mongoclient == null) {
       MongoClientURI uri = new MongoClientURI(this.getURIName());
       this.mongoclient = new MongoClient(uri);
     }
-
     return this.mongoclient;
   }
 
