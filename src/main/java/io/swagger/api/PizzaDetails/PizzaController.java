@@ -58,10 +58,9 @@ public class PizzaController {
     }
   }
 
-  @RequestMapping(path = "/id={_id}/{sizeName}", method = RequestMethod.PUT)
+  @RequestMapping(path = "/id={_id}", method = RequestMethod.PUT)
   @ApiOperation(value = "Changes the size of a pizza", tags = {"admins",})
-//  public ResponseEntity updatePizzaSizeById(@ApiParam("_id of pizza to update.") @RequestParam("_id") String _id, @ApiParam("Name of size to set pizza to.") @PathVariable("sizeName") String sizeName) {
-  public ResponseEntity updatePizzaSizeById(@RequestParam @PathVariable("_id") String _id, @RequestParam @PathVariable("sizeName") String sizeName) {
+  public ResponseEntity updatePizzaSizeById(@PathVariable("_id") String _id, @RequestParam(value="sizeName") String sizeName) {
     Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
     Size size = mongoTemplate.findById(sizeName, Size.class);
     if (pizza == null || size == null) {
