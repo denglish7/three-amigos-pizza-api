@@ -67,8 +67,8 @@ public class PizzaController {
     }
   }
 
-  @RequestMapping(path = "/id={_id}/{size}", method = RequestMethod.GET, produces = {"application/json"})
-  @ApiOperation(value = "Searches for pizza by _id", response = Pizza.class, tags = {"developers",})
+  @RequestMapping(path = "/id={_id}/{size}", method = RequestMethod.POST, produces = {"application/json"})
+  @ApiOperation(value = "Updates size of a pizza given its _id", tags = {"admins",})
   public ResponseEntity searchPizzasById(@ApiParam("_id of pizza to update.") @PathVariable("_id") String _id, @ApiParam("Name of size to set pizza to.") @PathVariable("size") String sizeName) {
     //Optional pizza = repository.findById(_id);
     Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
@@ -76,7 +76,7 @@ public class PizzaController {
     sizeQuery.addCriteria(Criteria.where("name").is(sizeName));
     Size size = mongoTemplate.findOne(sizeQuery, Size.class);
     if (pizza == null || size == null) {
-      return new ResponseEntity(HttpStatus.NOT_FOUND);
+      ResponseEntity.notFound();
     } else {
       pizza.setSize(size);
       return ResponseEntity.ok(pizza);
