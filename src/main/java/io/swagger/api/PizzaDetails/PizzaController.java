@@ -53,7 +53,10 @@ public class PizzaController {
   @RequestMapping(path = "/{name}", method = RequestMethod.GET, produces = {"application/json"})
   @ApiOperation(value = "Searches for pizzas by name", response = Pizza.class, responseContainer = "List", tags = {"developers",})
   public List<Pizza> searchPizzasByName(@ApiParam("Name of pizza to get.") @PathVariable("name") String name) {
-    return repository.findAllByName(name);
+    Query query = new Query();
+    query.addCriteria(Criteria.where("name").all(name));
+    return mongoTemplate.find(query, Pizza.class);
+    //return repository.findAllByName(name);
   }
 
   @RequestMapping(path = "/id={_id}", method = RequestMethod.GET, produces = {"application/json"})
@@ -67,7 +70,7 @@ public class PizzaController {
     }
   }
 
-  @RequestMapping(path = "/id={_id}/{size}", method = RequestMethod.POST, produces = {"application/json"})
+  @RequestMapping(path = "/id={_id}/{size}", method = RequestMethod.POST)
   @ApiOperation(value = "Updates size of a pizza given its _id", tags = {"admins",})
   public ResponseEntity searchPizzasById(@ApiParam("_id of pizza to update.") @PathVariable("_id") String _id, @ApiParam("Name of size to set pizza to.") @PathVariable("size") String sizeName) {
     //Optional pizza = repository.findById(_id);
@@ -78,6 +81,7 @@ public class PizzaController {
     if (pizza == null || size == null) {
       return new ResponseEntity(HttpStatus.NOT_FOUND);
     } else {
+      //mongoTemplate.update
       pizza.setSize(size);
       return ResponseEntity.ok(pizza);
     }
