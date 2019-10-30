@@ -1,4 +1,4 @@
-package io.swagger.model.UserDetails;
+package io.swagger.model.CustomerDetails;
 
 /**
  * Simple class Email, that includes private instance variables loginName and domain.
