@@ -31,7 +31,7 @@ public class CustomerController {
     return repository.findAll();
   }
 
-  @RequestMapping(path = "/customer", method = RequestMethod.POST)
+  @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a customer", tags={ "admins", })
   public Customer createCustomer(@ApiParam("Customer information for a new customer") @Valid @RequestBody Customer customer) {
     return repository.save(customer);

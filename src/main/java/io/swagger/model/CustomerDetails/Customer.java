@@ -1,12 +1,15 @@
 package io.swagger.model.CustomerDetails;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.OrderDetails.Order;
 import io.swagger.model.StoreDetails.Address;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class Customer {
 
+  @ApiModelProperty(hidden=true)
   private String _id;
   @DBRef
   private String name;
@@ -16,14 +19,13 @@ public class Customer {
   private List<Order> pastOrders;
 
   public Customer(String _id, String name, Integer phone,
-      Address address, Order currentOrder,
-      List<Order> pastOrders) {
+      Address address) {
     this._id = _id;
     this.name = name;
     this.phone = phone;
     this.address = address;
-    this.currentOrder = currentOrder;
-    this.pastOrders = pastOrders;
+    this.currentOrder = null;
+    this.pastOrders = null;
   }
 
   public String get_id() {
@@ -34,6 +36,7 @@ public class Customer {
     this._id = _id;
   }
 
+  @ApiModelProperty(example = "Daniel")
   public String getName() {
     return name;
   }
@@ -42,6 +45,7 @@ public class Customer {
     this.name = name;
   }
 
+  @ApiModelProperty(example = "3920482753")
   public Integer getPhone() {
     return phone;
   }
@@ -50,6 +54,7 @@ public class Customer {
     this.phone = phone;
   }
 
+  @ApiModelProperty
   public Address getAddress() {
     return address;
   }
@@ -58,6 +63,7 @@ public class Customer {
     this.address = address;
   }
 
+  @ApiModelProperty
   public Order getCurrentOrder() {
     return currentOrder;
   }
@@ -66,6 +72,7 @@ public class Customer {
     this.currentOrder = currentOrder;
   }
 
+  @ApiModelProperty
   public List<Order> getPastOrders() {
     return pastOrders;
   }
