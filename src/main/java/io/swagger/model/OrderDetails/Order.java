@@ -1,6 +1,8 @@
 package io.swagger.model.OrderDetails;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.StoreDetails.Address;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Order {
@@ -9,11 +11,11 @@ public class Order {
   String customerId;
   String customerName;
   Cart cart;
-  LocalDateTime timeCreated;
-  LocalDateTime timeCompleted;
+  LocalDate timeCreated;
+  LocalDate timeCompleted;
   OrderStatus status;
 
-  public Order(Integer storeId, Integer orderId, String customerId, String customerName, LocalDateTime timeCreated, LocalDateTime timeCompleted, OrderStatus status) {
+  public Order(Integer storeId, Integer orderId, String customerId, String customerName, LocalDate timeCreated, LocalDate timeCompleted, OrderStatus status) {
     this.storeId = storeId;
     this.orderId = orderId;
     this.customerId = customerId;
@@ -55,19 +57,21 @@ public class Order {
     this.customerName = customerName;
   }
 
-  public LocalDateTime getTimeCreated() {
+  @ApiModelProperty(required=true, dataType = "org.joda.time.LocalDate")
+  public LocalDate getTimeCreated() {
     return timeCreated;
   }
 
-  public void setTimeCreated(LocalDateTime timeCreated) {
+  public void setTimeCreated(LocalDate timeCreated) {
     this.timeCreated = timeCreated;
   }
 
-  public LocalDateTime getTimeCompleted() {
+  @ApiModelProperty(required=true, dataType = "org.joda.time.LocalDate")
+  public LocalDate getTimeCompleted() {
     return timeCompleted;
   }
 
-  public void setTimeCompleted(LocalDateTime timeCompleted) {
+  public void setTimeCompleted(LocalDate timeCompleted) {
     this.timeCompleted = timeCompleted;
   }
 
