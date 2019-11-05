@@ -50,7 +50,7 @@ public class Customer {
     return phone;
   }
 
-  public void setPhone(Integer phone) {
+  public void setPhone(String phone) {
     this.phone = phone;
   }
 
