@@ -13,11 +13,10 @@ public class Customer {
 
   @ApiModelProperty(hidden=true)
   private String _id;
+  @DBRef
   private String name;
   private String phone;
   private Address address;
-  private Order currentOrder;
-  private List<Order> pastOrders;
 
   public Customer(String _id, String name, String phone,
       Address address) {
@@ -25,8 +24,6 @@ public class Customer {
     this.name = name;
     this.phone = phone;
     this.address = address;
-    this.currentOrder = null;
-    this.pastOrders = null;
   }
 
   public String get_id() {
@@ -62,28 +59,5 @@ public class Customer {
 
   public void setAddress(Address address) {
     this.address = address;
-  }
-
-  @ApiModelProperty
-  public Order getCurrentOrder() {
-    return currentOrder;
-  }
-
-  public void setCurrentOrder(Order currentOrder) {
-    this.currentOrder = currentOrder;
-  }
-
-  @ApiModelProperty
-  public List<Order> getPastOrders() {
-    return pastOrders;
-  }
-
-  public void setPastOrders(List<Order> pastOrders) {
-    this.pastOrders = pastOrders;
-  }
-
-  public void addCurrentOrderPastOrders(Order order) {
-    this.pastOrders.add(order);
-    this.currentOrder = null;
   }
 }

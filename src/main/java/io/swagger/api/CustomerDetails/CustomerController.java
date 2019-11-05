@@ -3,15 +3,10 @@ package io.swagger.api.CustomerDetails;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import io.swagger.model.CustomerDetails.Customer;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,9 +31,4 @@ public class CustomerController {
   public Customer createCustomer(@ApiParam("Customer information for a new customer") @Valid @RequestBody Customer customer) {
     return repository.save(customer);
   }
-
-
-
-
-
 }
