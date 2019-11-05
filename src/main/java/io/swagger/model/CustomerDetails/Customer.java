@@ -1,11 +1,7 @@
 package io.swagger.model.CustomerDetails;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.OrderDetails.Order;
 import io.swagger.model.StoreDetails.Address;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "customers")
@@ -25,6 +21,10 @@ public class Customer {
     this.address = address;
   }
 
+  /**
+   * Get _id
+   * @return _id
+   */
   public String get_id() {
     return _id;
   }
@@ -33,6 +33,10 @@ public class Customer {
     this._id = _id;
   }
 
+  /**
+   * Get name
+   * @return name
+   */
   @ApiModelProperty(example = "Daniel")
   public String getName() {
     return name;
@@ -42,6 +46,10 @@ public class Customer {
     this.name = name;
   }
 
+  /**
+   * Get phone
+   * @return phone
+   */
   @ApiModelProperty(example = "392-048-2753")
   public String getPhone() {
     return phone;
@@ -51,6 +59,10 @@ public class Customer {
     this.phone = phone;
   }
 
+  /**
+   * Get Address
+   * @return Address
+   */
   @ApiModelProperty
   public Address getAddress() {
     return address;
