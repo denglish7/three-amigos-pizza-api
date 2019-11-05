@@ -13,12 +13,12 @@ public class Customer {
   private String _id;
   @DBRef
   private String name;
-  private Integer phone;
+  private String phone;
   private Address address;
   private Order currentOrder;
   private List<Order> pastOrders;
 
-  public Customer(String _id, String name, Integer phone,
+  public Customer(String _id, String name, String phone,
       Address address) {
     this._id = _id;
     this.name = name;
@@ -45,8 +45,8 @@ public class Customer {
     this.name = name;
   }
 
-  @ApiModelProperty(example = "3920482753")
-  public Integer getPhone() {
+  @ApiModelProperty(example = "392-048-2753")
+  public String getPhone() {
     return phone;
   }
 
