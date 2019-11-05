@@ -11,7 +11,6 @@ public class Customer {
 
   @ApiModelProperty(hidden=true)
   private String _id;
-  @DBRef
   private String name;
   private String phone;
   private Address address;
