@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "pizzas")
 public class Pizza {
 
-  @ApiModelProperty(hidden=true)
+  @ApiModelProperty(hidden = true)
   private String _id;
   private String name;
   @DBRef
@@ -32,6 +32,7 @@ public class Pizza {
 
   /**
    * Get name
+   *
    * @return name
    */
   @ApiModelProperty(example = "Cheese")
@@ -45,6 +46,7 @@ public class Pizza {
 
   /**
    * Get size
+   *
    * @return size
    */
   public Size getSize() {
@@ -57,6 +59,7 @@ public class Pizza {
 
   /**
    * Get crust
+   *
    * @return crust
    */
   public Crust getCrust() {
@@ -69,6 +72,7 @@ public class Pizza {
 
   /**
    * Get topping
+   *
    * @return topping
    */
   public List<Topping> getToppings() {

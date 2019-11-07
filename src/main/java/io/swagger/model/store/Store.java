@@ -3,7 +3,6 @@ package io.swagger.model.store;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.menu.Menu;
 import javax.validation.constraints.NotNull;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "stores")

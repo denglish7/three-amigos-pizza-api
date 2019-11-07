@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.pizza.Pizza;
 import java.util.List;
-import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
