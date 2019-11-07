@@ -2,20 +2,23 @@ package io.swagger.model.customer;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.store.Address;
+import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "customers")
 public class Customer {
 
-  @ApiModelProperty(hidden=true)
+  @ApiModelProperty(hidden = true)
   private String _id;
+  @NotNull
   private String name;
+  @NotNull
   private String phone;
+  @NotNull
   private Address address;
 
-  public Customer(String _id, String name, String phone,
-      Address address) {
-    this._id = _id;
+  public Customer(@NotNull String name, @NotNull String phone,
+      @NotNull Address address) {
     this.name = name;
     this.phone = phone;
     this.address = address;
@@ -23,18 +26,17 @@ public class Customer {
 
   /**
    * Get _id
+   *
    * @return _id
    */
   public String get_id() {
     return _id;
   }
 
-  public void set_id(String _id) {
-    this._id = _id;
-  }
 
   /**
    * Get name
+   *
    * @return name
    */
   @ApiModelProperty(example = "Daniel")
@@ -48,6 +50,7 @@ public class Customer {
 
   /**
    * Get phone
+   *
    * @return phone
    */
   @ApiModelProperty(example = "392-048-2753")
@@ -61,6 +64,7 @@ public class Customer {
 
   /**
    * Get Address
+   *
    * @return Address
    */
   @ApiModelProperty

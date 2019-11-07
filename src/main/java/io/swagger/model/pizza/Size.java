@@ -2,16 +2,20 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "sizes")
 public class Size {
 
-  @Id
+  @ApiModelProperty(hidden = true)
+  private String _id;
+
+  @NotNull
   private String name;
+
   @NotNull
   private Double basePrice;
+
   private Integer diameter;
   private Integer numberOfServings;
   private Integer numberOfSlices;
@@ -25,8 +29,13 @@ public class Size {
     this.numberOfSlices = numberOfSlices;
   }
 
+  public String get_id() {
+    return _id;
+  }
+
   /**
    * Get name
+   *
    * @return name
    */
   @ApiModelProperty(example = "Large", required = true)
@@ -40,6 +49,7 @@ public class Size {
 
   /**
    * Get base price
+   *
    * @return base price
    */
   @ApiModelProperty(example = "12.0", required = true)
@@ -53,6 +63,7 @@ public class Size {
 
   /**
    * Get diameter in inches
+   *
    * @return diameter in inches
    */
   @ApiModelProperty(example = "18")
@@ -66,6 +77,7 @@ public class Size {
 
   /**
    * Get number of servings
+   *
    * @return number of servings
    */
   @ApiModelProperty(example = "4")
@@ -79,6 +91,7 @@ public class Size {
 
   /**
    * Get number of slices
+   *
    * @return number of slices
    */
   @ApiModelProperty(example = "8")

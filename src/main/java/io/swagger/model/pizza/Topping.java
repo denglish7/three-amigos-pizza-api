@@ -2,13 +2,14 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "toppings")
 public class Topping {
 
-  @Id
+  @ApiModelProperty(hidden = true)
+  private String _id;
+
   @NotNull
   private String name;
 
@@ -20,9 +21,14 @@ public class Topping {
     this.pricePerUnit = pricePerUnit;
   }
 
+  public String get_id() {
+    return _id;
+  }
+
   /**
    * Get name
-    * @return name
+   *
+   * @return name
    */
   @ApiModelProperty(example = "mushrooms", required = true)
   public String getName() {
@@ -35,6 +41,7 @@ public class Topping {
 
   /**
    * Get price
+   *
    * @return price
    */
   @ApiModelProperty(example = "1.0", required = true)

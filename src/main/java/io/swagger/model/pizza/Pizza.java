@@ -12,23 +12,19 @@ public class Pizza {
   private String _id;
   private String name;
   @DBRef
-  private Size size;
+  private String sizeId;
   @DBRef
-  private Sauce sauce;
+  private String crustId;
   @DBRef
-  private List<Topping> toppings;
-  private Boolean isGlutenFree;
-  @ApiModelProperty(hidden=true)
-  private Double totalPrice;
+  private List<String> toppingIds;
 
-public Pizza(String _id, String name, Size size, Sauce sauce, List<Topping> toppings, Boolean isGlutenFree) {
+  public Pizza(String _id, String name, String sizeId, String crustId,
+      List<String> toppingIds) {
     this._id = _id;
     this.name = name;
-    this.size = size;
-    this.sauce = sauce;
-    this.toppings = toppings;
-    this.isGlutenFree = isGlutenFree;
-    this.totalPrice = this.calculatePrice();
+    this.sizeId = sizeId;
+    this.crustId = crustId;
+    this.toppingIds = toppingIds;
   }
 
   /**
@@ -41,18 +37,6 @@ public Pizza(String _id, String name, Size size, Sauce sauce, List<Topping> topp
 
   public void set_id(String _id) {
     this._id = _id;
-  }
-
-  /**
-   * Get totalPrice
-   * @return totalPrice
-   */
-  public Double getTotalPrice() {
-    return this.totalPrice;
-  }
-
-  public void setTotalPrice(Double totalPrice) {
-    this.totalPrice = totalPrice;
   }
 
   /**
@@ -69,87 +53,38 @@ public Pizza(String _id, String name, Size size, Sauce sauce, List<Topping> topp
   }
 
   /**
-   * Get size
-   * @return Size object
+   * Get sizeId
+   * @return sizeId
    */
-  @ApiModelProperty
-  public Size getSize() {
-    return size;
+  public String getSizeId() {
+    return sizeId;
   }
 
-  public void setSize(Size size) {
-    this.size = size;
-    this.setTotalPrice(this.calculatePrice());
+  public void setSizeId(String sizeId) {
+    this.sizeId = sizeId;
   }
 
   /**
-   * Get sauce
-   * @return Sauce object
+   * Get crustId
+   * @return crustId
    */
-  @ApiModelProperty
-  public Sauce getSauce() {
-    return sauce;
+  public String getCrustId() {
+    return crustId;
   }
 
-  public void setSauce(Sauce sauce) {
-    this.sauce = sauce;
-    this.setTotalPrice(this.calculatePrice());
+  public void setCrustId(String crustId) {
+    this.crustId = crustId;
   }
 
   /**
-   * Get toppings
-   * @return list of toppings
+   * Get toppingIds
+   * @return toppingIds
    */
-  @ApiModelProperty
-  public List<Topping> getToppings() {
-    return toppings;
+  public List<String> getToppingIds() {
+    return toppingIds;
   }
 
-  public void setToppings(List<Topping> toppings) {
-    this.toppings = toppings;
-    this.setTotalPrice(this.calculatePrice());
-  }
-
-  public void addTopping(Topping topping) {
-    this.toppings.add(topping);
-    this.setTotalPrice(this.calculatePrice());
-  }
-
-  public void removeTopping(Topping topping) {
-    this.toppings.remove(topping);
-    this.setTotalPrice(this.calculatePrice());
-  }
-
-  /**
-   * Get isGlutenFree
-   * @return isGlutenFree
-   */
-  @ApiModelProperty
-  public Boolean getGlutenFree() {
-    return isGlutenFree;
-  }
-
-  public void setGlutenFree(Boolean glutenFree) {
-    isGlutenFree = glutenFree;
-  }
-
-  /**
-   * Helper method for calculating price of pizza.
-   * @return Double price, or null if size not set.
-   */
-  private Double calculatePrice() {
-    if (this.size == null) {
-      return null;
-    }
-    Double price = size.getBasePrice();
-    if (this.sauce != null) {
-      price += this.sauce.getPrice();
-    }
-    if (this.toppings != null) {
-      for (Topping t : this.toppings) {
-        price += t.getPricePerUnit();
-      }
-    }
-    return price;
+  public void setToppingIds(List<String> toppingIds) {
+    this.toppingIds = toppingIds;
   }
 }
