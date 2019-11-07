@@ -1,7 +1,7 @@
 package io.swagger.api;
 
-import io.swagger.api.PizzaDetails.SizeRepository;
-import io.swagger.model.PizzaDetails.Size;
+import io.swagger.repositories.SizeRepository;
+import io.swagger.model.pizza.Size;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
