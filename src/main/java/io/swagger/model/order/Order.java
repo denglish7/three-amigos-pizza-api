@@ -14,19 +14,16 @@ public class Order {
   @ApiModelProperty(hidden = true)
   private String _id;
   @DBRef
-  @NotNull
   private List<Pizza> pizzas;
   @DBRef
-  @NotNull
   private Customer customer;
-  @NotNull
   private String storeId;
 
 //  @ApiModelProperty(hidden=true)
 //  private OrderStatus status;
 
 
-  public Order(@NotNull List<Pizza> pizzas, @NotNull Customer customer, @NotNull String storeId) {
+  public Order(List<Pizza> pizzas, Customer customer, String storeId) {
     this.pizzas = pizzas;
     this.customer = customer;
     this.storeId = storeId;

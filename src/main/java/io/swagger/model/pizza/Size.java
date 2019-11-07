@@ -2,6 +2,7 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "sizes")
@@ -20,8 +21,16 @@ public class Size {
   private Integer numberOfServings;
   private Integer numberOfSlices;
 
-  public Size(String name, Double basePrice, Integer diameter, Integer numberOfServings,
-      Integer numberOfSlices) {
+  public Size() {
+  }
+
+  public Size(@NotNull String name, @NotNull Double basePrice) {
+    this.name = name;
+    this.basePrice = basePrice;
+  }
+
+  public Size(@NotNull String name, @NotNull Double basePrice, Integer diameter,
+      Integer numberOfServings, Integer numberOfSlices) {
     this.name = name;
     this.basePrice = basePrice;
     this.diameter = diameter;
@@ -31,6 +40,10 @@ public class Size {
 
   public String get_id() {
     return _id;
+  }
+
+  public void set_id(String _id) {
+    this._id = _id;
   }
 
   /**

@@ -15,12 +15,14 @@ public class Store {
   private String name;
   @NotNull
   private String address;
-  @DBRef
+  @NotNull
   private Menu menu;
 
-  public Store(@NotNull String name, @NotNull String address) {
+  public Store(@NotNull String name, @NotNull String address,
+      @NotNull Menu menu) {
     this.name = name;
     this.address = address;
+    this.menu = menu;
   }
 
   public String get_id() {
