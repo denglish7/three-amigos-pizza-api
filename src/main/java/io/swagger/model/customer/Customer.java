@@ -14,7 +14,6 @@ public class Customer {
   private String name;
   @NotNull
   private String phone;
-  @DBRef
   @NotNull
   private Address address;
 
