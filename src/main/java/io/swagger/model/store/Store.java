@@ -1,5 +1,7 @@
 package io.swagger.model.store;
 
+import io.swagger.model.order.Order;
+
 public class Store {
   Integer storeId;
   Address address;

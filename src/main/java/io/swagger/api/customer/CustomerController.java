@@ -5,9 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.model.customer.Address;
 import io.swagger.model.customer.Customer;
-import io.swagger.repositories.AddressRepository;
 import io.swagger.repositories.CustomerRepository;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +25,6 @@ public class CustomerController {
 
   @Autowired
   private CustomerRepository customerRepository;
-  @Autowired
-  private AddressRepository addressRepository;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Customers in the system.", response = Customer.class, responseContainer = "List", tags = {
@@ -41,12 +37,6 @@ public class CustomerController {
   @ApiOperation(value = "Creates a customer", tags = {"user",})
   public ResponseEntity<Customer> createCustomer(
       @ApiParam("Customer information for a new customer") @Valid @RequestBody Customer customer) {
-    Optional<Address> address = addressRepository.findById(customer.getAddressId());
-    if (!address.isPresent()) {
-      return ResponseEntity.notFound()
-          .header("message", "addressId " + customer.getAddressId() + " not found.")
-          .build();
-    }
     return ResponseEntity.ok(customerRepository.save(customer));
   }
 
