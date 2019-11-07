@@ -2,7 +2,6 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "pizzas")
@@ -11,11 +10,8 @@ public class Pizza {
   @ApiModelProperty(hidden=true)
   private String _id;
   private String name;
-  @DBRef
   private String sizeId;
-  @DBRef
   private String crustId;
-  @DBRef
   private List<String> toppingIds;
 
   public Pizza(String _id, String name, String sizeId, String crustId,
@@ -27,16 +23,8 @@ public class Pizza {
     this.toppingIds = toppingIds;
   }
 
-  /**
-   * Get _id
-   * @return _id
-   */
   public String get_id() {
     return _id;
-  }
-
-  public void set_id(String _id) {
-    this._id = _id;
   }
 
   /**
