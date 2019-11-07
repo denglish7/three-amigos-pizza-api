@@ -4,51 +4,58 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.pizza.Pizza;
 import java.util.List;
+import javax.validation.constraints.NotNull;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "orders")
 public class Order {
-  @ApiModelProperty(hidden=true)
+
+  @ApiModelProperty(hidden = true)
   private String _id;
-  @ApiModelProperty(hidden=true)
+  @DBRef
+  @NotNull
   private List<Pizza> pizzas;
-  @ApiModelProperty(hidden=true)
+  @DBRef
+  @NotNull
   private Customer customer;
+  @NotNull
+  private String storeId;
 
 //  @ApiModelProperty(hidden=true)
 //  private OrderStatus status;
 
 
-  public Order() {
-  }
-
-  public Order(List<Pizza> pizzas, Customer customer) {
+  public Order(@NotNull List<Pizza> pizzas, @NotNull Customer customer, @NotNull String storeId) {
     this.pizzas = pizzas;
     this.customer = customer;
+    this.storeId = storeId;
   }
 
   /**
    * Get _id
+   *
    * @return _id
    */
   public String get_id() {
     return _id;
   }
 
-  public void set_id(String _id) {
-    this._id = _id;
+  public String getStoreId() {
+    return storeId;
+  }
+
+  public void setStoreId(String storeId) {
+    this.storeId = storeId;
   }
 
   /**
    * Get pizzas
+   *
    * @return pizzas
    */
   public List<Pizza> getPizzas() {
     return pizzas;
-  }
-
-  public void addPizza(Pizza pizza) {
-    this.pizzas.add(pizza);
   }
 
   public void setPizzas(List<Pizza> pizzas) {
@@ -57,6 +64,7 @@ public class Order {
 
   /**
    * Get customer
+   *
    * @return customer
    */
   public Customer getCustomer() {

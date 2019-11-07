@@ -1,43 +1,52 @@
 package io.swagger.model.menu;
 
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.specials.Special;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.store.Store;
 
+import java.util.List;
 import java.util.Set;
+import javax.validation.constraints.NotNull;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "menus")
 public class Menu {
-  Set <Store> storesUsingMenu;
-  Set <Pizza> pizzas;
-  Set <Special> specials;
 
-  public Menu(Set <Store> storesUsingMenu, Set <Pizza> pizzas, Set <Special> specials) {
-    this.storesUsingMenu = storesUsingMenu;
+  @ApiModelProperty(hidden = true)
+  private String _id;
+
+  @DBRef
+  private List<Pizza> pizzas;
+  private String storeId;
+
+  public Menu(List<Pizza> pizzas, String storeId) {
     this.pizzas = pizzas;
-    this.specials = specials;
+    this.storeId = storeId;
   }
 
-  public Set <Store> getStoresUsingMenu() {
-    return storesUsingMenu;
+  public String get_id() {
+    return _id;
   }
 
-  public void setStoresUsingMenu(Set <Store> storesUsingMenu) {
-    this.storesUsingMenu = storesUsingMenu;
+  public String getStoreId() {
+    return storeId;
   }
 
-  public Set <Pizza> getPizzas() {
+  public void setStoreId(String storeId) {
+    this.storeId = storeId;
+  }
+
+  public List<Pizza> getPizzas() {
     return pizzas;
   }
 
-  public void setPizzas(Set <Pizza> pizzas) {
+  public void setPizzas(List<Pizza> pizzas) {
     this.pizzas = pizzas;
   }
 
-  public Set <Special> getSpecials() {
-    return specials;
-  }
-
-  public void setSpecials(Set <Special> specials) {
-    this.specials = specials;
+  public void addPizzas(List<Pizza> pizzas) {
+    this.pizzas.addAll(pizzas);
   }
 }

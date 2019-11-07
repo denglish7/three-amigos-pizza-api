@@ -2,6 +2,7 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "pizzas")
@@ -10,17 +11,19 @@ public class Pizza {
   @ApiModelProperty(hidden=true)
   private String _id;
   private String name;
-  private String sizeId;
-  private String crustId;
-  private List<String> toppingIds;
+  @DBRef
+  private Size size;
+  @DBRef
+  private Crust crust;
+  @DBRef
+  private List<Topping> toppings;
 
-  public Pizza(String _id, String name, String sizeId, String crustId,
-      List<String> toppingIds) {
-    this._id = _id;
+  public Pizza(String name, Size size, Crust crust,
+      List<Topping> toppings) {
     this.name = name;
-    this.sizeId = sizeId;
-    this.crustId = crustId;
-    this.toppingIds = toppingIds;
+    this.size = size;
+    this.crust = crust;
+    this.toppings = toppings;
   }
 
   public String get_id() {
@@ -41,38 +44,38 @@ public class Pizza {
   }
 
   /**
-   * Get sizeId
-   * @return sizeId
+   * Get size
+   * @return size
    */
-  public String getSizeId() {
-    return sizeId;
+  public Size getSize() {
+    return size;
   }
 
-  public void setSizeId(String sizeId) {
-    this.sizeId = sizeId;
+  public void setSize(Size size) {
+    this.size = size;
   }
 
   /**
-   * Get crustId
-   * @return crustId
+   * Get crust
+   * @return crust
    */
-  public String getCrustId() {
-    return crustId;
+  public Crust getCrust() {
+    return crust;
   }
 
-  public void setCrustId(String crustId) {
-    this.crustId = crustId;
+  public void setCrust(Crust crust) {
+    this.crust = crust;
   }
 
   /**
-   * Get toppingIds
-   * @return toppingIds
+   * Get topping
+   * @return topping
    */
-  public List<String> getToppingIds() {
-    return toppingIds;
+  public List<Topping> getToppings() {
+    return toppings;
   }
 
-  public void setToppingIds(List<String> toppingIds) {
-    this.toppingIds = toppingIds;
+  public void setToppings(List<Topping> toppings) {
+    this.toppings = toppings;
   }
 }

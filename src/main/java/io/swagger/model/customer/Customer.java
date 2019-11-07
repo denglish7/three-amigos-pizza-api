@@ -1,7 +1,6 @@
 package io.swagger.model.customer;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.store.Address;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,10 +14,10 @@ public class Customer {
   @NotNull
   private String phone;
   @NotNull
-  private Address address;
+  private String address;
 
   public Customer(@NotNull String name, @NotNull String phone,
-      @NotNull Address address) {
+      @NotNull String address) {
     this.name = name;
     this.phone = phone;
     this.address = address;
@@ -67,11 +66,11 @@ public class Customer {
    *
    * @return address
    */
-  public Address getAddress() {
+  public String getAddress() {
     return address;
   }
 
-  public void setAddressId(Address address) {
+  public void setAddress(String address) {
     this.address = address;
   }
 }

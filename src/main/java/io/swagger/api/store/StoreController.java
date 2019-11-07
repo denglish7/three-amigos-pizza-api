@@ -1,0 +1,87 @@
+package io.swagger.api.store;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.model.menu.Menu;
+import io.swagger.model.pizza.Pizza;
+import io.swagger.model.store.Store;
+import io.swagger.repositories.MenuRepository;
+import io.swagger.repositories.StoreRepository;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Api
+@RestController
+@RequestMapping("/store")
+public class StoreController {
+
+  @Autowired
+  private StoreRepository storeRepository;
+  @Autowired
+  private MenuRepository menuRepository;
+
+  @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+  @ApiOperation(value = "Returns list of all stores in the system.", response = Store.class, responseContainer = "List", tags = {
+      "store",})
+  public ResponseEntity<List<Store>> getAllStores() {
+    return ResponseEntity.ok(storeRepository.findAll());
+  }
+
+  @RequestMapping(path = "/", method = RequestMethod.POST)
+  @ApiOperation(value = "Creates a store", tags = {"store",})
+  public ResponseEntity<Store> createStore(
+      @ApiParam("Name for new store") @RequestParam(value = "storeName") String storeName,
+      @ApiParam("Address for new store") @RequestParam(value = "storeAddress") String storeAddress,
+      @ApiParam("Existing menuID to duplicate for new store") @RequestParam(value = "menuId", required = false) String menuId) {
+    List<Pizza> menuPizzas = new ArrayList<>();
+    if (menuId != null) {
+      Optional<Menu> menu = menuRepository.findById(menuId);
+      if (!menu.isPresent()) {
+        return ResponseEntity.notFound().header("message", "menuId " + menuId + " not found.")
+            .build();
+      }
+      menuPizzas = menu.get().getPizzas();
+    }
+    Store newStore = new Store(storeName, storeAddress);
+    Menu storeMenu = new Menu(menuPizzas, newStore.get_id());
+    menuRepository.save(storeMenu);
+    return ResponseEntity.ok(storeRepository.save(newStore));
+  }
+
+  @RequestMapping(path = "/{storeId}/menu", method = RequestMethod.GET)
+  @ApiOperation(value = "Get a store's menu", tags = {"store",})
+  public ResponseEntity<Menu> addPizzasToMenus(
+      @ApiParam("Store Id to get menu of.") @PathVariable("storeId") String storeId) {
+    Optional<Store> storeToGet = storeRepository.findById(storeId);
+    if (!storeToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
+          .build();
+    }
+    return ResponseEntity.ok(storeToGet.get().getMenu());
+  }
+
+  @RequestMapping(path = "/{storeId}/menu", method = RequestMethod.PUT)
+  @ApiOperation(value = "Adds a list of pizzas to a store's menu", tags = {"store",})
+  public ResponseEntity<Menu> addPizzasToMenus(
+      @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
+      @ApiParam("List of Pizzas to add to menu") @RequestParam(value = "pizzas") List<Pizza> pizzas) {
+    Optional<Store> storeToGet = storeRepository.findById(storeId);
+    if (!storeToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
+          .build();
+    }
+    Store store = storeToGet.get();
+    Menu storeMenu = store.getMenu();
+    storeMenu.addPizzas(pizzas);
+    return ResponseEntity.ok(menuRepository.save(storeMenu));
+  }
+}
