@@ -1,8 +1,8 @@
 package io.swagger.model.customer;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.model.store.Address;
 import javax.validation.constraints.NotNull;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "customers")

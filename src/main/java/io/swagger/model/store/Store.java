@@ -1,6 +1,5 @@
 package io.swagger.model.store;
 
-import io.swagger.model.customer.Address;
 import io.swagger.model.order.Order;
 
 public class Store {
