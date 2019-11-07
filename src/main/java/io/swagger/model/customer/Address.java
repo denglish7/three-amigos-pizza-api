@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Address {
 
+  @ApiModelProperty(hidden = true)
+  private String _id;
   @NotNull
   private String streetNumber;
   @NotNull
