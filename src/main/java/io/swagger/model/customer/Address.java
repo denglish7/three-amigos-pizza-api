@@ -3,7 +3,9 @@ package io.swagger.model.customer;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class Address {
 
   @NotNull
