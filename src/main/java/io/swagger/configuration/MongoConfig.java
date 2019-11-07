@@ -21,11 +21,13 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
   private MongoClient mongoclient;
   private MongoTemplate mongoTemplate;
+  private String databaseName;
 
   @Bean
   public MongoClient mongoClient() {
     if (this.mongoclient == null) {
       MongoClientURI uri = new MongoClientURI(this.getURIName());
+      this.databaseName = uri.getDatabase();
       this.mongoclient = new MongoClient(uri);
     }
     return this.mongoclient;
@@ -41,11 +43,10 @@ public class MongoConfig extends AbstractMongoConfiguration {
 
   @Bean
   protected String getDatabaseName() {
-    return env.getProperty("spring.data.mongodb.database");
+    return this.databaseName;
   }
 
   private String getURIName() {
     return env.getProperty("spring.data.mongodb.uri");
   }
 }
-
