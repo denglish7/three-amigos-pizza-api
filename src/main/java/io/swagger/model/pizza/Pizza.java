@@ -18,13 +18,22 @@ public class Pizza {
   @DBRef
   private List<Topping> toppings;
 
-  public Pizza(String name, Size size, Crust crust,
-      List<Topping> toppings) {
+  public Pizza() {
+  }
+
+  public Pizza(String name, Crust crust, List<Topping> toppings) {
     this.name = name;
-    this.size = size;
     this.crust = crust;
     this.toppings = toppings;
   }
+
+//  public Pizza(String name, Size size, Crust crust,
+//      List<Topping> toppings) {
+//    this.name = name;
+//    this.size = size;
+//    this.crust = crust;
+//    this.toppings = toppings;
+//  }
 
   public String get_id() {
     return _id;

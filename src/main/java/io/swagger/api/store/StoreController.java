@@ -5,7 +5,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.model.menu.Menu;
 import io.swagger.model.pizza.Pizza;
+import io.swagger.model.specials.Special;
 import io.swagger.model.store.Store;
+import io.swagger.repositories.PizzaRepository;
+import io.swagger.repositories.SpecialRepository;
 import io.swagger.repositories.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +28,10 @@ public class StoreController {
 
   @Autowired
   private StoreRepository storeRepository;
+  @Autowired
+  private PizzaRepository pizzaRepository;
+  @Autowired
+  private SpecialRepository specialRepository;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all stores in the system.", response = Store.class, responseContainer = "List", tags = {
@@ -38,7 +45,7 @@ public class StoreController {
   public ResponseEntity<Store> createStore(
       @ApiParam("Name for new store") @RequestParam(value = "storeName") String storeName,
       @ApiParam("Address for new store") @RequestParam(value = "storeAddress") String storeAddress,
-      @ApiParam("Existing storeID to duplicate menu from") @RequestParam(value = "storeId", required = false) String storeId) {
+      @ApiParam("Optional existing storeID to duplicate menu from") @RequestParam(value = "storeId", required = false) String storeId) {
     Menu storeMenu = new Menu();
     if (storeId != null) {
       Optional<Store> store = storeRepository.findById(storeId);
@@ -46,7 +53,8 @@ public class StoreController {
         return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
             .build();
       }
-      storeMenu.setPizzas(store.get().getMenu().getPizzas());
+      storeMenu.addPizzas(store.get().getMenu().getPizzas());
+      storeMenu.addSpecials(store.get().getMenu().getSpecials());
     }
     Store newStore = new Store(storeName, storeAddress, storeMenu);
     return ResponseEntity.ok(storeRepository.save(newStore));
@@ -64,11 +72,12 @@ public class StoreController {
     return ResponseEntity.ok(storeToGet.get().getMenu());
   }
 
-  @RequestMapping(path = "/{storeId}/menu/pizzas", method = RequestMethod.PUT)
-  @ApiOperation(value = "Adds a list of pizzas to a store's menu", tags = {"store",})
-  public ResponseEntity<Menu> addPizzasToMenus(
+  @RequestMapping(path = "/{storeId}/menu/add", method = RequestMethod.PUT)
+  @ApiOperation(value = "Add to a store's menu", tags = {"store",})
+  public ResponseEntity<Menu> addPizzasToMenu(
       @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
-      @ApiParam("List of Pizzas to add to menu") @RequestParam(value = "pizzas") List<Pizza> pizzas) {
+      @ApiParam("List of Pizza ids to add to menu") @RequestParam(value = "pizzaIds", required = false) List<String> pizzaIds,
+      @ApiParam("List of Special ids to add to menu") @RequestParam(value = "specialIds", required = false) List<String> specialIds) {
     Optional<Store> storeToGet = storeRepository.findById(storeId);
     if (!storeToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
@@ -76,7 +85,32 @@ public class StoreController {
     }
     Store store = storeToGet.get();
     Menu storeMenu = store.getMenu();
-    storeMenu.addPizzas(pizzas);
+    if (pizzaIds != null) {
+      List<Pizza> pizzasToAdd = new ArrayList<>();
+      for (String pizzaId : pizzaIds) {
+        Optional<Pizza> pizza = pizzaRepository.findById(pizzaId);
+        if (!pizza.isPresent()) {
+          return ResponseEntity.notFound().header("message", "pizzaId " + pizzaId + " not found.")
+              .build();
+        } else {
+          pizzasToAdd.add(pizza.get());
+        }
+      }
+      storeMenu.addPizzas(pizzasToAdd);
+    }
+    if (specialIds != null) {
+      List<Special> specialsToAdd = new ArrayList<>();
+      for (String specialId : specialIds) {
+        Optional<Special> special = specialRepository.findById(specialId);
+        if (!special.isPresent()) {
+          return ResponseEntity.notFound()
+              .header("message", "specialId " + specialId + " not found.").build();
+        } else {
+          specialsToAdd.add(special.get());
+        }
+      }
+      storeMenu.addSpecials(specialsToAdd);
+    }
     store.setMenu(storeMenu);
     storeRepository.save(store);
     return ResponseEntity.ok(storeMenu);
