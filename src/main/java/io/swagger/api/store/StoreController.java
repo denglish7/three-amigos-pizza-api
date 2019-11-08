@@ -90,8 +90,11 @@ public class StoreController {
       for (String pizzaId : pizzaIds) {
         Optional<Pizza> pizza = pizzaRepository.findById(pizzaId);
         if (!pizza.isPresent()) {
-          return ResponseEntity.notFound().header("message", "pizzaId " + pizzaId + " not found.").build();
-        } else {pizzasToAdd.add(pizza.get());}
+          return ResponseEntity.notFound().header("message", "pizzaId " + pizzaId + " not found.")
+              .build();
+        } else {
+          pizzasToAdd.add(pizza.get());
+        }
       }
       storeMenu.addPizzas(pizzasToAdd);
     }
@@ -100,8 +103,11 @@ public class StoreController {
       for (String specialId : specialIds) {
         Optional<Special> special = specialRepository.findById(specialId);
         if (!special.isPresent()) {
-          return ResponseEntity.notFound().header("message", "specialId " + specialId + " not found.").build();
-        } else {specialsToAdd.add(special.get());}
+          return ResponseEntity.notFound()
+              .header("message", "specialId " + specialId + " not found.").build();
+        } else {
+          specialsToAdd.add(special.get());
+        }
       }
       storeMenu.addSpecials(specialsToAdd);
     }
@@ -109,24 +115,4 @@ public class StoreController {
     storeRepository.save(store);
     return ResponseEntity.ok(storeMenu);
   }
-
-//  @RequestMapping(path = "/{storeId}/menu/", method = RequestMethod.PUT)
-//  @ApiOperation(value = "Add to a store's menu", tags = {"store",})
-//  public ResponseEntity<Menu> addPizzasToMenu(
-//      @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
-//      @ApiParam("List of Pizzas to add to menu") @RequestParam(value = "pizzas", required = false) List<Pizza> pizzas,
-//      @ApiParam("List of Specials to add to menu") @RequestParam(value = "specials", required = false) List<Special> specials) {
-//    Optional<Store> storeToGet = storeRepository.findById(storeId);
-//    if (!storeToGet.isPresent()) {
-//      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
-//          .build();
-//    }
-//    Store store = storeToGet.get();
-//    Menu storeMenu = store.getMenu();
-//    storeMenu.addPizzas(pizzas);
-//    storeMenu.addSpecials(specials);
-//    store.setMenu(storeMenu);
-//    storeRepository.save(store);
-//    return ResponseEntity.ok(storeMenu);
-//  }
 }

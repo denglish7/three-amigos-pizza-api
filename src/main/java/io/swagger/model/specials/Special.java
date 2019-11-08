@@ -1,11 +1,8 @@
 package io.swagger.model.specials;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.pizza.Pizza;
 import io.swagger.model.pizza.Size;
-import java.util.List;
 import javax.validation.constraints.NotNull;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -36,6 +33,7 @@ public class Special {
 
   /**
    * Get id
+   *
    * @return id
    */
   public String get_id() {
@@ -48,6 +46,7 @@ public class Special {
 
   /**
    * Get name
+   *
    * @return name
    */
   @ApiModelProperty(example = "Two for one", required = true)
@@ -61,6 +60,7 @@ public class Special {
 
   /**
    * Get specialPriceRatio
+   *
    * @return specialPriceRatio
    */
   @ApiModelProperty(allowableValues = "0 to 1", example = "0.8", required = true)
@@ -74,6 +74,7 @@ public class Special {
 
   /**
    * Get requiredNumberPizzas
+   *
    * @return requiredNumberPizzas
    */
   @ApiModelProperty(example = "2")
@@ -87,6 +88,7 @@ public class Special {
 
   /**
    * Get requiredSizeOfPizzas
+   *
    * @return requiredSizeOfPizzas
    */
   public Size getRequiredSizeOfPizzas() {

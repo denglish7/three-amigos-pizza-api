@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api
 @RestController
-@RequestMapping(path = "/topping")
+@RequestMapping(path = "/pizza/topping")
 public class ToppingController {
 
   @Autowired

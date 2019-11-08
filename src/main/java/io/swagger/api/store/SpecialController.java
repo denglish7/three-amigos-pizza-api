@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api
 @RestController
-@RequestMapping("/store/menu/special")
+@RequestMapping("special")
 public class SpecialController {
 
   @Autowired
@@ -44,7 +44,8 @@ public class SpecialController {
     if (requiredSizeId != null) {
       Optional<Size> size = sizeRepository.findById(requiredSizeId);
       if (!size.isPresent()) {
-        return ResponseEntity.notFound().header("message", "sizeId " + requiredSizeId + " not found").build();
+        return ResponseEntity.notFound()
+            .header("message", "sizeId " + requiredSizeId + " not found").build();
       }
       requiredSize = size.get();
     }

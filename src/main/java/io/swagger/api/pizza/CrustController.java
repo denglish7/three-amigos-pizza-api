@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api
 @RestController
-@RequestMapping(path = "/crust")
+@RequestMapping(path = "/pizza/crust")
 public class CrustController {
 
   @Autowired
   private CrustRepository crustRepository;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
-  @ApiOperation(value = "Returns list of all crusts in the system.", response = Crust.class, responseContainer = "List", tags = {
+  @ApiOperation(value = "Returns a list of all crusts in the system.", response = Crust.class, responseContainer = "List", tags = {
       "pizza",})
   public ResponseEntity<List<Crust>> getAllCrusts() {
     return ResponseEntity.ok(crustRepository.findAll());
@@ -41,7 +41,7 @@ public class CrustController {
   }
 
   @RequestMapping(path = "/{crustId}", produces = {"application/json"}, method = RequestMethod.GET)
-  @ApiOperation(value = "Searches for a crust by id", response = Crust.class, tags = {
+  @ApiOperation(value = "Searches for a crust by id.", response = Crust.class, tags = {
       "pizza",})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Crust.class),

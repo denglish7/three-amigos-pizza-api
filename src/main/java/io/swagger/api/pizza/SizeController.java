@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api
 @RestController
-@RequestMapping("/size")
+@RequestMapping("/pizza/size")
 public class SizeController {
 
   @Autowired

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Api
 @RestController
-@RequestMapping("store/menu/pizza")
+@RequestMapping("/pizza")
 public class PizzaController {
 
   @Autowired
@@ -33,13 +33,14 @@ public class PizzaController {
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Pizza.class, responseContainer = "List", tags = {
-      "pizza/za",})
+      "pizza",})
   public ResponseEntity<List<Pizza>> getAllPizzas() {
     return ResponseEntity.ok(pizzaRepository.findAll());
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "Creates a pizza", response = Pizza.class, tags = {"pizza.zaza",})
+  @ApiOperation(value = "Creates a pizza and adds it to the system. Could optionally adds pizza to all store menus or a list of stores?", response = Pizza.class, tags = {
+      "pizza",})
   public ResponseEntity<Pizza> createPizza(
       @ApiParam("Name for new pizza") @RequestParam(value = "pizzaName") String pizzaName,
       @ApiParam("Crust ID for new pizza") @RequestParam(value = "crustId") String crustId,
@@ -55,53 +56,11 @@ public class PizzaController {
       if (!topping.isPresent()) {
         return ResponseEntity.notFound().header("message", "toppingId " + toppingId + " not found.")
             .build();
-      } else {toppings.add(topping.get());}
+      } else {
+        toppings.add(topping.get());
+      }
     }
     Pizza newPizza = new Pizza(pizzaName, crust.get(), toppings);
     return ResponseEntity.ok(pizzaRepository.save(newPizza));
   }
-
-//  @RequestMapping(path = "/", method = RequestMethod.POST)
-//  @ApiOperation(value = "Creates a pizza", tags={ "admins", })
-//  public Pizza createPizza(@ApiParam("Pizza information") @Valid @RequestBody Pizza pizza) {
-//    return null;
-//  }
-
-//  @RequestMapping(path = "/{name}", method = RequestMethod.GET, produces = {"application/json"})
-//  @ApiOperation(value = "Searches for pizzas by name", response = Pizza.class, responseContainer = "List", tags = {
-//      "developers",})
-//  public List<Pizza> searchPizzasByName(
-//      @ApiParam("Name of pizza to get.") @PathVariable("name") String name) {
-//    Query query = new Query(Criteria.where("name").all(name));
-//    return null;
-//    // return mongoTemplate.find(query, Pizza.class);
-//  }
-//
-//  @RequestMapping(path = "/id={_id}", method = RequestMethod.GET, produces = {"application/json"})
-//  @ApiOperation(value = "Searches for pizza by _id", response = Pizza.class, tags = {"developers",})
-//  public ResponseEntity searchPizzasById(
-//      @ApiParam("_id of pizza to get.") @PathVariable("_id") String _id) {
-//    return null;
-//    // Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
-//    // if (pizza == null) {
-//    //   return new ResponseEntity(HttpStatus.NOT_FOUND);
-//    // } else {
-//    //   return ResponseEntity.ok(pizza);
-//    // }
-//  }
-//
-//  @RequestMapping(path = "/id={_id}", method = RequestMethod.PUT)
-//  @ApiOperation(value = "Changes the size of a pizza", tags = {"admins",})
-//  public ResponseEntity updatePizzaSizeById(@PathVariable("_id") String _id,
-//      @RequestParam(value = "sizeName") String sizeName) {
-//    return null;
-//    // Pizza pizza = mongoTemplate.findById(_id, Pizza.class);
-//    // Size size = mongoTemplate.findById(sizeName, Size.class);
-//    // if (pizza == null || size == null) {
-//    //   return new ResponseEntity(HttpStatus.NOT_FOUND);
-//    // } else {
-//    //   pizza.setSize(size);
-//    //   return ResponseEntity.ok(mongoTemplate.save(pizza));
-//    // }
-//  }
 }
