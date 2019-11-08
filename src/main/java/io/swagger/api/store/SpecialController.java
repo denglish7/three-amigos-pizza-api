@@ -28,7 +28,7 @@ public class SpecialController {
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Special.class, responseContainer = "List", tags = {
-      "store/special",})
+      "special",})
   public ResponseEntity<List<Special>> getAllSpecials() {
     return ResponseEntity.ok(specialRepository.findAll());
   }
