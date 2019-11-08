@@ -51,7 +51,7 @@ public class OrderController {
     return ResponseEntity.ok(orderRepository.save(newOrder));
   }
 
-  @RequestMapping(path = "/{orderId}", method = RequestMethod.PUT)
+  @RequestMapping(path = "/{orderId}/add", method = RequestMethod.PUT)
   @ApiOperation(value = "Updates the contents of an order", tags = {"order",})
   public ResponseEntity<Order> addToOrder(
       @ApiParam("Order Id to add to.") @PathVariable(value = "orderId") String orderId,
@@ -66,7 +66,8 @@ public class OrderController {
     if (customerId != null) {
       Optional<Customer> customer = customerRepository.findById(customerId);
       if (!customer.isPresent()) {
-        return ResponseEntity.notFound().header("message", "customerId " + customerId + " not found.")
+        return ResponseEntity.notFound()
+            .header("message", "customerId " + customerId + " not found.")
             .build();
       }
       order.setCustomer(customer.get());

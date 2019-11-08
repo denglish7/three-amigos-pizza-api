@@ -34,7 +34,7 @@ public class SpecialController {
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "Creates a pizza", response = Special.class, tags = {"store/special",})
+  @ApiOperation(value = "Creates a special", response = Special.class, tags = {"store/special",})
   public ResponseEntity<Special> createSpecial(
       @ApiParam("Name for new special") @RequestParam(value = "specialName") String specialName,
       @ApiParam("Price ratio for new special") @RequestParam(value = "priceRatio") Double priceRatio,

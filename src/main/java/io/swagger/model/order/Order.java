@@ -50,6 +50,7 @@ public class Order {
 
   /**
    * Get orderDetails
+   *
    * @return orderDetails
    */
   public OrderDetails getOrderDetails() {
@@ -73,6 +74,8 @@ public class Order {
     this.customer = customer;
   }
 
-  public void addPizzas(List<Pizza> pizzas) {this.orderDetails.addPizzas(pizzas);}
+  public void addPizzas(List<Pizza> pizzas) {
+    this.orderDetails.addPizzas(pizzas);
+  }
 
 }

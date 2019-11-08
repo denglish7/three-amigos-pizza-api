@@ -72,7 +72,7 @@ public class StoreController {
     return ResponseEntity.ok(storeToGet.get().getMenu());
   }
 
-  @RequestMapping(path = "/{storeId}/menu/", method = RequestMethod.PUT)
+  @RequestMapping(path = "/{storeId}/menu/add", method = RequestMethod.PUT)
   @ApiOperation(value = "Add to a store's menu", tags = {"store",})
   public ResponseEntity<Menu> addPizzasToMenu(
       @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
