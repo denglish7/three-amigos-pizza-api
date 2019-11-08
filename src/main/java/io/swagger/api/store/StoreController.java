@@ -7,7 +7,10 @@ import io.swagger.model.menu.Menu;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.specials.Special;
 import io.swagger.model.store.Store;
+import io.swagger.repositories.PizzaRepository;
+import io.swagger.repositories.SpecialRepository;
 import io.swagger.repositories.StoreRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,10 @@ public class StoreController {
 
   @Autowired
   private StoreRepository storeRepository;
+  @Autowired
+  private PizzaRepository pizzaRepository;
+  @Autowired
+  private SpecialRepository specialRepository;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all stores in the system.", response = Store.class, responseContainer = "List", tags = {
@@ -69,8 +76,8 @@ public class StoreController {
   @ApiOperation(value = "Add to a store's menu", tags = {"store",})
   public ResponseEntity<Menu> addPizzasToMenu(
       @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
-      @ApiParam("List of Pizzas to add to menu") @RequestParam(value = "pizzas", required = false) List<Pizza> pizzas,
-      @ApiParam("List of Specials to add to menu") @RequestParam(value = "specials", required = false) List<Special> specials) {
+      @ApiParam("List of Pizza ids to add to menu") @RequestParam(value = "pizzaIds", required = false) List<String> pizzaIds,
+      @ApiParam("List of Special ids to add to menu") @RequestParam(value = "specialIds", required = false) List<String> specialIds) {
     Optional<Store> storeToGet = storeRepository.findById(storeId);
     if (!storeToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
@@ -78,10 +85,48 @@ public class StoreController {
     }
     Store store = storeToGet.get();
     Menu storeMenu = store.getMenu();
-    storeMenu.addPizzas(pizzas);
-    storeMenu.addSpecials(specials);
+    if (pizzaIds != null) {
+      List<Pizza> pizzasToAdd = new ArrayList<>();
+      for (String pizzaId : pizzaIds) {
+        Optional<Pizza> pizza = pizzaRepository.findById(pizzaId);
+        if (!pizza.isPresent()) {
+          return ResponseEntity.notFound().header("message", "pizzaId " + pizzaId + " not found.").build();
+        } else {pizzasToAdd.add(pizza.get());}
+      }
+      storeMenu.addPizzas(pizzasToAdd);
+    }
+    if (specialIds != null) {
+      List<Special> specialsToAdd = new ArrayList<>();
+      for (String specialId : specialIds) {
+        Optional<Special> special = specialRepository.findById(specialId);
+        if (!special.isPresent()) {
+          return ResponseEntity.notFound().header("message", "specialId " + specialId + " not found.").build();
+        } else {specialsToAdd.add(special.get());}
+      }
+      storeMenu.addSpecials(specialsToAdd);
+    }
     store.setMenu(storeMenu);
     storeRepository.save(store);
     return ResponseEntity.ok(storeMenu);
   }
+
+//  @RequestMapping(path = "/{storeId}/menu/", method = RequestMethod.PUT)
+//  @ApiOperation(value = "Add to a store's menu", tags = {"store",})
+//  public ResponseEntity<Menu> addPizzasToMenu(
+//      @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
+//      @ApiParam("List of Pizzas to add to menu") @RequestParam(value = "pizzas", required = false) List<Pizza> pizzas,
+//      @ApiParam("List of Specials to add to menu") @RequestParam(value = "specials", required = false) List<Special> specials) {
+//    Optional<Store> storeToGet = storeRepository.findById(storeId);
+//    if (!storeToGet.isPresent()) {
+//      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
+//          .build();
+//    }
+//    Store store = storeToGet.get();
+//    Menu storeMenu = store.getMenu();
+//    storeMenu.addPizzas(pizzas);
+//    storeMenu.addSpecials(specials);
+//    store.setMenu(storeMenu);
+//    storeRepository.save(store);
+//    return ResponseEntity.ok(storeMenu);
+//  }
 }
