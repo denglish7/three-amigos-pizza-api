@@ -37,7 +37,7 @@ public class ToppingController {
   @ApiOperation(value = "Creates a Topping", tags = {"pizza",})
   public ResponseEntity<Topping> saveTopping(
       @ApiParam("Topping information") @Valid @RequestBody Topping topping) {
-    return ResponseEntity.ok(topping);
+    return ResponseEntity.ok(toppingRepository.save(topping));
   }
 
   @RequestMapping(path = "/{toppingId}", produces = {

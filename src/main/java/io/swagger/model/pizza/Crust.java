@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
 @Document(collection = "crusts")
 public class Crust {
 
