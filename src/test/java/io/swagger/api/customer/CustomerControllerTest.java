@@ -84,11 +84,4 @@ public class CustomerControllerTest {
     assertEquals(message, response.getHeaders().getFirst("message"));
   }
 
-
-
-
-
-
-
-
 }
