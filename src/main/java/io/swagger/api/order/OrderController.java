@@ -81,6 +81,7 @@ public class OrderController {
             .build();
       }
       Menu orderMenu = orderStore.get().getMenu();
+      System.out.println("orderMenu here" + orderMenu.getPizzas());
       List<Pizza> pizzasToAdd = new ArrayList<>();
       for (String pizzaId : pizzaIds) {
         Pizza pizza = orderMenu.getPizza(pizzaId);

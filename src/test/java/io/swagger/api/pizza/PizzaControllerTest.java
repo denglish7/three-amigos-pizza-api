@@ -8,7 +8,6 @@ import io.swagger.model.pizza.Pizza;
 import io.swagger.model.pizza.Topping;
 import io.swagger.repositories.CrustRepository;
 import io.swagger.repositories.PizzaRepository;
-import io.swagger.repositories.SizeRepository;
 import io.swagger.repositories.ToppingRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,22 +34,12 @@ public class PizzaControllerTest {
   private ToppingRepository toppingRepository;
 
   @Autowired
-  private SizeRepository sizeRepository;
-
-
-  @Autowired
   private PizzaController pizzaController;
-  @Autowired
-  private CrustController crustController;
-  @Autowired
-  private ToppingController toppingController;
 
   private Crust crust;
-
   private Topping topping;
   private Topping topping2;
   private List<String> toppingIds;
-
   private Pizza pizza;
 
   @Before
