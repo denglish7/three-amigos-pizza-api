@@ -1,6 +1,5 @@
 package io.swagger.api.pizza;
 
-
 import io.swagger.repositories.ToppingRepository;
 import io.swagger.model.pizza.Topping;
 
