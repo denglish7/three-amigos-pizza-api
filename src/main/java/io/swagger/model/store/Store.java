@@ -13,14 +13,14 @@ public class Store {
   @NotNull
   private String name;
   @NotNull
-  private String address;
-  @NotNull
+  private String location;
+
   private Menu menu;
 
-  public Store(@NotNull String name, @NotNull String address,
-      @NotNull Menu menu) {
+  public Store(@NotNull String name, @NotNull String location,
+      Menu menu) {
     this.name = name;
-    this.address = address;
+    this.location = location;
     this.menu = menu;
   }
 
@@ -44,11 +44,11 @@ public class Store {
     this.menu = menu;
   }
 
-  public String getAddress() {
-    return address;
+  public String getLocation() {
+    return location;
   }
 
-  public void setAddress(String address) {
-    this.address = address;
+  public void setLocation(String location) {
+    this.location = location;
   }
 }
