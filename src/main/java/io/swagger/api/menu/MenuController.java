@@ -55,7 +55,7 @@ public class MenuController {
 
   @RequestMapping(path = "/{pizzaId}/add", method = RequestMethod.PUT)
   @ApiOperation(value = "Updates the pizzas on a menu", tags = {"menu",})
-  public ResponseEntity<Menu> addPizzaToMenu(
+  public ResponseEntity<Menu> addPizza(
       @ApiParam("Pizza Id to add to order.") @PathVariable(value = "pizzaId") String pizzaId,
       @ApiParam("Menu Id to add to.") @RequestParam(value = "menuId") String menuId) {
     Optional <Menu> menuToGet = menuRepository.findById(menuId);
@@ -81,7 +81,7 @@ public class MenuController {
 
   @RequestMapping(path = "/{pizzaId}/remove", method = RequestMethod.PUT)
   @ApiOperation(value = "Removes a pizza from a menu", tags = {"menu",})
-  public ResponseEntity<Menu> removePizzaTFromMenu(
+  public ResponseEntity<Menu> removePizza(
       @ApiParam("Pizza Id to remove from order.") @PathVariable(value = "pizzaId") String pizzaId,
       @ApiParam("Menu Id to remove from.") @RequestParam(value = "menuId") String menuId) {
     Optional <Menu> menuToGet = menuRepository.findById(menuId);
@@ -145,12 +145,12 @@ public class MenuController {
       Optional <Special> special = specialRepository.findById(specialId);
       if (!special.isPresent()) {
         return ResponseEntity.notFound()
-            .header("message", "pizzaId " + specialId + " not found.")
+            .header("message", "specialId " + specialId + " not found.")
             .build();
       }
       List <String> specialIdToRemove = new ArrayList <>();
       specialIdToRemove.add(specialId);
-      menu.removePizzas(specialIdToRemove);
+      menu.removeSpecials(specialIdToRemove);
     }
     return ResponseEntity.ok(menuRepository.save(menu));
   }

@@ -1,15 +1,18 @@
 package io.swagger.api.menu;
 
 
+import io.swagger.api.pizza.CrustController;
+import io.swagger.api.pizza.PizzaController;
 import io.swagger.api.pizza.SizeController;
+import io.swagger.api.pizza.ToppingController;
 import io.swagger.api.store.SpecialController;
 import io.swagger.model.menu.Menu;
+import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.pizza.Size;
+import io.swagger.model.pizza.Topping;
 import io.swagger.model.specials.Special;
-import io.swagger.repositories.MenuRepository;
-import io.swagger.repositories.SizeRepository;
-import io.swagger.repositories.SpecialRepository;
+import io.swagger.repositories.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +35,17 @@ import static org.junit.Assert.*;
 @SpringBootTest
 public class MenuControllerTest {
 
+
+  @Autowired
+  private CrustController crustController;
+  @Autowired
+  private PizzaController pizzaController;
+  @Autowired
+  private ToppingController toppingController;
   @Autowired
   private SpecialController specialController;
   @Autowired
   private SpecialRepository specialRepository;
-  @Autowired
-  private SizeRepository sizeRepository;
   @Autowired
   private SizeController sizeController;
   @Autowired
@@ -74,10 +82,72 @@ public class MenuControllerTest {
 
   @Test
   public void addPizzaToMenu() {
+    String TOPPINGNAME = "mushroom";
+    Double TOPPINGPRICE = 1.5;
+    Topping newTopping = new Topping(TOPPINGNAME, TOPPINGPRICE);
+    ResponseEntity<Topping> saveTopping = toppingController.saveTopping(newTopping);
+    String toppingsId = saveTopping.getBody().get_id();
+    List<Topping> newToppings = new ArrayList <>();
+    newToppings.add(newTopping);
+    List<String> newToppingIds = new ArrayList <>();
+    newToppingIds.add(toppingsId);
+
+    String CRUSTNAME = "VEGGIEDOUGH";
+    Double CRUSTPRICE = 1.5;
+    Boolean GLUTENFREE = true;
+    Crust newCrust = new Crust(CRUSTPRICE, GLUTENFREE, CRUSTNAME);
+    ResponseEntity<Crust> saveCrust = crustController.saveCrust(newCrust);
+    String crustId = saveCrust.getBody().get_id();
+
+    String PIZZANAME = "shroomzaa";
+    Pizza newPizza = new Pizza(PIZZANAME, newCrust, newToppings);
+    ResponseEntity <Pizza> savePizza = pizzaController.createPizza(PIZZANAME, crustId, newToppingIds);
+    String pizzaId = savePizza.getBody().get_id();
+
+    ResponseEntity <Menu> testMenu = menuController.createMenu();
+    String testMenuId = testMenu.getBody().get_id();
+
+
+    ResponseEntity<Menu> addPizza = menuController.addPizza(pizzaId, testMenuId);
+
+    List<Pizza> currentPizzas = addPizza .getBody().getPizzas();
+    Pizza currentPizza = currentPizzas.get(0);
+    assertEquals(pizzaId, currentPizza.get_id());
   }
 
   @Test
   public void removePizzaTFromMenu() {
+    String TOPPINGNAME = "mushroom";
+    Double TOPPINGPRICE = 1.5;
+    Topping newTopping = new Topping(TOPPINGNAME, TOPPINGPRICE);
+    ResponseEntity<Topping> saveTopping = toppingController.saveTopping(newTopping);
+    String toppingsId = saveTopping.getBody().get_id();
+    List<Topping> newToppings = new ArrayList <>();
+    newToppings.add(newTopping);
+    List<String> newToppingIds = new ArrayList <>();
+    newToppingIds.add(toppingsId);
+
+    String CRUSTNAME = "VEGGIEDOUGH";
+    Double CRUSTPRICE = 1.5;
+    Boolean GLUTENFREE = true;
+    Crust newCrust = new Crust(CRUSTPRICE, GLUTENFREE, CRUSTNAME);
+    ResponseEntity<Crust> saveCrust = crustController.saveCrust(newCrust);
+    String crustId = saveCrust.getBody().get_id();
+
+    String PIZZANAME = "shroomzaa";
+    Pizza newPizza = new Pizza(PIZZANAME, newCrust, newToppings);
+    ResponseEntity <Pizza> savePizza = pizzaController.createPizza(PIZZANAME, crustId, newToppingIds);
+    String pizzaId = savePizza.getBody().get_id();
+
+    ResponseEntity <Menu> testMenu = menuController.createMenu();
+    String testMenuId = testMenu.getBody().get_id();
+
+
+    ResponseEntity<Menu> addPizza = menuController.addPizza(pizzaId, testMenuId);
+    ResponseEntity<Menu> removePizza = menuController.removePizza(pizzaId, testMenuId);
+
+    List<Pizza> currentPizzas = removePizza.getBody().getPizzas();
+    assertEquals(0, currentPizzas.size());
   }
 
   @Test
@@ -121,10 +191,8 @@ public class MenuControllerTest {
 
     ResponseEntity<Menu> addSpecial = menuController.addSpecial(specialId, testMenuId);
     ResponseEntity<Menu> removeSpecial = menuController.removeSpecial(specialId, testMenuId);
-    List<Special> currentSpecials = addSpecial.getBody().getSpecials();
-    //Special currentSpecial = currentSpecials.get(0);
+    List<Special> currentSpecials = removeSpecial.getBody().getSpecials();
 
-    ResponseEntity<Menu> removeSpecial = menuController.removeSpecial(specialId, testMenuId);
-    assertEquals(currentSpecial.get_id());
+    assertEquals(0, currentSpecials.size());
   }
 }
