@@ -81,6 +81,18 @@ public class MenuControllerTest {
   }
 
   @Test
+  public void addInvalidPizzaId() {
+
+    ResponseEntity <Menu> testMenu = menuController.createMenu();
+    String testMenuId = testMenu.getBody().get_id();
+
+    String INVALIDPIZZAID = "adsbfuiesd";
+    ResponseEntity<Menu> addPizza = menuController.addPizza(INVALIDPIZZAID, testMenuId);
+    String message = "pizzaId adsbfuiesd not found.";
+    assertEquals(message, addPizza.getHeaders().getFirst("message"));
+  }
+
+  @Test
   public void addPizzaToMenu() {
     String TOPPINGNAME = "mushroom";
     Double TOPPINGPRICE = 1.5;
@@ -150,6 +162,17 @@ public class MenuControllerTest {
     assertEquals(0, currentPizzas.size());
   }
 
+  @Test
+  public void addInvalidSpecialId() {
+
+    ResponseEntity <Menu> testMenu = menuController.createMenu();
+    String testMenuId = testMenu.getBody().get_id();
+
+    String INVALIDSPECIALID = "adsbfuiesd";
+    ResponseEntity<Menu> addSpecial = menuController.addSpecial(INVALIDSPECIALID, testMenuId);
+    String message = "specialId adsbfuiesd not found.";
+    assertEquals(message, addSpecial.getHeaders().getFirst("message"));
+  }
   @Test
   public void addSpecialToMenu() {
     String NAME = "small";

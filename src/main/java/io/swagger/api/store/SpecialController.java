@@ -45,7 +45,7 @@ public class SpecialController {
       Optional<Size> size = sizeRepository.findById(requiredSizeId);
       if (!size.isPresent()) {
         return ResponseEntity.notFound()
-            .header("message", "sizeId " + requiredSizeId + " not found").build();
+            .header("message", "sizeId " + requiredSizeId + " not found.").build();
       }
       requiredSize = size.get();
     }
