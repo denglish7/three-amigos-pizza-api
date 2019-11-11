@@ -4,12 +4,14 @@ import io.swagger.model.pizza.Pizza;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrderDetails {
 
-  private HashMap<String, Pizza> pizzas;
+  private Map<String, Pizza> pizzas;
 
   public OrderDetails() {
+    this.pizzas = new HashMap<>();
   }
 
   public List<Pizza> getPizzas() {

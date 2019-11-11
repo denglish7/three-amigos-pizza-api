@@ -1,4 +1,4 @@
-package io.swagger.api;
+package io.swagger.api.pizza;
 
 import io.swagger.repositories.SizeRepository;
 import io.swagger.model.pizza.Size;
