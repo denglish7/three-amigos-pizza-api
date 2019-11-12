@@ -1,9 +1,16 @@
 package io.swagger.model.store;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.menu.Menu;
+
 import javax.validation.constraints.NotNull;
+
+import io.swagger.model.customer.Receipt;
+import io.swagger.model.order.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Document(collection = "stores")
 public class Store {
@@ -15,6 +22,10 @@ public class Store {
   @NotNull
   private String location;
 
+  private HashMap <String, Order> currentOrders;
+
+  private HashMap <String, Order> completedOrders;
+
   private Menu menu;
 
   public Store(@NotNull String name, @NotNull String location,
@@ -22,6 +33,8 @@ public class Store {
     this.name = name;
     this.location = location;
     this.menu = menu;
+    this.currentOrders = new HashMap <>();
+    this.completedOrders = new HashMap <>();
   }
 
   public String get_id() {
@@ -51,4 +64,30 @@ public class Store {
   public void setLocation(String location) {
     this.location = location;
   }
+
+
+  public Boolean validateCard(String customerCard) {
+    if (customerCard.length() == 16) {
+      return true;
+    }
+    return false;
+  }
+
+  public void processOrder(Order order) {
+    this.currentOrders.put(order.get_id(), order);
+  }
+
+//  public void completeOrder(String OrderId) {
+//    Order completedOrder = this.currentOrders.get(OrderId);
+//    Receipt customerReciept = new Receipt(
+//        completedOrder.get_id(),
+//        completedOrder.getOrderDetails().getPizzas(),
+//        completedOrder.getPrice()
+//        );
+//
+//    completedOrder.getCustomer().receipts.add(customerReciept);
+//    this.completedOrders.put(completedOrder.get_id(), completedOrder);
+//  }
+
+
 }
