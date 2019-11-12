@@ -104,4 +104,11 @@ public class OrderController {
     return null;
   }
 
+  @RequestMapping(path = "/{orderId}/applySpecial", method = RequestMethod.GET)
+  @ApiOperation(value = "Gets the price of an order", tags = {"order",})
+  public ResponseEntity<OrderPrice> applySpecial(
+      @ApiParam("Order id to get price of.") @PathVariable("orderId") String orderId) {
+    return null;
+  }
+
 }
