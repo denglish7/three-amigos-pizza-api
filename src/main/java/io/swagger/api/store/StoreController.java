@@ -152,11 +152,11 @@ public class StoreController {
     store.setLocation(location);
     return ResponseEntity.ok(storeRepository.save(store));
   }
-////////////////////////////////////////////////////////////////////////////////////////////////
+
   @RequestMapping(path = "/{storeId}/checkout", method = RequestMethod.PUT)
   @ApiOperation(value = "Submit your order.", tags = {"store",})
-  public ResponseEntity <Store> processNewOrder (
-     @ApiParam("Store Id to add pizza to menu of.") @PathVariable("storeId") String storeId,
+  public ResponseEntity <Store> processNewOrder(
+      @ApiParam("Store Id of the store processing the order.") @PathVariable("storeId") String storeId,
       @ApiParam("Order Id to process.") @RequestParam(value = "OrderId", required = true) String orderId) {
     //Get Store processing order
     Optional <Store> storeToGet = storeRepository.findById(storeId);
@@ -165,8 +165,6 @@ public class StoreController {
           .build();
     }
     Store store = storeToGet.get();
-    //Get Menu from Store
-    Menu storeMenu = store.getMenu();
 
     //Get Order to validate
     Optional <Order> orderToGet = orderRepository.findById(orderId);
@@ -177,17 +175,38 @@ public class StoreController {
     Order order = orderToGet.get();
     // - Number of Pizzas > 0
     if (order.getOrderDetails().getPizzas().size() < 1) {
-      return ResponseEntity.badRequest().header( "message", "orderId " + orderId + " has no pizza's in cart.")
+      return ResponseEntity.badRequest().header("message", "orderId " + orderId + " has no pizza's in cart.")
           .build();
     }
     // - Card Num
     String customerCreditCard = order.getCreditCard();
     if (!store.validateCard(customerCreditCard)) {
-      return ResponseEntity.badRequest().header( "message", "Invalid card number entered.")
+      return ResponseEntity.badRequest().header("message", "Invalid card number entered.")
           .build();
     }
 
     store.processOrder(order);
+    return ResponseEntity.ok(storeRepository.save(store));
+  }
+
+  @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
+  @ApiOperation(value = "Submit your order.", tags = {"store",})
+  public ResponseEntity <Store> completeOrder(
+      @ApiParam("Store Id of the Store completing the order.") @PathVariable("storeId") String storeId,
+      @ApiParam("Order Id of the completed Order.") @RequestParam(value = "OrderId", required = true) String orderId) {
+    Optional <Store> storeToGet = storeRepository.findById(storeId);
+    if (!storeToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
+          .build();
+    }
+    Store store = storeToGet.get();
+
+    Optional <Order> orderToGet = orderRepository.findById(orderId);
+    if (!orderToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+          .build();
+    }
+    store.completeOrder(orderId);
     return ResponseEntity.ok(storeRepository.save(store));
   }
 }

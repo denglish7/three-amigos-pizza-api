@@ -84,11 +84,6 @@ public class Store {
    */
   public void processOrder(Order order) {
     this.currentOrders.put(order.get_id(), order);
-//    if (validateCard(order.getCreditCard()) != true) {
-//      throw new Exception("Invalid Card Provided.");
-//    } else {
-//      this.currentOrders.put(order.get_id(), order);
-//    }
   }
 
   /**
