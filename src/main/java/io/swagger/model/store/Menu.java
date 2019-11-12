@@ -1,4 +1,4 @@
-package io.swagger.model.menu;
+package io.swagger.model.store;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.pizza.Pizza;

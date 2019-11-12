@@ -2,9 +2,8 @@ package io.swagger.api.order;
 
 import static org.junit.Assert.assertEquals;
 
-import io.swagger.api.pizza.PizzaController;
 import io.swagger.model.customer.Customer;
-import io.swagger.model.menu.Menu;
+import io.swagger.model.store.Menu;
 import io.swagger.model.order.Order;
 import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
