@@ -18,15 +18,15 @@ public class OrderDetails {
     return new ArrayList<>(pizzas.values());
   }
 
-  public void addPizzas(List<Pizza> pizzasToAdd) {
-    for (Pizza pizza : pizzasToAdd) {
-      this.pizzas.put(pizza.get_id(), pizza);
-    }
+  public Pizza getPizzaById(String pizzaId) {
+    return pizzas.get(pizzaId);
   }
 
-  public void removePizzas(List<String> pizzaIdsToRemove) {
-    for (String pizzaId : pizzaIdsToRemove) {
-      this.pizzas.remove(pizzaId);
-    }
+  public void addPizza(Pizza pizza) {
+    pizzas.put(pizza.get_id(), pizza);
+  }
+
+  public Pizza removePizzaById(String pizzaId) {
+    return pizzas.remove(pizzaId);
   }
 }
