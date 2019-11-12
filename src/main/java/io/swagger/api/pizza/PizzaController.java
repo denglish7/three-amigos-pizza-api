@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/pizza")
 public class PizzaController {
 
+  private static final Double PIZZA_BASE_PRICE = 0.0;
+
   @Autowired
   private PizzaRepository pizzaRepository;
   @Autowired
@@ -38,8 +40,9 @@ public class PizzaController {
     return ResponseEntity.ok(pizzaRepository.findAll());
   }
 
+  // TODO: Add Size as optional parameter
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "Creates a pizza and adds it to the system. Could optionally adds pizza to all store menus or a list of stores?", response = Pizza.class, tags = {
+  @ApiOperation(value = "Creates a pizza and adds it to the system.", response = Pizza.class, tags = {
       "pizza",})
   public ResponseEntity<Pizza> createPizza(
       @ApiParam("Name for new pizza") @RequestParam(value = "pizzaName") String pizzaName,
@@ -61,6 +64,24 @@ public class PizzaController {
       }
     }
     Pizza newPizza = new Pizza(pizzaName, crust.get(), toppings);
+    newPizza.setPrice(this.calculatePriceOfPizza(newPizza));
     return ResponseEntity.ok(pizzaRepository.save(newPizza));
+  }
+
+  /**
+   * Returns the price of a pizza.  Can we move this to the Pizza model?
+   * @param pizza pizza to calculate price of.
+   * @return Double, null if pizza doesn't have a size or crust.
+   */
+  public Double calculatePriceOfPizza(Pizza pizza) {
+    Double price = PIZZA_BASE_PRICE;
+    if (pizza.getSize() != null) { price += pizza.getSize().getBasePrice(); }
+    if (pizza.getCrust() != null) { price += pizza.getCrust().getPrice(); }
+    if (pizza.getToppings() != null) {
+      for (Topping topping : pizza.getToppings()) {
+        price += topping.getPricePerUnit();
+      }
+    }
+    return price;
   }
 }

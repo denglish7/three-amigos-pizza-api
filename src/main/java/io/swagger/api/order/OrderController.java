@@ -3,7 +3,10 @@ package io.swagger.api.order;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import io.swagger.api.pizza.PizzaController;
+import io.swagger.api.store.StoreController;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.order.Order;
 import io.swagger.model.order.OrderPrice;
@@ -13,7 +16,6 @@ import io.swagger.model.store.Menu;
 import io.swagger.model.store.Store;
 import io.swagger.repositories.CustomerRepository;
 import io.swagger.repositories.OrderRepository;
-import io.swagger.repositories.PizzaRepository;
 import io.swagger.repositories.SizeRepository;
 import io.swagger.repositories.StoreRepository;
 import java.util.Optional;
@@ -32,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/order")
 public class OrderController {
 
+  private static final String INVALID_PIZZA_MESSAGE = "Pizza must have valid size, crust, and toppings fields to be added to an order.";
+
   @Autowired
   private OrderRepository orderRepository;
   @Autowired
@@ -41,7 +45,9 @@ public class OrderController {
   @Autowired
   private CustomerRepository customerRepository;
   @Autowired
-  PizzaController pizzaController;
+  private PizzaController pizzaController;
+  @Autowired
+  private StoreController storeController;
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates an order", tags = {"order",})
@@ -54,6 +60,21 @@ public class OrderController {
     }
     Order newOrder = new Order(storeId);
     return ResponseEntity.ok(orderRepository.save(newOrder));
+  }
+
+  @RequestMapping(path = "/{orderId}", produces = {"application/json"}, method = RequestMethod.GET)
+  @ApiOperation(value = "Searches for an Order by id", response = Order.class, tags = {"order",})
+  @ApiResponses(value = {
+      @ApiResponse(code = 200, message = "search results matching criteria", response = Order.class),
+      @ApiResponse(code = 404, message = "order not found")})
+  public ResponseEntity<Order> findById(
+      @ApiParam("Id of size to get.") @PathVariable("orderId") String orderId) {
+    Optional<Order> order = orderRepository.findById(orderId);
+    if (order.isPresent()) {
+      return ResponseEntity.of(order);
+    }
+    return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+        .build();
   }
 
   @RequestMapping(path = "/{orderId}/customer", method = RequestMethod.PUT)
@@ -76,46 +97,9 @@ public class OrderController {
     return ResponseEntity.ok(orderRepository.save(order));
   }
 
-  @RequestMapping(path = "/{orderId}/addPizzaById", method = RequestMethod.PUT)
-  @ApiOperation(value = "Adds a pizza from store's menu to an order", tags = {"order",})
-  public ResponseEntity<Order> addPizzaById(
-      @ApiParam("Order Id to add to.") @PathVariable(value = "orderId") String orderId,
-      @ApiParam("Pizza Id to add to order.") @RequestParam(value = "pizzaId") String pizzaId,
-      @ApiParam("Size Id for pizza.") @RequestParam(value = "pizzaId") String sizeId) {
-    Optional<Order> orderToGet = orderRepository.findById(orderId);
-    if (!orderToGet.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
-          .build();
-    }
-    Order order = orderToGet.get();
-    String orderStoreId = order.getStoreId();
-    Optional<Store> orderStore = storeRepository.findById(orderStoreId);
-    if (!orderStore.isPresent()) {
-      return ResponseEntity.notFound()
-          .header("message", "storeId " + orderStoreId + " not found.")
-          .build();
-    }
-    Menu orderMenu = orderStore.get().getMenu();
-    Pizza pizzaToAdd = orderMenu.getPizza(pizzaId);
-    if (pizzaToAdd == null) {
-      return ResponseEntity.notFound().header("message", "pizzaId " + pizzaId + " not found.")
-          .build();
-    }
-    Optional<Size> size = sizeRepository.findById(sizeId);
-    if (!size.isPresent()) {
-      return ResponseEntity.notFound().header("message",
-          "sizeId " + sizeId + " not found.").build();
-    }
-    pizzaToAdd.setSize(size.get());
-    pizzaToAdd.setPrice(pizzaController.calculatePrice(pizzaToAdd));
-    order.addPizza(pizzaToAdd);
-    order.setPrice(order.getPrice() + pizzaToAdd.getPrice());
-    return ResponseEntity.ok(orderRepository.save(order));
-  }
-
   @RequestMapping(path = "/{orderId}/addCustomPizza", method = RequestMethod.PUT)
   @ApiOperation(value = "Adds a custom pizza to an order", tags = {"order",})
-  public ResponseEntity<Order> addPizza(
+  public ResponseEntity<Order> addCustomPizza(
       @ApiParam("Order Id to add to.") @PathVariable(value = "orderId") String orderId,
       @ApiParam("Pizza to add to order.") @RequestParam(value = "pizzas") @Valid @RequestBody Pizza pizza) {
     Optional<Order> orderToGet = orderRepository.findById(orderId);
@@ -124,16 +108,46 @@ public class OrderController {
           .build();
     }
     Order order = orderToGet.get();
-    if (pizza.getPrice() == null) {
-      try {
-        pizza.setPrice(pizzaController.calculatePrice(pizza));
-      } catch (PizzaHasNoSizeException e) {
-        return ResponseEntity.badRequest().header("message",
-            "Custom pizza must either have price field, or valid size for price calculation. " + e
-                .getMessage()).build();
-      }
+    if (!pizza.isValidForOrder()) {
+      return ResponseEntity.badRequest()
+          .header("message", INVALID_PIZZA_MESSAGE).build();
     }
-    order.setPrice(order.getPrice() + pizza.getPrice());
+    pizza.setPrice(pizzaController.calculatePriceOfPizza(pizza));
+    order.addPizza(pizza);
+    return ResponseEntity.ok(orderRepository.save(order));
+  }
+
+  @RequestMapping(path = "/{orderId}/addPizzaById", method = RequestMethod.PUT)
+  @ApiOperation(value = "Adds a pizza from store's menu to an order", tags = {"order",})
+  public ResponseEntity<Order> addPizzaById(
+      @ApiParam("Order Id to add to.") @PathVariable(value = "orderId") String orderId,
+      @ApiParam("Pizza Id to add to order.") @RequestParam(value = "pizzaId") String pizzaId,
+      @ApiParam("Size Id for pizza.") @RequestParam(value = "pizzaId") String sizeId) {
+    ResponseEntity<Order> orderResponse = findById(orderId);
+    Order order = orderResponse.getBody();
+    if (order == null) {
+      return orderResponse;
+    }
+    ResponseEntity<Menu> menuResponse = storeController.getMenu(order.getStoreId());
+    Menu orderMenu = menuResponse.getBody();
+    if (orderMenu == null) {
+      return ResponseEntity.notFound().header(menuResponse.getHeaders().getFirst("message"))
+          .build();
+    }
+    Pizza pizzaToAdd = orderMenu.getPizza(pizzaId);
+    if (pizzaToAdd == null) {
+      return ResponseEntity.notFound().header("message",
+          "pizzaId " + pizzaId + " not found in menu associated with this order.")
+          .build();
+    }
+    Optional<Size> size = sizeRepository.findById(sizeId);
+    if (!size.isPresent()) {
+      return ResponseEntity.notFound().header("message",
+          "sizeId " + sizeId + " not found.").build();
+    }
+    pizzaToAdd.setSize(size.get());
+    pizzaToAdd.setPrice(pizzaController.calculatePriceOfPizza(pizzaToAdd));
+    order.addPizza(pizzaToAdd);
     return ResponseEntity.ok(orderRepository.save(order));
   }
 
@@ -154,8 +168,11 @@ public class OrderController {
           .header("message", "pizza with Id " + pizzaId + " not found in order with Id " + orderId)
           .build();
     }
-    order.setPrice(order.getPrice() - removedPizza.getPrice());
     return ResponseEntity.ok(orderRepository.save(order));
+  }
+
+  private Order getOrder(String orderId) {
+    return null;
   }
 
 
@@ -166,11 +183,49 @@ public class OrderController {
     return null;
   }
 
-  @RequestMapping(path = "/{orderId}/applySpecial", method = RequestMethod.GET)
-  @ApiOperation(value = "Applies a special to an order", tags = {"order",})
-  public ResponseEntity<OrderPrice> applySpecial(
-      @ApiParam("Order id to get price of.") @PathVariable("orderId") String orderId) {
-    return null;
-  }
+//  @RequestMapping(path = "/{orderId}/applySpecial", method = RequestMethod.GET)
+//  @ApiOperation(value = "Applies a special to an order", tags = {"order",})
+//  public ResponseEntity<Order> applySpecial(
+//      @ApiParam("Order id to get price of.") @PathVariable("orderId") String orderId,
+//      @ApiParam("Special id to apply to order.") @RequestParam("specialId") String specialId,
+//      @ApiParam("Pizza id's to apply special to.") @RequestParam("pizzaIds") List<String> pizzaIds) {
+//    ResponseEntity<Order> orderResponse = findById(orderId);
+//    Order order = orderResponse.getBody();
+//    if (order == null) {
+//      return orderResponse;
+//    }
+//    ResponseEntity<Menu> menuResponse = storeController.getMenu(order.getStoreId());
+//    Menu orderMenu = menuResponse.getBody();
+//    if (orderMenu == null) {
+//      return ResponseEntity.notFound().header(menuResponse.getHeaders().getFirst("message"))
+//          .build();
+//    }
+//    Special special = orderMenu.getSpecial(specialId);
+//    if (special == null) {
+//      return ResponseEntity.badRequest().header("message",
+//          "specialId " + specialId + " not found in menu associated with this order.").build();
+//    }
+//
+//    try (validateSpecial(special, );)
+//
+//  }
+//
+//  private void validateSpecial(Special special, Order order) throws InvalidSpecialApplicationException {
+//    List<Pizza> orderPizzas = order.getPizzas();
+//    if (special.getRequiredNumberPizzas() != null) {
+//      if (pizzas.size() != special.getRequiredNumberPizzas()) {
+//        throw new InvalidSpecialApplicationException(
+//            "Wrong number of pizzas for special with id " + special.get_id());
+//      }
+//    }
+//    if (special.getRequiredSizeOfPizzas() != null) {
+//      for (Pizza pizza : pizzas) {
+//        if (pizza.getSize() != special.getRequiredSizeOfPizzas()) {
+//          throw new InvalidSpecialApplicationException(
+//              "Pizza with id " + pizza.get_id() + " has wrong size for special with id " + special.get_id());
+//        }
+//      }
+//    }
+//  }
 
 }

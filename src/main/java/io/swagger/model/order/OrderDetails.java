@@ -1,6 +1,7 @@
 package io.swagger.model.order;
 
 import io.swagger.model.pizza.Pizza;
+import io.swagger.model.specials.Special;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 public class OrderDetails {
 
   private Map<String, Pizza> pizzas;
+  private Map<String, Special> specials;
 
   public OrderDetails() {
     this.pizzas = new HashMap<>();

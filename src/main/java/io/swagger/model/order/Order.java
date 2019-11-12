@@ -85,7 +85,7 @@ public class Order {
    *
    * @return pizzas
    */
-  public List<Pizza> getPizzas() {
+  public List<Pizza> getPizzas () {
     return orderDetails.getPizzas();
   }
 
@@ -98,16 +98,24 @@ public class Order {
     return customer;
   }
 
+  public Pizza getPizzaInOrder(String pizzaId) {
+    return orderDetails.getPizzaById(pizzaId);
+  }
+
   public void setCustomer(Customer customer) {
     this.customer = customer;
   }
 
   public void addPizza(Pizza pizza) {
     orderDetails.addPizza(pizza);
+    setPrice(getPrice() + pizza.getPrice());
   }
 
   public Pizza removePizzaById(String pizzaId) {
-    return orderDetails.removePizzaById(pizzaId);
+    Pizza removedPizza = orderDetails.removePizzaById(pizzaId);
+    if (removedPizza != null) {
+      setPrice(getPrice() - removedPizza.getPrice());
+    }
+    return removedPizza;
   }
-
 }

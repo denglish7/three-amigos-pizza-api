@@ -2,6 +2,7 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,27 +14,22 @@ public class Pizza {
   private String name;
   @DBRef
   private Size size;
-  @DBRef
+  @DBRef @NotNull
   private Crust crust;
-  @DBRef
+  @DBRef @NotNull
   private List<Topping> toppings;
+  @ApiModelProperty(hidden = true)
+  private Double price;
 
   public Pizza() {
   }
 
-  public Pizza(String name, Crust crust, List<Topping> toppings) {
+  public Pizza(String name, @NotNull Crust crust,
+      @NotNull List<Topping> toppings) {
     this.name = name;
     this.crust = crust;
     this.toppings = toppings;
   }
-
-//  public Pizza(String name, Size size, Crust crust,
-//      List<Topping> toppings) {
-//    this.name = name;
-//    this.size = size;
-//    this.crust = crust;
-//    this.toppings = toppings;
-//  }
 
   public String get_id() {
     return _id;
@@ -90,5 +86,25 @@ public class Pizza {
 
   public void setToppings(List<Topping> toppings) {
     this.toppings = toppings;
+  }
+
+  /**
+   * Get price
+   * @return price
+   */
+  public Double getPrice() {
+    return price;
+  }
+
+  public void setPrice(Double price) {
+    this.price = price;
+  }
+
+  /**
+   * Get isValidForOrder
+   * @return isValidForOrder
+   */
+  public Boolean isValidForOrder() {
+    return size != null && crust != null && toppings != null;
   }
 }
