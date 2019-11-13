@@ -75,6 +75,10 @@ public class Order implements Priceable {
     return customer;
   }
 
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
+  }
+
   @Override
   public Double getPrice() {
     return price;
@@ -87,10 +91,6 @@ public class Order implements Priceable {
 
   public OrderItems getOrderItems() {
     return orderItems;
-  }
-
-  public void setCustomer(Customer customer) {
-    this.customer = customer;
   }
 
   public void addPizza(Pizza pizza) {
