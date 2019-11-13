@@ -2,11 +2,9 @@ package io.swagger.model.store;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
-
 import io.swagger.model.customer.CreditCard;
 import io.swagger.model.order.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,17 +19,16 @@ public class Store {
   private String name;
   @NotNull
   private String address;
-  private HashMap <String, Order> currentOrders;
-  private HashMap <String, Order> completedOrders;
+  private List<String> currentOrderIds;
+  private List<String> completedOrderIds;
   private Menu menu;
 
-  public Store(@NotNull String name, @NotNull String address,
-      Menu menu) {
+  public Store(@NotNull String name, @NotNull String address, Menu menu) {
     this.name = name;
     this.address = address;
     this.menu = menu;
-    this.currentOrders = new HashMap <>();
-    this.completedOrders = new HashMap <>();
+    this.currentOrderIds = new ArrayList <>();
+    this.completedOrderIds = new ArrayList <>();
   }
 
   public String get_id() {
@@ -75,47 +72,40 @@ public class Store {
     if (customerCard.getCardNumber().matches("[0-9]+")
         && customerCard.getCardNumber().length() == 16
         && customerCard.getExpirationMonth() >= LocalDate.now().getMonthValue()
-        && customerCard.getExpirationYear() >= LocalDate.now().getYear()
+        && customerCard.getExpirationYear() >= LocalDate.now().getYear() - 2000
         && customerCard.getCvv().matches("[0-9]+")
-        && customerCard.getCvv().length() == 3) {
-    return true;
+        && customerCard.getCvv().length() == 3
+    ) { return true;
     } else {
       return false;
     }
   }
 
   /**
-   * Moves an order into the list of current orders.
-   * @param order an order provided by the customer at checkout
+   * Moves an orderId into the list of current orders.
+   * @param orderId an orderId provided by the customer at checkout
    */
-  public void processOrder(Order order) {
-    this.currentOrders.put(order.get_id(), order);
+  public void processOrder(String orderId) {
+    this.currentOrderIds.add(orderId);
   }
 
-  public List <String> getCurrentOrders() {
-    List <String> currentOrderIds = new ArrayList <>();
-    for (String key : this.currentOrders.keySet()) {
-      String currentOrderId = currentOrders.get(key).get_id();
-      currentOrderIds.add(currentOrderId);
-    }
-    return currentOrderIds;
+  public List <String> getCurrentOrderIds() {
+    return this.currentOrderIds;
   }
 
   /**
-   * Moves an order from current orders into the list of completed orders.
+   * Moves an orderId from current orders into the list of completed orderIds.
    * @param orderId orderId being completed
    */
-  public void completeOrder(String orderId) {
-    Order completedOrder = this.currentOrders.get(orderId);
-    this.completedOrders.put(completedOrder.get_id(), completedOrder);
+  public void completeOrder(String orderId){
+    for(String id : this.currentOrderIds)
+      if (id == orderId) {
+        this.currentOrderIds.remove(id);
+        this.completedOrderIds.add(id);
+      }
   }
 
   public List <String> getCompletedOrders() {
-    List <String> completedOrderIds = new ArrayList <>();
-    for (String key : this.completedOrders.keySet()) {
-      String completedOrderId = completedOrders.get(key).get_id();
-      completedOrderIds.add(completedOrderId);
-    }
-    return completedOrderIds;
+    return this.completedOrderIds;
   }
 }
