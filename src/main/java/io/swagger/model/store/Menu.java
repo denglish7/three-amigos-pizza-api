@@ -46,6 +46,10 @@ public class Menu {
     }
   }
 
+  public Special getSpecial(String specialId) {
+    return specials.get(specialId);
+  }
+
   public List<Special> getSpecials() {
     return new ArrayList<>(specials.values());
   }

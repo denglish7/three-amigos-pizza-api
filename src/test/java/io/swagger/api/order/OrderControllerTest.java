@@ -55,6 +55,7 @@ public class OrderControllerTest {
   private Crust crust;
   private Topping topping;
   private Topping topping2;
+  private List<Topping> toppings;
   private List<String> toppingIds;
   private Pizza pizza;
   private Store store;
@@ -63,7 +64,7 @@ public class OrderControllerTest {
   private List<String> pizzaIdsToAdd;
   private List<Pizza> pizzasToAdd;
   private Menu menu;
-  private Size size;
+  private Size sizeLarge;
 
   @Before
   public void setUp() {
@@ -77,7 +78,7 @@ public class OrderControllerTest {
     toppingIds = new ArrayList<>();
     toppingIds.add(topping.get_id());
     toppingIds.add(topping2.get_id());
-    List<Topping> toppings = new ArrayList<>();
+    toppings = new ArrayList<>();
     toppings.add(topping);
     toppings.add(topping2);
     pizza = new Pizza(
@@ -94,8 +95,8 @@ public class OrderControllerTest {
         "1492 1st Ave"
     );
     customerRepository.insert(customer);
-    size = new Size("Large", 10.0);
-    sizeRepository.insert(size);
+    sizeLarge = new Size("Large", 10.0);
+    sizeRepository.insert(sizeLarge);
     pizzaIdsToAdd = new ArrayList<>();
     pizzaIdsToAdd.add(pizza.get_id());
     pizzasToAdd = new ArrayList<>();
@@ -192,6 +193,15 @@ public class OrderControllerTest {
 
   @Test
   public void addCustomPizzaSuccess() {
+//    Pizza customPizza = new Pizza("Custom", crust, toppings);
+//    customPizza.setSize(sizeLarge);
+//    ResponseEntity<Order> response = orderController.createOrder(
+//        order.getStoreId()
+//    );
+//    ResponseEntity<Order> addPizzaResponse = orderController.addCustomPizza(response.getBody().get_id(), customPizza);
+//    System.out.println(addPizzaResponse.getBody().getPizzas());
+//    assertEquals(customPizza, addPizzaResponse.getBody().getPizzaInOrder(customPizza.get_id()));
+//    assertTrue(addPizzaResponse.getStatusCode().is2xxSuccessful());
   }
 
   @Test
@@ -227,7 +237,7 @@ public class OrderControllerTest {
     ResponseEntity<Order> addPizzaResponse = orderController.addPizzaById(
         response.getBody().get_id(),
         pizza.get_id(),
-        size.get_id()
+        sizeLarge.get_id()
     );
 
     String message = "pizzaId " + pizza.get_id()

@@ -38,7 +38,7 @@ public class SpecialController {
   public ResponseEntity<Special> createSpecial(
       @ApiParam("Name for new special") @RequestParam(value = "specialName") String specialName,
       @ApiParam("Price ratio for new special") @RequestParam(value = "priceRatio") Double priceRatio,
-      @ApiParam("Required number of pizzas for special") @RequestParam(value = "requiredNumberPizzas", required = false) Integer requiredNumberPizzas,
+      @ApiParam("Required number of pizzas for special") @RequestParam(value = "requiredNumberPizzas") Integer requiredNumberPizzas,
       @ApiParam("Id of required size of pizzas for special") @RequestParam(value = "requiredSizeOfPizzas", required = false) String requiredSizeId) {
     Size requiredSize = null;
     if (requiredSizeId != null) {

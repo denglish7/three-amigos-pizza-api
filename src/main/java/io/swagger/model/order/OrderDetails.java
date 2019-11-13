@@ -10,7 +10,7 @@ import java.util.Map;
 public class OrderDetails {
 
   private Map<String, Pizza> pizzas;
-  private Map<String, Special> specials;
+  private Map<Special, List<Pizza>> special;
 
   public OrderDetails() {
     this.pizzas = new HashMap<>();
