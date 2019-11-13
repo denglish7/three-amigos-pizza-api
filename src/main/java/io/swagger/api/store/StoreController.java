@@ -234,7 +234,7 @@ public class StoreController {
         paymentDetails,
         order.getOrderItems().getPrice(order.getPrice())
     );
-    store.processOrder(order);
+    store.processOrder(orderId);
     ResponseEntity.ok(storeRepository.save(store));
     return ResponseEntity.ok(receipt.getBody());
   }
