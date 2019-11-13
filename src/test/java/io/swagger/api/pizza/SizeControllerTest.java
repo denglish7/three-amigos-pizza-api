@@ -57,6 +57,6 @@ public class SizeControllerTest {
     String id = saveResponse.getBody().get_id();
     ResponseEntity<Size> response = sizeController.findById(id);
     assertEquals(NAME, response.getBody().getName());
-    assertEquals(PRICE, response.getBody().getBasePrice());
+    assertEquals(PRICE, response.getBody().getPriceMultiplier());
   }
 }

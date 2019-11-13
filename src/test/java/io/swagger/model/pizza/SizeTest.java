@@ -28,8 +28,8 @@ public class SizeTest {
 
   @Test
   public void setBasePrice() {
-    size.setBasePrice(7.50);
-    assertEquals((Double) 7.50, size.getBasePrice());
+    size.setPriceMultiplier(7.50);
+    assertEquals((Double) 7.50, size.getPriceMultiplier());
   }
 
   @Test

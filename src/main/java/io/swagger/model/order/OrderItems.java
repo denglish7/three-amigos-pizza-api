@@ -1,6 +1,5 @@
 package io.swagger.model.order;
 
-import io.swagger.model.pizza.Pizza;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,49 +7,39 @@ import java.util.Map;
 
 public class OrderItems {
 
-  private Map<String, List<Pizza>> pizzas;
+  private Map<String, OrderPizza> pizzas;
   private Map<String, OrderSpecial> specials;
 
-  public OrderItems() {
+  OrderItems() {
     this.pizzas = new HashMap<>();
     this.specials = new HashMap<>();
   }
 
-//  public List<Pizza> getPizzas() {
-//
-//  }
+  public Map<String, OrderPizza> getPizzas() {
+    return pizzas;
+  }
 
-  public List <String> getPizzaNames() {
-    List <String> pizzaNames = new ArrayList <>();
-    for (List<Pizza> pizzas : pizzas.values()) {
-      for (Pizza pizza : pizzas) {
-        pizzaNames.add(pizza.getName());
-      }
+  public Map<String, OrderSpecial> getSpecials() {
+    return specials;
+  }
+
+  public List<String> getPizzaNames() {
+    List<String> pizzaNames = new ArrayList<>();
+    for (OrderPizza pizza : pizzas.values()) {
+      pizzaNames.add(pizza.getName());
     }
     return pizzaNames;
   }
 
 
-  public void addPizza(Pizza pizza) {
-    List<Pizza> pizzasToPut = new ArrayList<>();
-    if (pizzas.containsKey(pizza.get_id())) {
-      pizzasToPut = pizzas.get(pizza.get_id());
-    }
-    pizzasToPut.add(pizza);
-    pizzas.put(pizza.get_id(), pizzasToPut);
+  public void addPizza(OrderPizza pizza) {
+    pizzas.put(pizza.get_id(), pizza);
   }
 
-  public boolean removePizza(String pizzaId, String sizeId) {
-    if (!pizzas.containsKey(pizzaId)) {
-      return false;
-    }
-    List<Pizza> pizzasWithId = pizzas.get(pizzaId);
-    for (Pizza pizza : pizzasWithId) {
-      if (pizza.getSize().get_id().equals(sizeId)) {
-        pizzasWithId.remove(pizza);
-        pizzas.put(pizzaId, pizzasWithId);
-        return true;
-      }
+  public boolean removePizza(String pizzaId) {
+    if (containsPizza(pizzaId)) {
+      pizzas.remove(pizzaId);
+      return true;
     }
     return false;
   }
@@ -59,15 +48,25 @@ public class OrderItems {
     specials.put(special.getSpecialId(), special);
   }
 
-  public OrderSpecial removeSpecialById(String specialId) {
-    return specials.remove(specialId);
+  public boolean removeSpecialById(String specialId) {
+    if (containsSpecial(specialId)) {
+      specials.remove(specialId);
+      return true;
+    }
+    return false;
   }
 
+  public boolean containsPizza(String pizzaId) { return pizzas.containsKey(pizzaId); }
+
+  public boolean containsSpecial(String specialId) { return specials.containsKey(specialId); }
+
   //TODO: Can we get the specialId to use this in StoreController.processOrder()?
-  public OrderSpecial getSpecialById(String specialId) {return specials.get(specialId);}
+  public OrderSpecial getSpecialById(String specialId) {
+    return specials.get(specialId);
+  }
 
   public List<String> getSpecialNames() {
-    List <String> specialNames = new ArrayList <>();
+    List<String> specialNames = new ArrayList<>();
     for (String key : this.specials.keySet()) {
       String specialName = specials.get(key).getSpecialName();
       specialNames.add(specialName);
@@ -81,8 +80,8 @@ public class OrderItems {
 
   public Double getPrice(Double basePrice) {
     Double price = basePrice;
-    for (List<Pizza> pizzas : pizzas.values()) {
-      for (Pizza pizza : pizzas) {
+    for (OrderPizza pizza : pizzas.values()) {
+      if (pizza != null) {
         price += pizza.getPrice();
       }
     }
@@ -90,5 +89,11 @@ public class OrderItems {
       price += special.getPrice();
     }
     return price;
+  }
+
+  @Override
+  public String toString() {
+    return "Pizzas: " + pizzas.values().toString() + '\'' +
+        "Specials: " + specials.values().toString();
   }
 }

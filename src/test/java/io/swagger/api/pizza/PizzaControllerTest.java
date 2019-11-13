@@ -80,8 +80,7 @@ public class PizzaControllerTest {
     pizzaController.createPizza(
         "Pepperoni",
         crust.get_id(),
-        toppingIds,
-        null
+        toppingIds
     );
     TestCase.assertEquals(1, pizzaController.getAllPizzas().getBody().size());
   }
@@ -91,8 +90,7 @@ public class PizzaControllerTest {
     ResponseEntity<Pizza> response = pizzaController.createPizza(
         pizza.getName(),
         crust.get_id(),
-        toppingIds,
-        null
+        toppingIds
     );
     assertEquals(pizza.getName(), response.getBody().getName());
     assertEquals(pizza.getCrust().get_id(), response.getBody().getCrust().get_id());
@@ -104,8 +102,7 @@ public class PizzaControllerTest {
     ResponseEntity<Pizza> response = pizzaController.createPizza(
         pizza.getName(),
         "5",
-        toppingIds,
-        null
+        toppingIds
     );
     String message = "crustId 5 not found.";
     assertEquals(message, response.getHeaders().getFirst("message"));
@@ -117,8 +114,7 @@ public class PizzaControllerTest {
     ResponseEntity<Pizza> response = pizzaController.createPizza(
         pizza.getName(),
         crust.get_id(),
-        toppingIds,
-        null
+        toppingIds
     );
     String message = "toppingId 3 not found.";
     assertEquals(message, response.getHeaders().getFirst("message"));
