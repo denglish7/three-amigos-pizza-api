@@ -2,8 +2,12 @@ package io.swagger.model.store;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
+
+import io.swagger.model.customer.CreditCard;
 import io.swagger.model.order.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.time.LocalDate;
 import java.util.HashMap;
 
 @Document(collection = "stores")
@@ -15,11 +19,8 @@ public class Store {
   private String name;
   @NotNull
   private String address;
-
   private HashMap <String, Order> currentOrders;
-
   private HashMap <String, Order> completedOrders;
-
   private Menu menu;
 
   public Store(@NotNull String name, @NotNull String address,
@@ -64,13 +65,18 @@ public class Store {
   }
 
   /**
-   * Validates a customer's card based on length.
+   * Validates a customer's card based on length, expiration, and data type.
    * @param customerCard customer's credit card
    * @return true if valid, false otherwise
    */
-  public Boolean validateCard(String customerCard) {
-    if (customerCard.length() == 16) {
-      return true;
+  public Boolean validateCard(CreditCard customerCard) {
+    if (customerCard.getCardNumber().matches("[0-9]+")
+        && customerCard.getCardNumber().length() == 16
+        && customerCard.getExpirationMonth() >= LocalDate.now().getMonthValue()
+        && customerCard.getExpirationYear() >= LocalDate.now().getYear()
+        && customerCard.getCvv().matches("[0-9]+")
+        && customerCard.getCvv().length() == 3) {
+    return true;
     } else {
       return false;
     }

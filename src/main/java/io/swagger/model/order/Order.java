@@ -2,6 +2,7 @@ package io.swagger.model.order;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Priceable;
+import io.swagger.model.customer.CreditCard;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.pizza.Pizza;
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ public class Order implements Priceable {
   @DBRef
   private Customer customer;
   private Double price = BASE_PRICE;
-  private String creditCard;
+  private CreditCard creditCard;
 
   public Order() {
   }
@@ -115,12 +116,8 @@ public class Order implements Priceable {
     return removedSpecial;
   }
 
-  public void addCreditCard(String cardNum) {
-    this.creditCard = cardNum;
-  }
-
-  public String getCreditCard() {
-    return this.creditCard;
+  public CreditCard getCreditCard() {
+    return this.customer.getCreditCard();
   }
 
   public Boolean isEmpty() {

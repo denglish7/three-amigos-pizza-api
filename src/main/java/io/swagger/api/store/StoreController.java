@@ -4,6 +4,7 @@ package io.swagger.api.store;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.model.customer.CreditCard;
 import io.swagger.model.specials.Special;
 import io.swagger.model.order.Order;
 import io.swagger.model.store.Menu;
@@ -80,7 +81,6 @@ public class StoreController {
     return ResponseEntity.ok(storeToGet.get().getMenu());
   }
 
-  //Update the pizzas or specials on a store's menu
   @RequestMapping(path = "/{storeId}/menu/add", method = RequestMethod.PUT)
   @ApiOperation(value = "Add to a store's menu", tags = {"store",})
   public ResponseEntity <Menu> addToStoreMenu(
@@ -180,11 +180,13 @@ public class StoreController {
           .build();
     }
     // - Card Num
-    String customerCreditCard = order.getCreditCard();
+    CreditCard customerCreditCard = order.getCreditCard();
     if (!store.validateCard(customerCreditCard)) {
       return ResponseEntity.badRequest().header("message", "Invalid card number entered.")
           .build();
     }
+
+    // make receipt but only save last 4 digits of card number
 
     store.processOrder(order);
     return ResponseEntity.ok(storeRepository.save(store));
