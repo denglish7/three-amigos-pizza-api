@@ -1,13 +1,14 @@
 package io.swagger.model.order;
 
 import io.swagger.model.pizza.Pizza;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class OrderDetails {
-
   private Map<String, Pizza> pizzas;
 
   public OrderDetails() {

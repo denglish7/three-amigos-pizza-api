@@ -20,6 +20,8 @@ public class Order {
   @DBRef
   private Customer customer;
 
+  private String creditCard;
+
 //  @ApiModelProperty(hidden=true)
 //  private OrderStatus status;
 
@@ -78,4 +80,11 @@ public class Order {
     this.orderDetails.addPizzas(pizzas);
   }
 
+  public void addCreditCard(String cardNum) {
+    this.creditCard = cardNum;
+  }
+
+  public String getCreditCard() {
+    return this.creditCard;
+  }
 }
