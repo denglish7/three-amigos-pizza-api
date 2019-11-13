@@ -1,19 +1,23 @@
 package io.swagger.api.order;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import io.swagger.model.customer.Customer;
-import io.swagger.model.store.Menu;
 import io.swagger.model.order.Order;
 import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
+import io.swagger.model.pizza.Size;
 import io.swagger.model.pizza.Topping;
+import io.swagger.model.specials.Special;
+import io.swagger.model.store.Menu;
 import io.swagger.model.store.Store;
 import io.swagger.repositories.CrustRepository;
 import io.swagger.repositories.CustomerRepository;
-import io.swagger.repositories.MenuRepository;
 import io.swagger.repositories.OrderRepository;
 import io.swagger.repositories.PizzaRepository;
+import io.swagger.repositories.SizeRepository;
+import io.swagger.repositories.SpecialRepository;
 import io.swagger.repositories.StoreRepository;
 import io.swagger.repositories.ToppingRepository;
 import java.util.ArrayList;
@@ -42,26 +46,31 @@ public class OrderControllerTest {
   @Autowired
   private ToppingRepository toppingRepository;
   @Autowired
+  private SizeRepository sizeRepository;
+  @Autowired
   private StoreRepository storeRepository;
   @Autowired
   private CustomerRepository customerRepository;
   @Autowired
-  private MenuRepository menuRepository;
-
+  private SpecialRepository specialRepository;
   @Autowired
   private OrderController orderController;
 
   private Crust crust;
   private Topping topping;
   private Topping topping2;
+  private List<Topping> toppings;
   private List<String> toppingIds;
-  private Pizza pizza;
+  private Pizza pizzaOnMenu, pizzaNotOnMenu;
   private Store store;
   private Order order;
   private Customer customer;
   private List<String> pizzaIdsToAdd;
   private List<Pizza> pizzasToAdd;
   private Menu menu;
+  private Size sizeLarge;
+  private Special special;
+  private List<Special> specialsToAdd;
 
   @Before
   public void setUp() {
@@ -75,16 +84,21 @@ public class OrderControllerTest {
     toppingIds = new ArrayList<>();
     toppingIds.add(topping.get_id());
     toppingIds.add(topping2.get_id());
-    List<Topping> toppings = new ArrayList<>();
+    toppings = new ArrayList<>();
     toppings.add(topping);
     toppings.add(topping2);
-    pizza = new Pizza(
+    pizzaOnMenu = new Pizza(
         "Pepperoni",
         crust,
         toppings
     );
-    pizzaRepository.insert(pizza);
-
+    pizzaNotOnMenu = new Pizza(
+        "Cheese",
+        crust,
+        new ArrayList<>()
+    );
+    pizzaRepository.insert(pizzaOnMenu);
+    pizzaRepository.insert(pizzaNotOnMenu);
     store = new Store("Seattle", "1111 1st Ave S", null);
     customer = new Customer(
         "Daniel English",
@@ -92,23 +106,35 @@ public class OrderControllerTest {
         "1492 1st Ave"
     );
     customerRepository.insert(customer);
-
+    sizeLarge = new Size("Large", 10.0);
+    sizeRepository.insert(sizeLarge);
     pizzaIdsToAdd = new ArrayList<>();
-    pizzaIdsToAdd.add(pizza.get_id());
+    pizzaIdsToAdd.add(pizzaOnMenu.get_id());
     pizzasToAdd = new ArrayList<>();
-    pizzasToAdd.add(pizza);
+    pizzasToAdd.add(pizzaOnMenu);
+    special = new Special("2 Larges half off", 0.5, 2, sizeLarge);
+    specialRepository.insert(special);
+    specialsToAdd = new ArrayList<>();
+    specialsToAdd.add(special);
     menu = new Menu();
     menu.addPizzas(pizzasToAdd);
-    menuRepository.insert(menu);
+    menu.addSpecials(specialsToAdd);
     store.setMenu(menu);
     storeRepository.insert(store);
-
     order = new Order(store.get_id());
+
   }
 
   @After
   public void tearDown() {
     orderRepository.deleteAll();
+    pizzaRepository.deleteAll();
+    crustRepository.deleteAll();
+    toppingRepository.deleteAll();
+    sizeRepository.deleteAll();
+    storeRepository.deleteAll();
+    customerRepository.deleteAll();
+    specialRepository.deleteAll();
   }
 
   @Test
@@ -121,71 +147,149 @@ public class OrderControllerTest {
 
   @Test
   public void createOrderStoreIdNotFound() {
+    String BAD_ORDER_ID = "8";
+    String message = "storeId " + BAD_ORDER_ID + " not found.";
     ResponseEntity<Order> response = orderController.createOrder(
-        "8"
+        BAD_ORDER_ID
     );
-
-    String message = "storeId 8 not found.";
     assertEquals(message, response.getHeaders().getFirst("message"));
   }
 
   @Test
-  public void addToOrderSuccess() {
+  public void findByIdSuccess() {
+    ResponseEntity<Order> createOrderResponse = orderController.createOrder(
+        order.getStoreId()
+    );
+    ResponseEntity<Order> findOrderResponse = orderController
+        .findById(createOrderResponse.getBody().get_id());
+    assertTrue(findOrderResponse.getStatusCode().is2xxSuccessful());
+  }
+
+  @Test
+  public void findByIdNotFound() {
+    ResponseEntity<Order> createOrderResponse = orderController.createOrder(
+        order.getStoreId()
+    );
+    String BAD_ID = createOrderResponse.getBody().get_id() + "1";
+    ResponseEntity<Order> findOrderResponse = orderController.findById(BAD_ID);
+    assertTrue(findOrderResponse.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void setCustomerByIdSuccess() {
     ResponseEntity<Order> response = orderController.createOrder(
         order.getStoreId()
     );
 
-    ResponseEntity<Order> addToOrderResponse = orderController.addToOrder(
-        response.getBody().get_id(),
-        pizzaIdsToAdd,
-        customer.get_id()
+    ResponseEntity<Order> setCustomerResponse = orderController.setCustomerById(
+        response.getBody().get_id(), customer.get_id()
     );
-
-    assertEquals(pizzasToAdd.get(0).get_id(), addToOrderResponse.getBody().getOrderDetails().getPizzas().get(0).get_id());
+    assertEquals(customer.get_id(), setCustomerResponse.getBody().getCustomer().get_id());
   }
 
   @Test
-  public void addToOrderOrderIdNotFound() {
-    ResponseEntity<Order> addToOrderResponse = orderController.addToOrder(
-        "5",
-        pizzaIdsToAdd,
-        customer.get_id()
+  public void setCustomerByIdOrderNotFound() {
+    String BAD_ORDER_ID = "5";
+    String message = "orderId " + BAD_ORDER_ID + " not found.";
+    orderController.createOrder(order.getStoreId());
+    ResponseEntity<Order> setCustomerResponse = orderController.setCustomerById(
+        BAD_ORDER_ID, customer.get_id()
     );
-    String message = "orderId 5 not found.";
-    assertEquals(message, addToOrderResponse.getHeaders().getFirst("message"));
+    assertTrue(setCustomerResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, setCustomerResponse.getHeaders().getFirst("message"));
   }
 
   @Test
-  public void addToOrderCustomerIdNotFound() {
+  public void setCustomerByIdCustomerNotFound() {
+    String BAD_CUSTOMER_ID = "5";
+    String message = "customerId " + BAD_CUSTOMER_ID + " not found.";
     ResponseEntity<Order> response = orderController.createOrder(
         order.getStoreId()
     );
-
-    ResponseEntity<Order> addToOrderResponse = orderController.addToOrder(
-        response.getBody().get_id(),
-        pizzaIdsToAdd,
-        "5"
+    ResponseEntity<Order> setCustomerResponse = orderController.setCustomerById(
+        response.getBody().get_id(), BAD_CUSTOMER_ID
     );
-    String message = "customerId 5 not found.";
-    assertEquals(message, addToOrderResponse.getHeaders().getFirst("message"));
+    assertTrue(setCustomerResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, setCustomerResponse.getHeaders().getFirst("message"));
   }
+
   @Test
-  public void addToOrderStoreIdNotFound() {
+  public void samePizzaTwice() {
     ResponseEntity<Order> response = orderController.createOrder(
         order.getStoreId()
     );
-    storeRepository.deleteAll();
-    ResponseEntity<Order> addToOrderResponse = orderController.addToOrder(
-        response.getBody().get_id(),
-        pizzaIdsToAdd,
-        customer.get_id()
-    );
-    String message = "storeId " + order.getStoreId() + " not found.";
-    assertEquals(message, addToOrderResponse.getHeaders().getFirst("message"));
+    String orderId = response.getBody().get_id();
+    response = orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    System.out.println("price 1: " + response.getBody().getPrice());
+    response = orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    System.out.println("price 2: " + response.getBody().getPrice());
   }
 
   @Test
-  public void addToOrderPizzaNotOnMenu() {
+  public void addCustomPizzaSuccess() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    ResponseEntity<Order> addPizzaResponse = orderController
+        .addCustomPizza(orderId, crust.get_id(), toppingIds, sizeLarge.get_id());
+    System.out.println(addPizzaResponse.getHeaders().getFirst("message"));
+    assertTrue(addPizzaResponse.getStatusCode().is2xxSuccessful());
+  }
+
+  @Test
+  public void addCustomPizzaOrderNotFound() {
+    String BAD_ORDER_ID = "5";
+    String message = "orderId " + BAD_ORDER_ID + " not found.";
+    orderController.createOrder(order.getStoreId());
+    ResponseEntity<Order> addPizzaResponse = orderController.addCustomPizza(
+        BAD_ORDER_ID, crust.get_id(), toppingIds, sizeLarge.get_id()
+    );
+    assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+  }
+
+  @Test
+  public void addCustomPizzaInvalidPizza() {
+    String BAD_CRUST_ID = "42";
+    String message = "crustId " + BAD_CRUST_ID + " not found.";
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    ResponseEntity<Order> addPizzaResponse = orderController.addCustomPizza(
+        orderId, BAD_CRUST_ID, toppingIds, sizeLarge.get_id()
+    );
+    assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+  }
+
+  @Test
+  public void addPizzaByIdSuccess() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    ResponseEntity<Order> addPizzaResponse = orderController
+        .addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    assertTrue(addPizzaResponse.getStatusCode().is2xxSuccessful());
+  }
+
+  @Test
+  public void addPizzaByIdOrderNotFound() {
+    String BAD_ORDER_ID = "12";
+    String message = "orderId " + BAD_ORDER_ID + " not found.";
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    ResponseEntity<Order> addPizzaResponse = orderController
+        .addPizzaById(BAD_ORDER_ID, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+  }
+
+  @Test
+  public void addPizzaByIdPizzaNotOnMenu() {
     ResponseEntity<Order> response = orderController.createOrder(
         order.getStoreId()
     );
@@ -194,15 +298,141 @@ public class OrderControllerTest {
     store.setMenu(blankMenu);
     storeRepository.save(store);
 
-    ResponseEntity<Order> addToOrderResponse = orderController.addToOrder(
+    ResponseEntity<Order> addPizzaResponse = orderController.addPizzaById(
         response.getBody().get_id(),
-        pizzaIdsToAdd,
-        customer.get_id()
+        pizzaOnMenu.get_id(),
+        sizeLarge.get_id()
     );
 
-    String message = "pizzaId " + pizza.get_id() + " is not on the menu of the store associated with this order!";
-    assertEquals(message, addToOrderResponse.getHeaders().getFirst("message"));
+    String message = "pizzaId " + pizzaOnMenu.get_id()
+        + " not found in menu associated with this order.";
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
   }
 
+  @Test
+  public void addPizzaByIdSizeNotFound() {
+    String BAD_SIZE_ID = "42";
+    String message = "sizeId " + BAD_SIZE_ID + " not found.";
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    ResponseEntity<Order> addPizzaResponse = orderController
+        .addPizzaById(orderId, pizzaOnMenu.get_id(), BAD_SIZE_ID);
+    assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+  }
 
+  @Test
+  public void removePizzaByIdSuccess() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    ResponseEntity<Order> removePizzaResponse = orderController
+        .removePizzaById(orderId, pizzaOnMenu.get_id());
+    assertTrue(removePizzaResponse.getStatusCode().is2xxSuccessful());
+  }
+
+  @Test
+  public void removePizzaByIdOrderNotFound() {
+    String BAD_ORDER_ID = "42";
+    String message = "orderId " + BAD_ORDER_ID + " not found.";
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    ResponseEntity<Order> removePizzaResponse = orderController
+        .removePizzaById(BAD_ORDER_ID, pizzaOnMenu.get_id());
+    assertTrue(removePizzaResponse.getStatusCode().is4xxClientError());
+    assertEquals(message, removePizzaResponse.getHeaders().getFirst("message"));
+  }
+
+  @Test
+  public void removePizzaByIdPizzaNotOnOrder() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    ResponseEntity<Order> removePizzaResponse = orderController
+        .removePizzaById(orderId, pizzaOnMenu.get_id());
+    assertTrue(removePizzaResponse.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void addSpecialSuccess() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    List<String> pizzaIds = new ArrayList<>();
+    pizzaIds.add(pizzaOnMenu.get_id());
+    pizzaIds.add(pizzaOnMenu.get_id());
+    ResponseEntity<Order> addSpecialResponse = orderController
+        .addSpecial(orderId, special.get_id(), pizzaIds);
+    assertTrue(addSpecialResponse.getStatusCode().is2xxSuccessful());
+  }
+
+  @Test
+  public void addSpecialAlreadyAdded() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    List<String> pizzaIds = new ArrayList<>();
+    pizzaIds.add(pizzaOnMenu.get_id());
+    pizzaIds.add(pizzaOnMenu.get_id());
+    orderController.addSpecial(orderId, special.get_id(), pizzaIds);
+    ResponseEntity<Order> addSpecialAgainResponse = orderController
+        .addSpecial(orderId, special.get_id(), pizzaIds);
+    assertTrue(addSpecialAgainResponse.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void addSpecialNotOnMenu() {
+    Special newSpecial = new Special("Buy 3 Large, get 25% off", 0.75, 3, sizeLarge);
+    specialRepository.insert(newSpecial);
+    List<String> pizzaIds = new ArrayList<>();
+    pizzaIds.add(pizzaOnMenu.get_id());
+    pizzaIds.add(pizzaOnMenu.get_id());
+    pizzaIds.add(pizzaOnMenu.get_id());
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    ResponseEntity<Order> addSpecialResponse = orderController
+        .addSpecial(orderId, newSpecial.get_id(), pizzaIds);
+    assertTrue(addSpecialResponse.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void addSpecialWrongNumberPizzas() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    List<String> pizzaIds = new ArrayList<>();
+    pizzaIds.add(pizzaOnMenu.get_id());
+    orderController.addSpecial(orderId, special.get_id(), pizzaIds);
+    ResponseEntity<Order> addSpecialAgainResponse = orderController
+        .addSpecial(orderId, special.get_id(), pizzaIds);
+    assertTrue(addSpecialAgainResponse.getStatusCode().is4xxClientError());
+  }
+
+  @Test
+  public void addSpecialPizzaNotOnMenu() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    List<String> pizzaIds = new ArrayList<>();
+    pizzaIds.add(pizzaOnMenu.get_id());
+    pizzaIds.add(pizzaNotOnMenu.get_id());
+    orderController.addSpecial(orderId, special.get_id(), pizzaIds);
+    ResponseEntity<Order> addSpecialResponse = orderController
+        .addSpecial(orderId, special.get_id(), pizzaIds);
+    assertTrue(addSpecialResponse.getStatusCode().is4xxClientError());
+  }
 }

@@ -21,6 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("special")
 public class SpecialController {
 
+  private static final Double MINIMUM_PRICE_RATIO = 0.0;
+  private static final Double MAXIMUM_PRICE_RATIO = 1.0;
+  private static final String PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE =
+      "Price ratio must be in range [" + MINIMUM_PRICE_RATIO + ", " + MAXIMUM_PRICE_RATIO + "]";
+  private static final Integer MINIMUM_NUMBER_REQUIRED_PIZZAS = 1;
+  private static final String TOO_FEW_REQUIRED_PIZZAS_MESSAGE =
+      "Minimum number of required pizzas for a special is " + MINIMUM_NUMBER_REQUIRED_PIZZAS;
+
   @Autowired
   private SpecialRepository specialRepository;
   @Autowired
@@ -38,18 +46,42 @@ public class SpecialController {
   public ResponseEntity<Special> createSpecial(
       @ApiParam("Name for new special") @RequestParam(value = "specialName") String specialName,
       @ApiParam("Price ratio for new special") @RequestParam(value = "priceRatio") Double priceRatio,
-      @ApiParam("Required number of pizzas for special") @RequestParam(value = "requiredNumberPizzas", required = false) Integer requiredNumberPizzas,
-      @ApiParam("Id of required size of pizzas for special") @RequestParam(value = "requiredSizeOfPizzas", required = false) String requiredSizeId) {
-    Size requiredSize = null;
-    if (requiredSizeId != null) {
-      Optional<Size> size = sizeRepository.findById(requiredSizeId);
-      if (!size.isPresent()) {
-        return ResponseEntity.notFound()
-            .header("message", "sizeId " + requiredSizeId + " not found.").build();
-      }
-      requiredSize = size.get();
+      @ApiParam("Required number of pizzas for special") @RequestParam(value = "requiredNumberPizzas") Integer requiredNumberPizzas,
+      @ApiParam("Id of required size of pizzas for special") @RequestParam(value = "requiredSizeOfPizzas") String requiredSizeId) {
+    if (requiredNumberPizzas < MINIMUM_NUMBER_REQUIRED_PIZZAS) {
+      return ResponseEntity.badRequest()
+          .header("message", TOO_FEW_REQUIRED_PIZZAS_MESSAGE).build();
     }
-    Special newSpecial = new Special(specialName, priceRatio, requiredNumberPizzas, requiredSize);
+    if (priceRatio < MINIMUM_PRICE_RATIO || priceRatio > MAXIMUM_PRICE_RATIO) {
+      return ResponseEntity.badRequest()
+          .header("message", PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE).build();
+    }
+    Optional<Size> size = sizeRepository.findById(requiredSizeId);
+    if (!size.isPresent()) {
+      return ResponseEntity.notFound()
+          .header("message", "sizeId " + requiredSizeId + " not found.").build();
+    }
+    Special newSpecial = new Special(specialName, priceRatio, requiredNumberPizzas, size.get());
     return ResponseEntity.ok(specialRepository.save(newSpecial));
+  }
+
+  public static Double getMinimumPriceRatio() {
+    return MINIMUM_PRICE_RATIO;
+  }
+
+  public static Double getMaximumPriceRatio() {
+    return MAXIMUM_PRICE_RATIO;
+  }
+
+  public static String getPriceRatioOutOfBoundsMessage() {
+    return PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE;
+  }
+
+  public static Integer getMinimumNumberRequiredPizzas() {
+    return MINIMUM_NUMBER_REQUIRED_PIZZAS;
+  }
+
+  public static String getTooFewRequiredPizzasMessage() {
+    return TOO_FEW_REQUIRED_PIZZAS_MESSAGE;
   }
 }

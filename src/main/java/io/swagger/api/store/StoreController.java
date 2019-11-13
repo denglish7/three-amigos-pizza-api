@@ -3,10 +3,10 @@ package io.swagger.api.store;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.model.specials.Special;
 import io.swagger.model.order.Order;
 import io.swagger.model.store.Menu;
 import io.swagger.model.pizza.Pizza;
-import io.swagger.model.specials.Special;
 import io.swagger.model.store.Store;
 import io.swagger.repositories.OrderRepository;
 import io.swagger.repositories.PizzaRepository;
@@ -174,7 +174,7 @@ public class StoreController {
     }
     Order order = orderToGet.get();
     // - Number of Pizzas > 0
-    if (order.getOrderDetails().getPizzas().size() < 1) {
+    if (order.isEmpty()) {
       return ResponseEntity.badRequest().header("message", "orderId " + orderId + " has no pizza's in cart.")
           .build();
     }

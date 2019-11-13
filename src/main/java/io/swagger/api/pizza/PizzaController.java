@@ -5,9 +5,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
+import io.swagger.model.pizza.Size;
 import io.swagger.model.pizza.Topping;
 import io.swagger.repositories.CrustRepository;
 import io.swagger.repositories.PizzaRepository;
+import io.swagger.repositories.SizeRepository;
 import io.swagger.repositories.ToppingRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/pizza")
 public class PizzaController {
 
+  private static final Double PIZZA_BASE_PRICE = 0.0;
+
   @Autowired
   private PizzaRepository pizzaRepository;
   @Autowired
   private CrustRepository crustRepository;
   @Autowired
   private ToppingRepository toppingRepository;
+  @Autowired
+  private SizeRepository sizeRepository;
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Pizzas in the system.", response = Pizza.class, responseContainer = "List", tags = {
@@ -39,12 +45,13 @@ public class PizzaController {
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "Creates a pizza and adds it to the system. Could optionally adds pizza to all store menus or a list of stores?", response = Pizza.class, tags = {
+  @ApiOperation(value = "Creates a pizza and adds it to the system.", response = Pizza.class, tags = {
       "pizza",})
   public ResponseEntity<Pizza> createPizza(
       @ApiParam("Name for new pizza") @RequestParam(value = "pizzaName") String pizzaName,
       @ApiParam("Crust ID for new pizza") @RequestParam(value = "crustId") String crustId,
-      @ApiParam("Topping ID's for new pizza") @RequestParam(value = "toppingIds") List<String> toppingIds) {
+      @ApiParam("Topping ID's for new pizza") @RequestParam(value = "toppingIds") List<String> toppingIds,
+      @ApiParam("Size ID for new pizza") @RequestParam(value = "sizeId", required = false) String sizeId) {
     Optional<Crust> crust = crustRepository.findById(crustId);
     if (!crust.isPresent()) {
       return ResponseEntity.notFound().header("message", "crustId " + crustId + " not found.")
@@ -61,6 +68,15 @@ public class PizzaController {
       }
     }
     Pizza newPizza = new Pizza(pizzaName, crust.get(), toppings);
+    if (sizeId != null) {
+      Optional<Size> size = sizeRepository.findById(sizeId);
+      if (!size.isPresent()) {
+        return ResponseEntity.notFound().header("message", "sizeId " + sizeId + " not found.")
+            .build();
+      }
+      newPizza.setSize(size.get());
+    }
+    newPizza.setPrice();
     return ResponseEntity.ok(pizzaRepository.save(newPizza));
   }
 }

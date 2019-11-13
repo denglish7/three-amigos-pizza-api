@@ -1,18 +1,12 @@
 package io.swagger.model.store;
 
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.specials.Special;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@Document(collection = "menus")
 public class Menu {
-  @ApiModelProperty(hidden = true)
-  private String _id;
 
   private HashMap<String, Pizza> pizzas;
   private HashMap<String, Special> specials;
@@ -20,10 +14,6 @@ public class Menu {
   public Menu() {
     this.pizzas = new HashMap<>();
     this.specials = new HashMap<>();
-  }
-
-  public String get_id() {
-    return _id;
   }
 
   public List<Pizza> getPizzas() {
@@ -44,6 +34,10 @@ public class Menu {
     for (String pizzaId : pizzaIdsToRemove) {
       this.pizzas.remove(pizzaId);
     }
+  }
+
+  public Special getSpecial(String specialId) {
+    return specials.get(specialId);
   }
 
   public List<Special> getSpecials() {
