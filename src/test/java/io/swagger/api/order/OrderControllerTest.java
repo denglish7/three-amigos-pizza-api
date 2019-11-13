@@ -20,6 +20,7 @@ import io.swagger.repositories.StoreRepository;
 import io.swagger.repositories.ToppingRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -189,6 +190,18 @@ public class OrderControllerTest {
     );
     assertTrue(setCustomerResponse.getStatusCode().is4xxClientError());
     assertEquals(message, setCustomerResponse.getHeaders().getFirst("message"));
+  }
+
+  @Test
+  public void samePizzaTwice() {
+    ResponseEntity<Order> response = orderController.createOrder(
+        order.getStoreId()
+    );
+    String orderId = response.getBody().get_id();
+    response = orderController.addPizzaById(orderId, pizza.get_id(), sizeLarge.get_id());
+    System.out.println("price 1: " + response.getBody().getPrice());
+    response = orderController.addPizzaById(orderId, pizza.get_id(), sizeLarge.get_id());
+    System.out.println("price 2: " + response.getBody().getPrice());
   }
 
   @Test

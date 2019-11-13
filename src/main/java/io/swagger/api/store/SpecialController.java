@@ -47,7 +47,7 @@ public class SpecialController {
       @ApiParam("Name for new special") @RequestParam(value = "specialName") String specialName,
       @ApiParam("Price ratio for new special") @RequestParam(value = "priceRatio") Double priceRatio,
       @ApiParam("Required number of pizzas for special") @RequestParam(value = "requiredNumberPizzas") Integer requiredNumberPizzas,
-      @ApiParam("Id of required size of pizzas for special") @RequestParam(value = "requiredSizeOfPizzas", required = false) String requiredSizeId) {
+      @ApiParam("Id of required size of pizzas for special") @RequestParam(value = "requiredSizeOfPizzas") String requiredSizeId) {
     if (requiredNumberPizzas < MINIMUM_NUMBER_REQUIRED_PIZZAS) {
       return ResponseEntity.badRequest()
           .header("message", TOO_FEW_REQUIRED_PIZZAS_MESSAGE).build();
@@ -56,16 +56,12 @@ public class SpecialController {
       return ResponseEntity.badRequest()
           .header("message", PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE).build();
     }
-    Size requiredSize = null;
-    if (requiredSizeId != null) {
-      Optional<Size> size = sizeRepository.findById(requiredSizeId);
-      if (!size.isPresent()) {
-        return ResponseEntity.notFound()
-            .header("message", "sizeId " + requiredSizeId + " not found.").build();
-      }
-      requiredSize = size.get();
+    Optional<Size> size = sizeRepository.findById(requiredSizeId);
+    if (!size.isPresent()) {
+      return ResponseEntity.notFound()
+          .header("message", "sizeId " + requiredSizeId + " not found.").build();
     }
-    Special newSpecial = new Special(specialName, priceRatio, requiredNumberPizzas, requiredSize);
+    Special newSpecial = new Special(specialName, priceRatio, requiredNumberPizzas, size.get());
     return ResponseEntity.ok(specialRepository.save(newSpecial));
   }
 }

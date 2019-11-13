@@ -64,24 +64,7 @@ public class PizzaController {
       }
     }
     Pizza newPizza = new Pizza(pizzaName, crust.get(), toppings);
-    newPizza.setPrice(this.calculatePriceOfPizza(newPizza));
+    newPizza.setPrice();
     return ResponseEntity.ok(pizzaRepository.save(newPizza));
-  }
-
-  /**
-   * Returns the price of a pizza.  Can we move this to the Pizza model?
-   * @param pizza pizza to calculate price of.
-   * @return Double, null if pizza doesn't have a size or crust.
-   */
-  public Double calculatePriceOfPizza(Pizza pizza) {
-    Double price = PIZZA_BASE_PRICE;
-    if (pizza.getSize() != null) { price += pizza.getSize().getBasePrice(); }
-    if (pizza.getCrust() != null) { price += pizza.getCrust().getPrice(); }
-    if (pizza.getToppings() != null) {
-      for (Topping topping : pizza.getToppings()) {
-        price += topping.getPricePerUnit();
-      }
-    }
-    return price;
   }
 }

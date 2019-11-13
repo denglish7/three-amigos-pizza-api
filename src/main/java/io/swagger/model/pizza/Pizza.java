@@ -1,13 +1,14 @@
 package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.model.Priceable;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "pizzas")
-public class Pizza {
+public class Pizza implements Priceable {
 
   @ApiModelProperty(hidden = true)
   private String _id;
@@ -19,7 +20,7 @@ public class Pizza {
   @DBRef @NotNull
   private List<Topping> toppings;
   @ApiModelProperty(hidden = true)
-  private Double price;
+  private Double price = BASE_PRICE;
 
   public Pizza() {
   }
@@ -92,11 +93,21 @@ public class Pizza {
    * Get price
    * @return price
    */
+  @Override
   public Double getPrice() {
     return price;
   }
 
-  public void setPrice(Double price) {
+  @Override
+  public void setPrice() {
+    Double price = BASE_PRICE;
+    if (size != null) { price += size.getBasePrice(); }
+    if (crust != null) { price += crust.getPrice(); }
+    if (toppings != null) {
+      for (Topping topping : toppings) {
+        price += topping.getPricePerUnit();
+      }
+    }
     this.price = price;
   }
 

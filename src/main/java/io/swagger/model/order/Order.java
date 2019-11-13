@@ -1,18 +1,17 @@
 package io.swagger.model.order;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.model.Priceable;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.pizza.Pizza;
+import io.swagger.model.specials.OrderSpecial;
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "orders")
-public class Order {
-
-  private static final Double ORDER_BASE_PRICE = 0.0;
+public class Order implements Priceable {
 
   @ApiModelProperty(hidden = true)
   private String _id;
@@ -21,11 +20,10 @@ public class Order {
   @NotNull
   private String storeId;
   @NotNull
-  private Double price = ORDER_BASE_PRICE;
-  @NotNull
-  private OrderDetails orderDetails;
+  private OrderItems orderItems;
   @DBRef
   private Customer customer;
+  private Double price = BASE_PRICE;
   private String creditCard;
 
   public Order() {
@@ -33,7 +31,7 @@ public class Order {
 
   public Order(@NotNull String storeId) {
     this.storeId = storeId;
-    this.orderDetails = new OrderDetails();
+    this.orderItems = new OrderItems();
   }
 
   /**
@@ -70,27 +68,6 @@ public class Order {
   }
 
   /**
-   * Get price
-   * @return price
-   */
-  public Double getPrice() {
-    return price;
-  }
-
-  public void setPrice(Double price) {
-    this.price = price;
-  }
-
-  /**
-   * Get pizzas
-   *
-   * @return pizzas
-   */
-  public List<Pizza> getPizzas () {
-    return orderDetails.getPizzas();
-  }
-
-  /**
    * Get customer
    *
    * @return customer
@@ -99,8 +76,14 @@ public class Order {
     return customer;
   }
 
-  public Pizza getPizzaInOrder(String pizzaId) {
-    return orderDetails.getPizzaById(pizzaId);
+  @Override
+  public Double getPrice() {
+    return price;
+  }
+
+  @Override
+  public void setPrice() {
+    this.price = orderItems.getPrice(BASE_PRICE);
   }
 
   public void setCustomer(Customer customer) {
@@ -108,16 +91,25 @@ public class Order {
   }
 
   public void addPizza(Pizza pizza) {
-    orderDetails.addPizza(pizza);
-    setPrice(getPrice() + pizza.getPrice());
+    orderItems.addPizza(pizza);
+    setPrice();
   }
 
   public Pizza removePizzaById(String pizzaId) {
-    Pizza removedPizza = orderDetails.removePizzaById(pizzaId);
-    if (removedPizza != null) {
-      setPrice(getPrice() - removedPizza.getPrice());
-    }
+    Pizza removedPizza = orderItems.removePizzaById(pizzaId);
+    setPrice();
     return removedPizza;
+  }
+
+  public void addSpecial(OrderSpecial special) {
+    orderItems.addSpecial(special);
+    setPrice();
+  }
+
+  public OrderSpecial removeSpecialById(String specialId) {
+    OrderSpecial removedSpecial = orderItems.removeSpecialById(specialId);
+    setPrice();
+    return removedSpecial;
   }
 
   public void addCreditCard(String cardNum) {
@@ -129,6 +121,6 @@ public class Order {
   }
 
   public Boolean isEmpty() {
-    return orderDetails.isEmpty();
+    return orderItems.isEmpty();
   }
 }
