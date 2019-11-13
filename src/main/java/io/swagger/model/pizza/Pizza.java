@@ -26,7 +26,7 @@ public class Pizza implements Priceable {
   }
 
   public Pizza(String name, @NotNull Crust crust,
-      @NotNull List<Topping> toppings) {
+               @NotNull List<Topping> toppings) {
     this.name = name;
     this.crust = crust;
     this.toppings = toppings;

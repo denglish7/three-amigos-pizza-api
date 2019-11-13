@@ -16,6 +16,21 @@ public class OrderItems {
     this.specials = new HashMap<>();
   }
 
+//  public List<Pizza> getPizzas() {
+//
+//  }
+
+  public List <String> getPizzaNames() {
+    List <String> pizzaNames = new ArrayList <>();
+    for (List<Pizza> pizzas : pizzas.values()) {
+      for (Pizza pizza : pizzas) {
+        pizzaNames.add(pizza.getName());
+      }
+    }
+    return pizzaNames;
+  }
+
+
   public void addPizza(Pizza pizza) {
     List<Pizza> pizzasToPut = new ArrayList<>();
     if (pizzas.containsKey(pizza.get_id())) {
@@ -48,7 +63,17 @@ public class OrderItems {
     return specials.remove(specialId);
   }
 
+  //Can we get the specialId to use this in StoreController.processOrder()?
   public OrderSpecial getSpecialById(String specialId) {return specials.get(specialId);}
+
+  public List<String> getSpecialNames() {
+    List <String> specialNames = new ArrayList <>();
+    for (String key : this.specials.keySet()) {
+      String specialName = specials.get(key).getSpecialName();
+      specialNames.add(specialName);
+    }
+    return specialNames;
+  }
 
   public Boolean isEmpty() {
     return (pizzas.size() == 0 && specials.size() == 0);
