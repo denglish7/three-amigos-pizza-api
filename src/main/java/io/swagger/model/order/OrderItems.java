@@ -1,7 +1,6 @@
 package io.swagger.model.order;
 
 import io.swagger.model.pizza.Pizza;
-import io.swagger.model.specials.OrderSpecial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,13 +22,17 @@ public class OrderItems {
     return pizzas.remove(pizzaId);
   }
 
+  public Pizza getPizzaById(String pizzaId) {return pizzas.get(pizzaId);}
+
   public void addSpecial(OrderSpecial special) {
-    specials.put(special.getSpecial().get_id(), special);
+    specials.put(special.getSpecialId(), special);
   }
 
   public OrderSpecial removeSpecialById(String specialId) {
     return specials.remove(specialId);
   }
+
+  public OrderSpecial getSpecialById(String specialId) {return specials.get(specialId);}
 
   public Boolean isEmpty() {
     return (pizzas.size() == 0 && specials.size() == 0);

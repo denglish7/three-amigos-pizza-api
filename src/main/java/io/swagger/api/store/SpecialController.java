@@ -64,4 +64,24 @@ public class SpecialController {
     Special newSpecial = new Special(specialName, priceRatio, requiredNumberPizzas, size.get());
     return ResponseEntity.ok(specialRepository.save(newSpecial));
   }
+
+  public static Double getMinimumPriceRatio() {
+    return MINIMUM_PRICE_RATIO;
+  }
+
+  public static Double getMaximumPriceRatio() {
+    return MAXIMUM_PRICE_RATIO;
+  }
+
+  public static String getPriceRatioOutOfBoundsMessage() {
+    return PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE;
+  }
+
+  public static Integer getMinimumNumberRequiredPizzas() {
+    return MINIMUM_NUMBER_REQUIRED_PIZZAS;
+  }
+
+  public static String getTooFewRequiredPizzasMessage() {
+    return TOO_FEW_REQUIRED_PIZZAS_MESSAGE;
+  }
 }

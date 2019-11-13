@@ -11,6 +11,7 @@ import io.swagger.repositories.PizzaRepository;
 import io.swagger.repositories.ToppingRepository;
 import java.util.ArrayList;
 import java.util.List;
+import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -79,9 +80,10 @@ public class PizzaControllerTest {
     pizzaController.createPizza(
         "Pepperoni",
         crust.get_id(),
-        toppingIds
+        toppingIds,
+        null
     );
-    assertTrue(pizzaController.getAllPizzas().getBody().size() == 1);
+    TestCase.assertEquals(1, pizzaController.getAllPizzas().getBody().size());
   }
 
   @Test
@@ -89,7 +91,8 @@ public class PizzaControllerTest {
     ResponseEntity<Pizza> response = pizzaController.createPizza(
         pizza.getName(),
         crust.get_id(),
-        toppingIds
+        toppingIds,
+        null
     );
     assertEquals(pizza.getName(), response.getBody().getName());
     assertEquals(pizza.getCrust().get_id(), response.getBody().getCrust().get_id());
@@ -101,7 +104,8 @@ public class PizzaControllerTest {
     ResponseEntity<Pizza> response = pizzaController.createPizza(
         pizza.getName(),
         "5",
-        toppingIds
+        toppingIds,
+        null
     );
     String message = "crustId 5 not found.";
     assertEquals(message, response.getHeaders().getFirst("message"));
@@ -113,7 +117,8 @@ public class PizzaControllerTest {
     ResponseEntity<Pizza> response = pizzaController.createPizza(
         pizza.getName(),
         crust.get_id(),
-        toppingIds
+        toppingIds,
+        null
     );
     String message = "toppingId 3 not found.";
     assertEquals(message, response.getHeaders().getFirst("message"));

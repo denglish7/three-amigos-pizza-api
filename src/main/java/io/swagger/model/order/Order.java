@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Priceable;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.pizza.Pizza;
-import io.swagger.model.specials.OrderSpecial;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -84,6 +83,10 @@ public class Order implements Priceable {
   @Override
   public void setPrice() {
     this.price = orderItems.getPrice(BASE_PRICE);
+  }
+
+  public OrderItems getOrderItems() {
+    return orderItems;
   }
 
   public void setCustomer(Customer customer) {

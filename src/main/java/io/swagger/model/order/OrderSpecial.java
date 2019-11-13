@@ -1,7 +1,8 @@
-package io.swagger.model.specials;
+package io.swagger.model.order;
 
 import io.swagger.model.Priceable;
 import io.swagger.model.pizza.Pizza;
+import io.swagger.model.specials.Special;
 import java.util.List;
 
 public class OrderSpecial implements Priceable {
@@ -13,14 +14,11 @@ public class OrderSpecial implements Priceable {
   public OrderSpecial(Special special, List<Pizza> pizzasInSpecial) {
     this.special = special;
     this.pizzasInSpecial = pizzasInSpecial;
+    setPrice();
   }
 
-  public Special getSpecial() {
-    return special;
-  }
-
-  public void setSpecial(Special special) {
-    this.special = special;
+  public String getSpecialId() {
+    return special.get_id();
   }
 
   @Override
