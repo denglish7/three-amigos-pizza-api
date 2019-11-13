@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Priceable;
 import java.util.List;
 import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -27,6 +28,7 @@ public class Pizza implements Priceable {
 
   public Pizza(String name, @NotNull Crust crust,
                @NotNull List<Topping> toppings) {
+    this._id = new ObjectId().toString();
     this.name = name;
     this.crust = crust;
     this.toppings = toppings;
@@ -109,13 +111,5 @@ public class Pizza implements Priceable {
       }
     }
     this.price = price;
-  }
-
-  /**
-   * Get isValidForOrder
-   * @return isValidForOrder
-   */
-  public Boolean isValidForOrder() {
-    return size != null && crust != null && toppings != null;
   }
 }

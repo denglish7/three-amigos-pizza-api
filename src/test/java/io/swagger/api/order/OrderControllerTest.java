@@ -108,7 +108,7 @@ public class OrderControllerTest {
     ResponseEntity<Order> response = orderController.createOrder(
         BAD_ORDER_ID
     );
-    assertEquals(message, response.getHeaders().getFirst("message"));
+    assertEquals(message, response.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
@@ -151,7 +151,7 @@ public class OrderControllerTest {
         BAD_ORDER_ID, customer.get_id()
     );
     assertTrue(setCustomerResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, setCustomerResponse.getHeaders().getFirst("message"));
+    assertEquals(message, setCustomerResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
@@ -165,7 +165,7 @@ public class OrderControllerTest {
         response.getBody().get_id(), BAD_CUSTOMER_ID
     );
     assertTrue(setCustomerResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, setCustomerResponse.getHeaders().getFirst("message"));
+    assertEquals(message, setCustomerResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test //TODO: fix this bug.
@@ -184,30 +184,33 @@ public class OrderControllerTest {
 
   @Test
   public void addCustomPizzaSuccess() {
+    String pizzaName = "customPizzaName";
     ResponseEntity<Order> response = orderController.createOrder(
         store.get_id()
     );
     String orderId = response.getBody().get_id();
     ResponseEntity<Order> addPizzaResponse = orderController
-        .addCustomPizza(orderId, crust.get_id(), toppingIds, sizeLarge.get_id());
-    System.out.println(addPizzaResponse.getHeaders().getFirst("message"));
+        .addCustomPizza(orderId, pizzaName, crust.get_id(), toppingIds, sizeLarge.get_id());
+    System.out.println(addPizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
     assertTrue(addPizzaResponse.getStatusCode().is2xxSuccessful());
   }
 
   @Test
   public void addCustomPizzaOrderNotFound() {
+    String pizzaName = "customPizzaName";
     String BAD_ORDER_ID = "5";
     String message = "orderId " + BAD_ORDER_ID + " not found.";
     orderController.createOrder(store.get_id());
     ResponseEntity<Order> addPizzaResponse = orderController.addCustomPizza(
-        BAD_ORDER_ID, crust.get_id(), toppingIds, sizeLarge.get_id()
+        BAD_ORDER_ID, pizzaName, crust.get_id(), toppingIds, sizeLarge.get_id()
     );
     assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
   public void addCustomPizzaInvalidPizza() {
+    String pizzaName = "customPizzaName";
     String BAD_CRUST_ID = "42";
     String message = "crustId " + BAD_CRUST_ID + " not found.";
     ResponseEntity<Order> response = orderController.createOrder(
@@ -215,10 +218,10 @@ public class OrderControllerTest {
     );
     String orderId = response.getBody().get_id();
     ResponseEntity<Order> addPizzaResponse = orderController.addCustomPizza(
-        orderId, BAD_CRUST_ID, toppingIds, sizeLarge.get_id()
+        orderId, pizzaName, BAD_CRUST_ID, toppingIds, sizeLarge.get_id()
     );
     assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
@@ -242,7 +245,7 @@ public class OrderControllerTest {
     ResponseEntity<Order> addPizzaResponse = orderController
         .addPizzaById(BAD_ORDER_ID, pizzaOnMenu.get_id(), sizeLarge.get_id());
     assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
@@ -263,7 +266,7 @@ public class OrderControllerTest {
 
     String message = "pizzaId " + pizzaOnMenu.get_id()
         + " not found in menu associated with this order.";
-    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
@@ -277,7 +280,7 @@ public class OrderControllerTest {
     ResponseEntity<Order> addPizzaResponse = orderController
         .addPizzaById(orderId, pizzaOnMenu.get_id(), BAD_SIZE_ID);
     assertTrue(addPizzaResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, addPizzaResponse.getHeaders().getFirst("message"));
+    assertEquals(message, addPizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test
@@ -304,7 +307,7 @@ public class OrderControllerTest {
     ResponseEntity<Order> removePizzaResponse = orderController
         .removePizza(BAD_ORDER_ID, pizzaOnMenu.get_id(), sizeLarge.get_id());
     assertTrue(removePizzaResponse.getStatusCode().is4xxClientError());
-    assertEquals(message, removePizzaResponse.getHeaders().getFirst("message"));
+    assertEquals(message, removePizzaResponse.getHeaders().getFirst(OrderController.getMessageHeaderName()));
   }
 
   @Test

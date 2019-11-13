@@ -63,7 +63,7 @@ public class OrderItems {
     return specials.remove(specialId);
   }
 
-  //Can we get the specialId to use this in StoreController.processOrder()?
+  //TODO: Can we get the specialId to use this in StoreController.processOrder()?
   public OrderSpecial getSpecialById(String specialId) {return specials.get(specialId);}
 
   public List<String> getSpecialNames() {

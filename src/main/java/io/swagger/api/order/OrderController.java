@@ -5,14 +5,15 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.api.exceptions.InvalidPizzaException;
 import io.swagger.api.exceptions.InvalidSpecialApplicationException;
 import io.swagger.api.pizza.PizzaController;
 import io.swagger.api.store.StoreController;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.order.Order;
+import io.swagger.model.order.OrderSpecial;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.pizza.Size;
-import io.swagger.model.order.OrderSpecial;
 import io.swagger.model.specials.Special;
 import io.swagger.model.store.Menu;
 import io.swagger.model.store.Store;
@@ -23,11 +24,9 @@ import io.swagger.repositories.StoreRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,9 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/order")
 public class OrderController {
-
-  private static final String INVALID_PIZZA_MESSAGE = "Pizza must have valid size, crust, and toppings fields to be added to an order.";
+  
+  private static final String MESSAGE_HEADER_NAME = "message";
   private static final String NOT_ON_MENU_MESSAGE = "%s not found in menu associated with this order.";
+  private static final String CUSTOM_PIZZA_DEFAULT_NAME = "custom";
 
   @Autowired
   private OrderRepository orderRepository;
@@ -54,13 +54,14 @@ public class OrderController {
   @Autowired
   private StoreController storeController;
 
+  //TODO: make string 'message' a constant
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates an order", tags = {"order",})
   public ResponseEntity<Order> createOrder(
       @ApiParam("Store Id for order.") @RequestParam(value = "storeId") String storeId) {
     Optional<Store> store = storeRepository.findById(storeId);
     if (!store.isPresent()) {
-      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "storeId " + storeId + " not found.")
           .build();
     }
     Order newOrder = new Order(storeId);
@@ -76,7 +77,7 @@ public class OrderController {
       @ApiParam("Id of size to get.") @PathVariable("orderId") String orderId) {
     Optional<Order> order = orderRepository.findById(orderId);
     if (!order.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "orderId " + orderId + " not found.")
           .build();
     }
     return ResponseEntity.ok(order.get());
@@ -89,14 +90,14 @@ public class OrderController {
       @ApiParam("Id of customer.") @RequestParam(value = "customerId") String customerId) {
     Optional<Order> orderToGet = orderRepository.findById(orderId);
     if (!orderToGet.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "orderId " + orderId + " not found.")
           .build();
     }
     Order order = orderToGet.get();
     Optional<Customer> customer = customerRepository.findById(customerId);
     if (!customer.isPresent()) {
       return ResponseEntity.notFound()
-          .header("message", "customerId " + customerId + " not found.").build();
+          .header(MESSAGE_HEADER_NAME, "customerId " + customerId + " not found.").build();
     }
     order.setCustomer(customer.get());
     return ResponseEntity.ok(orderRepository.save(order));
@@ -106,23 +107,46 @@ public class OrderController {
   @ApiOperation(value = "Adds a custom pizza to an order", tags = {"order",})
   public ResponseEntity<Order> addCustomPizza(
       @ApiParam("Order Id to add to.") @PathVariable(value = "orderId") String orderId,
+      @ApiParam("Name for new pizza, default is 'custom'") @RequestParam(value = "name", required = false, defaultValue = CUSTOM_PIZZA_DEFAULT_NAME) String name,
       @ApiParam("Crust ID for new pizza") @RequestParam(value = "crustId") String crustId,
       @ApiParam("Topping ID's for new pizza") @RequestParam(value = "toppingIds") List<String> toppingIds,
       @ApiParam("Size ID for new pizza") @RequestParam(value = "sizeId") String sizeId) {
     Optional<Order> orderToGet = orderRepository.findById(orderId);
     if (!orderToGet.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "orderId " + orderId + " not found.")
           .build();
     }
     Order order = orderToGet.get();
-    ResponseEntity<Pizza> createPizzaResponse = pizzaController.createPizza("Custom", crustId, toppingIds, sizeId);
-    if (!createPizzaResponse.getStatusCode().is2xxSuccessful()) {
-      return ResponseEntity.badRequest().header("message", createPizzaResponse.getHeaders().getFirst("message")).build();
+    try {
+      Pizza customPizza = pizzaController.validatePizza(name, crustId, toppingIds, sizeId);
+      order.addPizza(customPizza);
+      return ResponseEntity.ok(orderRepository.save(order));
+    } catch (InvalidPizzaException e) {
+      return ResponseEntity.badRequest().header(MESSAGE_HEADER_NAME, e.getMessage()).build();
     }
-    Pizza customPizza = createPizzaResponse.getBody();
-    order.addPizza(customPizza);
-    return ResponseEntity.ok(orderRepository.save(order));
   }
+
+//  @RequestMapping(path = "/{orderId}/addCustomPizza", method = RequestMethod.PUT)
+//  @ApiOperation(value = "Adds a custom pizza to an order", tags = {"order",})
+//  public ResponseEntity<Order> addCustomPizza(
+//      @ApiParam("Order Id to add to.") @PathVariable(value = "orderId") String orderId,
+//      @ApiParam("Crust ID for new pizza") @RequestParam(value = "crustId") String crustId,
+//      @ApiParam("Topping ID's for new pizza") @RequestParam(value = "toppingIds") List<String> toppingIds,
+//      @ApiParam("Size ID for new pizza") @RequestParam(value = "sizeId") String sizeId) {
+//    Optional<Order> orderToGet = orderRepository.findById(orderId);
+//    if (!orderToGet.isPresent()) {
+//      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "orderId " + orderId + " not found.")
+//          .build();
+//    }
+//    Order order = orderToGet.get();
+//    ResponseEntity<Pizza> createPizzaResponse = pizzaController.createPizza("Custom", crustId, toppingIds, sizeId);
+//    if (!createPizzaResponse.getStatusCode().is2xxSuccessful()) {
+//      return ResponseEntity.badRequest().header(MESSAGE_HEADER_NAME, createPizzaResponse.getHeaders().getFirst(MESSAGE_HEADER_NAME)).build();
+//    }
+//    Pizza customPizza = createPizzaResponse.getBody();
+//    order.addPizza(customPizza);
+//    return ResponseEntity.ok(orderRepository.save(order));
+//  }
 
   @RequestMapping(path = "/{orderId}/addPizzaById", method = RequestMethod.PUT)
   @ApiOperation(value = "Adds a pizza from store's menu to an order", tags = {"order",})
@@ -138,18 +162,18 @@ public class OrderController {
     ResponseEntity<Menu> menuResponse = storeController.getMenu(order.getStoreId());
     Menu orderMenu = menuResponse.getBody();
     if (orderMenu == null) {
-      return ResponseEntity.notFound().header(menuResponse.getHeaders().getFirst("message"))
+      return ResponseEntity.notFound().header(menuResponse.getHeaders().getFirst(MESSAGE_HEADER_NAME))
           .build();
     }
     Pizza pizzaToAdd = orderMenu.getPizza(pizzaId);
     if (pizzaToAdd == null) {
-      return ResponseEntity.notFound().header("message",
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME,
           "pizzaId " + pizzaId + " not found in menu associated with this order.")
           .build();
     }
     Optional<Size> size = sizeRepository.findById(sizeId);
     if (!size.isPresent()) {
-      return ResponseEntity.notFound().header("message",
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME,
           "sizeId " + sizeId + " not found.").build();
     }
     pizzaToAdd.setSize(size.get());
@@ -167,14 +191,14 @@ public class OrderController {
     ResponseEntity<Order> orderResponse = findById(orderId);
     Order order = orderResponse.getBody();
     if (order == null) {
-      return ResponseEntity.notFound().header(orderResponse.getHeaders().getFirst("message"))
+      return ResponseEntity.notFound().header(orderResponse.getHeaders().getFirst(MESSAGE_HEADER_NAME))
           .build();
     }
     try {
       OrderSpecial orderSpecial = validateSpecial(specialId, pizzaIds, order);
       order.addSpecial(orderSpecial);
     } catch (InvalidSpecialApplicationException e) {
-      return ResponseEntity.badRequest().header("message", e.getMessage()).build();
+      return ResponseEntity.badRequest().header(MESSAGE_HEADER_NAME, e.getMessage()).build();
     }
     return ResponseEntity.ok(orderRepository.save(order));
   }
@@ -187,14 +211,15 @@ public class OrderController {
       @ApiParam("Size Id of pizza to remove from order.") @RequestParam(value = "sizeId") String sizeId) {
     Optional<Order> orderToGet = orderRepository.findById(orderId);
     if (!orderToGet.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "orderId " + orderId + " not found.")
           .build();
     }
     Order order = orderToGet.get();
     boolean removedPizza = order.removePizza(pizzaId, sizeId);
     if (!removedPizza) {
       return ResponseEntity.badRequest()
-          .header("message", "pizza with Id " + pizzaId + " and sizeId " + sizeId + " not found in order")
+          .header(MESSAGE_HEADER_NAME,
+              "pizza with Id " + pizzaId + " and sizeId " + sizeId + " not found in order")
           .build();
     }
     return ResponseEntity.ok(orderRepository.save(order));
@@ -207,14 +232,14 @@ public class OrderController {
       @ApiParam("Special Id to remove from order.") @RequestParam(value = "specialId") String specialId) {
     Optional<Order> orderToGet = orderRepository.findById(orderId);
     if (!orderToGet.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+      return ResponseEntity.notFound().header(MESSAGE_HEADER_NAME, "orderId " + orderId + " not found.")
           .build();
     }
     Order order = orderToGet.get();
     OrderSpecial removedSpecial = order.removeSpecialById(specialId);
     if (removedSpecial == null) {
       return ResponseEntity.badRequest()
-          .header("message", "specialId " + specialId + " not found in order with Id " + orderId)
+          .header(MESSAGE_HEADER_NAME, "specialId " + specialId + " not found in order with Id " + orderId)
           .build();
     }
     return ResponseEntity.ok(orderRepository.save(order));
@@ -226,12 +251,13 @@ public class OrderController {
   private OrderSpecial validateSpecial(String specialId, List<String> pizzaIds, Order order)
       throws InvalidSpecialApplicationException {
     if (order.getOrderItems().getSpecialById(specialId) != null) {
-      throw new InvalidSpecialApplicationException("specialId " + specialId + " already exists in this order.");
+      throw new InvalidSpecialApplicationException(
+          "specialId " + specialId + " already exists in this order.");
     }
     ResponseEntity<Menu> menuResponse = storeController.getMenu(order.getStoreId());
     Menu orderMenu = menuResponse.getBody();
     if (orderMenu == null) {
-      throw new InvalidSpecialApplicationException(menuResponse.getHeaders().getFirst("message"));
+      throw new InvalidSpecialApplicationException(menuResponse.getHeaders().getFirst(MESSAGE_HEADER_NAME));
     }
     Special special = orderMenu.getSpecial(specialId);
     if (special == null) {
@@ -255,5 +281,17 @@ public class OrderController {
       specialPizzas.add(pizza);
     }
     return new OrderSpecial(special, specialPizzas);
+  }
+
+  public static String getMessageHeaderName() {
+    return MESSAGE_HEADER_NAME;
+  }
+
+  public static String getNotOnMenuMessage() {
+    return NOT_ON_MENU_MESSAGE;
+  }
+
+  public static String getCustomPizzaDefaultName() {
+    return CUSTOM_PIZZA_DEFAULT_NAME;
   }
 }
