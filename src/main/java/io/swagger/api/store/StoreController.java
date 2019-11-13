@@ -224,7 +224,13 @@ public class StoreController {
           .build();
     }
     List<String> pizzaNames = order.getOrderItems().getPizzaNames();
+    if (pizzaNames.size() < 1) {
+      return ResponseEntity.badRequest().header("message", "No pizzas in order to process.")
+          .build();
+    }
+
     String paymentDetails = customerCreditCard.getCardNumber().substring(customerCreditCard.getCardNumber().length()-4);
+
     ResponseEntity <Receipt> receipt = receiptController.createReceipt(
         store.getName(),
         order.getCustomer().getName(),

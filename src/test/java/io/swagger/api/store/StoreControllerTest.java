@@ -1,5 +1,6 @@
 package io.swagger.api.store;
 
+import io.swagger.api.customer.CustomerController;
 import io.swagger.api.order.OrderController;
 import io.swagger.api.pizza.CrustController;
 import io.swagger.api.pizza.PizzaController;
@@ -8,6 +9,7 @@ import io.swagger.api.pizza.ToppingController;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.customer.Receipt;
 import io.swagger.model.order.Order;
+import io.swagger.model.order.OrderPizza;
 import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.pizza.Size;
@@ -38,6 +40,11 @@ import static org.junit.Assert.assertFalse;
 @TestPropertySource("classpath:/application-test.properties")
 @SpringBootTest
 public class StoreControllerTest {
+  private Crust crust;
+  private Topping topping;
+  private Topping topping2;
+  private List<String> toppingIds;
+  private Pizza pizza;
 
   @Autowired
   private CrustController crustController;
@@ -53,7 +60,6 @@ public class StoreControllerTest {
   private StoreController storeController;
   @Autowired
   private StoreRepository storeRepository;
-
   @Autowired
   private OrderRepository orderRepository;
   @Autowired
@@ -67,25 +73,11 @@ public class StoreControllerTest {
   @Autowired
   private CustomerRepository customerRepository;
   @Autowired
+  private CustomerController customerController;
+  @Autowired
   private SpecialRepository specialRepository;
   @Autowired
   private OrderController orderController;
-
-  private Crust crust;
-  private Topping topping;
-  private Topping topping2;
-  private List<Topping> toppings;
-  private List<String> toppingIds;
-  private Pizza pizzaOnMenu, pizzaNotOnMenu;
-  private Store store;
-  private Order order;
-  private Customer customer;
-  private List<String> pizzaIdsToAdd;
-  private List<Pizza> pizzasToAdd;
-  private Menu menu;
-  private Size sizeLarge;
-  private Special special;
-  private List<Special> specialsToAdd;
 
   @Before
   public void setUp() throws Exception {
@@ -202,6 +194,72 @@ public class StoreControllerTest {
     ResponseEntity <Store> updatedStore = storeController.changeLocation(storeId, NEWADDRESS);
     String currentAddress = updatedStore.getBody().getAddress();
     assertEquals(NEWADDRESS, currentAddress );
+  }
+
+  @Test
+  public void processNewOrder() {
+    Customer newCustomer = new Customer(
+        "Daniel English",
+        "492-372-3714",
+        "4256 2nd Ave Seattle, WA 98362"
+    );
+    ResponseEntity<Customer> customer = customerController.createCustomer(newCustomer);
+    String customerId = customer.getBody().get_id();
+
+
+    String STORENAME = "UptownGurl";
+    String ADDRESS = "123 Jerry St.";
+    //Store
+    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    String storeId = store.getBody().get_id();
+    //Order
+    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    String orderId = order.getBody().get_id();
+    //Pizza
+    crust = new Crust(4.50, false, "thin crust");
+    ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
+    String crustId = newCrust.getBody().get_id();
+    topping = new Topping("pepperoni", .10);
+    toppingRepository.insert(topping);
+    topping2 = new Topping("sausage", .10);
+    toppingRepository.insert(topping2);
+    toppingIds = new ArrayList<>();
+    toppingIds.add(topping.get_id());
+    toppingIds.add(topping2.get_id());
+    List<Topping> toppings = new ArrayList<>();
+    toppings.add(topping);
+    toppings.add(topping2);
+    pizza = new Pizza(
+        "Pepperoni",
+        crust,
+        toppings
+    );
+    ResponseEntity<Pizza> response = pizzaController.createPizza(
+        pizza.getName(),
+        crust.get_id(),
+        toppingIds
+    );
+    String NAME = "large";
+    Double PRICE = 15.5;
+    Size size = new Size(NAME, PRICE);
+    ResponseEntity<Size> newSize = sizeController.saveSize(size);
+    String sizeId = newSize.getBody().get_id();
+    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+        orderId,
+        pizza.getName(),
+        crustId,
+        toppingIds,
+        sizeId
+        );
+    String pizzaForOrderId = pizzaForOrder.getBody().get_id();
+    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+        orderId,
+        pizzaForOrderId,
+        sizeId
+        );
+
+
+
   }
 
 //  @Test
