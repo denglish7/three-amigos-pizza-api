@@ -218,7 +218,7 @@ public class StoreController {
       return ResponseEntity.badRequest().header("message", "orderId " + orderId + " has no pizza's in cart.")
           .build();
     }
-    CreditCard customerCreditCard = order.getCreditCard();
+    CreditCard customerCreditCard = order.getCustomer().getCreditCard();
     if (!store.validateCard(customerCreditCard)) {
       return ResponseEntity.badRequest().header("message", "Invalid card number entered.")
           .build();

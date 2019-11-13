@@ -1,6 +1,7 @@
 package io.swagger.api.store;
 
 import io.swagger.api.customer.CustomerController;
+import io.swagger.api.customer.ReceiptController;
 import io.swagger.api.order.OrderController;
 import io.swagger.api.pizza.CrustController;
 import io.swagger.api.pizza.PizzaController;
@@ -78,14 +79,20 @@ public class StoreControllerTest {
   private SpecialRepository specialRepository;
   @Autowired
   private OrderController orderController;
+  @Autowired
+  private ReceiptRepository receiptRepository;
+  @Autowired
+  private ReceiptController receiptController;
 
   @Before
   public void setUp() throws Exception {
+    receiptRepository.deleteAll();
     storeRepository.deleteAll();
   }
 
   @After
   public void tearDown() throws Exception {
+    receiptRepository.deleteAll();
     storeRepository.deleteAll();
   }
 
@@ -198,6 +205,7 @@ public class StoreControllerTest {
 
   @Test
   public void processNewOrder() {
+    //Customer
     Customer newCustomer = new Customer(
         "Daniel English",
         "492-372-3714",
@@ -205,7 +213,17 @@ public class StoreControllerTest {
     );
     ResponseEntity<Customer> customer = customerController.createCustomer(newCustomer);
     String customerId = customer.getBody().get_id();
-
+    String CARDNUM = "1234567891234567";
+    Integer EXPMONTH = 12;
+    Integer EXPYEAR = 19;
+    String CVV = "888";
+    ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
+        customerId,
+        CARDNUM,
+        EXPMONTH,
+        EXPYEAR,
+        CVV
+    );
 
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
@@ -215,6 +233,7 @@ public class StoreControllerTest {
     //Order
     ResponseEntity <Order> order = orderController.createOrder(storeId);
     String orderId = order.getBody().get_id();
+    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
     //Pizza
     crust = new Crust(4.50, false, "thin crust");
     ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
@@ -258,21 +277,12 @@ public class StoreControllerTest {
         sizeId
         );
 
-
+    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+        storeId,
+        orderId
+    );
+    assertTrue(receiptRepository.count() > 0);
 
   }
 
-//  @Test
-//  public void testCompleteOrder() {
-//    String STORENAME = "UptownGurl";
-//    String ADDRESS = "123 Jerry St.";
-//    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
-//    String storeId = store.getBody().get_id();
-//    ResponseEntity <Order> order = orderController.createOrder(storeId);
-//    String orderId = order.getBody().get_id();
-//
-//    ResponseEntity <Receipt> processOrder = storeController.processNewOrder(storeId, orderId);
-//    ResponseEntity <Store> completeOrder = storeController.completeOrder(storeId, orderId);
-//    assertEquals(1, completeOrder.getBody().getCompletedOrders().size(), 0);
-//  }
 }
