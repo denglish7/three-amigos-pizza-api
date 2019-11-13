@@ -44,7 +44,8 @@ public class ReceiptControllerTest {
     PIZZASORDERED.add("CHEESE");
     PIZZASORDERED.add("PEPPERONI");
     PIZZASORDERED.add("SAUSAGE-ONION");
-    String SPECIALAPPLIED = "241";
+    List <String> SPECIALAPPLIED = new ArrayList <>();
+    SPECIALAPPLIED.add("241");
     String CARDNUMLASTFOUR = "1234";
     Double PRICEPAID = 45.60;
 
@@ -67,7 +68,8 @@ public class ReceiptControllerTest {
     PIZZASORDERED.add("CHEESE");
     PIZZASORDERED.add("PEPPERONI");
     PIZZASORDERED.add("SAUSAGE-ONION");
-    String SPECIALAPPLIED = "241";
+    List <String> SPECIALAPPLIED = new ArrayList <>();
+    SPECIALAPPLIED.add("241");
     String CARDNUMLASTFOUR = "1234";
     Double PRICEPAID = 45.60;
 

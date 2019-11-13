@@ -4,16 +4,16 @@ package io.swagger.api.store;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.api.customer.ReceiptController;
 import io.swagger.model.customer.CreditCard;
+import io.swagger.model.customer.Receipt;
 import io.swagger.model.specials.Special;
 import io.swagger.model.order.Order;
 import io.swagger.model.store.Menu;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.store.Store;
-import io.swagger.repositories.OrderRepository;
-import io.swagger.repositories.PizzaRepository;
-import io.swagger.repositories.SpecialRepository;
-import io.swagger.repositories.StoreRepository;
+import io.swagger.repositories.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +38,12 @@ public class StoreController {
   private PizzaRepository pizzaRepository;
   @Autowired
   private SpecialRepository specialRepository;
+  @Autowired
+  private ReceiptController receiptController;
+  @Autowired
+  private ReceiptRepository receiptRepository;
 
-  //Return all stores
+
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all stores in the system.", response = Store.class, responseContainer = "List", tags = {
       "store",})
@@ -47,7 +51,7 @@ public class StoreController {
     return ResponseEntity.ok(storeRepository.findAll());
   }
 
-  //Create a new store, with or without copying an existing menu
+
   @RequestMapping(path = "/", method = RequestMethod.POST)
   @ApiOperation(value = "Creates a store", tags = {"store",})
   public ResponseEntity <Store> createStore(
@@ -68,7 +72,7 @@ public class StoreController {
     return ResponseEntity.ok(storeRepository.save(newStore));
   }
 
-  //Get the menu from a specified store
+
   @RequestMapping(path = "/{storeId}/menu", method = RequestMethod.GET)
   @ApiOperation(value = "Get a store's menu", tags = {"store",})
   public ResponseEntity <Menu> getMenu(
@@ -125,7 +129,45 @@ public class StoreController {
     return ResponseEntity.ok(storeMenu);
   }
 
-  //Get the location of a specified store
+  @RequestMapping(path = "/{storeId}/menu/remove", method = RequestMethod.PUT)
+  @ApiOperation(value = "Remove items from a store's menu", tags = {"store",})
+  public ResponseEntity <Menu> removeFromStoreMenu(
+      @ApiParam("Store Id to remove menu items from.") @PathVariable("storeId") String storeId,
+      @ApiParam("List of Pizza ids to remove from menu") @RequestParam(value = "pizzaIds", required = false) List <String> pizzaIds,
+      @ApiParam("List of Special ids to remove from menu") @RequestParam(value = "specialIds", required = false) List <String> specialIds) {
+    Optional <Store> storeToGet = storeRepository.findById(storeId);
+    if (!storeToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
+          .build();
+    }
+    Store store = storeToGet.get();
+    Menu storeMenu = store.getMenu();
+    if (pizzaIds != null) {
+      for (String pizzaId : pizzaIds) {
+        Optional <Pizza> pizza = pizzaRepository.findById(pizzaId);
+        if (!pizza.isPresent()) {
+          return ResponseEntity.notFound().header("message", "pizzaId " + pizzaId + " not found.")
+              .build();
+        }
+      }
+      storeMenu.removePizzas(pizzaIds);
+    }
+    if (specialIds != null) {
+      for (String specialId : specialIds) {
+        Optional <Special> special = specialRepository.findById(specialId);
+        if (!special.isPresent()) {
+          return ResponseEntity.notFound()
+              .header("message", "specialId " + specialId + " not found.").build();
+        }
+      }
+      storeMenu.removePizzas(specialIds);
+    }
+    store.setMenu(storeMenu);
+    storeRepository.save(store);
+    return ResponseEntity.ok(storeMenu);
+  }
+
+
   @RequestMapping(path = "/{storeId}/Location", method = RequestMethod.GET)
   @ApiOperation(value = "Get a store's location", tags = {"store",})
   public ResponseEntity <String> getLocation(
@@ -138,7 +180,7 @@ public class StoreController {
     return ResponseEntity.ok(storeToGet.get().getAddress());
   }
 
-  //Update the location of a store
+
   @RequestMapping(path = "/{storeId}/UpdateLocation", method = RequestMethod.PUT)
   @ApiOperation(value = "Store Id to change the location of.", tags = {"store",})
   public ResponseEntity <Store> changeLocation(
@@ -156,10 +198,9 @@ public class StoreController {
 
   @RequestMapping(path = "/{storeId}/checkout", method = RequestMethod.PUT)
   @ApiOperation(value = "Submit your order.", tags = {"store",})
-  public ResponseEntity <Store> processNewOrder(
+  public ResponseEntity <Receipt> processNewOrder(
       @ApiParam("Store Id of the store processing the order.") @PathVariable("storeId") String storeId,
       @ApiParam("Order Id to process.") @RequestParam(value = "OrderId", required = true) String orderId) {
-    //Get Store processing order
     Optional <Store> storeToGet = storeRepository.findById(storeId);
     if (!storeToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
@@ -167,29 +208,35 @@ public class StoreController {
     }
     Store store = storeToGet.get();
 
-    //Get Order to validate
     Optional <Order> orderToGet = orderRepository.findById(orderId);
     if (!orderToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
           .build();
     }
     Order order = orderToGet.get();
-    // - Number of Pizzas > 0
     if (order.isEmpty()) {
       return ResponseEntity.badRequest().header("message", "orderId " + orderId + " has no pizza's in cart.")
           .build();
     }
-    // - Card Num
     CreditCard customerCreditCard = order.getCreditCard();
     if (!store.validateCard(customerCreditCard)) {
       return ResponseEntity.badRequest().header("message", "Invalid card number entered.")
           .build();
     }
-
-    // make receipt but only save last 4 digits of card number
-
+    List<String> pizzaNames = order.getOrderItems().getPizzaNames();
+    String paymentDetails = customerCreditCard.getCardNumber().substring(customerCreditCard.getCardNumber().length()-4);
+    ResponseEntity <Receipt> receipt = receiptController.createReceipt(
+        store.getName(),
+        order.getCustomer().getName(),
+        orderId,
+        pizzaNames,
+        order.getOrderItems().getSpecialNames(),
+        paymentDetails,
+        order.getOrderItems().getPrice(order.getPrice())
+    );
     store.processOrder(order);
-    return ResponseEntity.ok(storeRepository.save(store));
+    ResponseEntity.ok(storeRepository.save(store));
+    return ResponseEntity.ok(receipt.getBody());
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)

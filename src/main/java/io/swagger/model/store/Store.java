@@ -8,7 +8,9 @@ import io.swagger.model.order.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Document(collection = "stores")
 public class Store {
@@ -90,12 +92,30 @@ public class Store {
     this.currentOrders.put(order.get_id(), order);
   }
 
+  public List <String> getCurrentOrders() {
+    List <String> currentOrderIds = new ArrayList <>();
+    for (String key : this.currentOrders.keySet()) {
+      String currentOrderId = currentOrders.get(key).get_id();
+      currentOrderIds.add(currentOrderId);
+    }
+    return currentOrderIds;
+  }
+
   /**
    * Moves an order from current orders into the list of completed orders.
-   * @param OrderId orderId being completed
+   * @param orderId orderId being completed
    */
-  public void completeOrder(String OrderId) {
-    Order completedOrder = this.currentOrders.get(OrderId);
+  public void completeOrder(String orderId) {
+    Order completedOrder = this.currentOrders.get(orderId);
     this.completedOrders.put(completedOrder.get_id(), completedOrder);
+  }
+
+  public List <String> getCompletedOrders() {
+    List <String> completedOrderIds = new ArrayList <>();
+    for (String key : this.completedOrders.keySet()) {
+      String completedOrderId = completedOrders.get(key).get_id();
+      completedOrderIds.add(completedOrderId);
+    }
+    return completedOrderIds;
   }
 }

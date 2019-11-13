@@ -17,7 +17,7 @@ public class Receipt {
   private String customerName;
   private String orderId;
   private List <String> pizzas;
-  private String specialApplied;
+  private List <String> specialApplied;
   private String paymentMethod;
   private Double pricePaid;
 
@@ -30,7 +30,7 @@ public class Receipt {
    * @param pizzas names of the pizza's ordered
    * @param pricePaid price paid in dollars
    */
-  public Receipt(String storeName, String customerName, String orderId, List <String> pizzas, String specialApplied, String paymentMethod, Double pricePaid) {
+  public Receipt(String storeName, String customerName, String orderId, List <String> pizzas, List <String> specialApplied, String paymentMethod, Double pricePaid) {
     this.timeOfPurchase = LocalDateTime.now().toLocalDate().toString();
     this.storeName = storeName;
     this.customerName = customerName;

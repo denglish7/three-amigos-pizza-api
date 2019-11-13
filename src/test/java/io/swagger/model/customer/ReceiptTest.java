@@ -18,7 +18,8 @@ public class ReceiptTest {
     PIZZASORDERED.add("CHEESE");
     PIZZASORDERED.add("PEPPERONI");
     PIZZASORDERED.add("SAUSAGE-ONION");
-    String SPECIALAPPLIED = "241";
+    List<String> SPECIALAPPLIED = new ArrayList <>();
+    SPECIALAPPLIED.add("241");
     String CARDNUMLASTFOUR = "1234";
     Double PRICEPAID = 45.60;
 
@@ -45,7 +46,7 @@ public class ReceiptTest {
           "'Customer: DanDanJonah" +
           "'Order Id: sskjdbf" +
           "'Pizzas: [CHEESE, PEPPERONI, SAUSAGE-ONION]" +
-          "'Promotion Applied: 241" +
+          "'Promotion Applied: [241]" +
           "'Payment Method: Card Ending In 1234" +
           "'Total: $45.6",
       printedReceipt);

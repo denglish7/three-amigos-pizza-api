@@ -32,7 +32,7 @@ public class ReceiptController {
       @ApiParam("Customer's name.") @RequestParam(value = "customer name") String customerName,
       @ApiParam("Order Id.") @RequestParam(value = "order id") String orderId,
       @ApiParam("Pizzas in order.") @RequestParam(value = "pizzas ordered") List<String> pizzas,
-      @ApiParam("Promotion applied to order.") @RequestParam(value = "promotion used") String specialApplied,
+      @ApiParam("Promotion applied to order.") @RequestParam(value = "promotion used") List <String> specialApplied,
       @ApiParam("Last 4 digits of the credit card charged.") @RequestParam(value = "last 4 digits of card") String paymentMethod,
       @ApiParam("Price paid.") @RequestParam(value = "price") Double pricePaid) {
     Receipt receipt = new Receipt(
