@@ -26,6 +26,7 @@ public class Order {
   private OrderDetails orderDetails;
   @DBRef
   private Customer customer;
+  private String creditCard;
 
   public Order() {
   }
@@ -117,5 +118,17 @@ public class Order {
       setPrice(getPrice() - removedPizza.getPrice());
     }
     return removedPizza;
+  }
+
+  public void addCreditCard(String cardNum) {
+    this.creditCard = cardNum;
+  }
+
+  public String getCreditCard() {
+    return this.creditCard;
+  }
+
+  public Boolean isEmpty() {
+    return orderDetails.isEmpty();
   }
 }

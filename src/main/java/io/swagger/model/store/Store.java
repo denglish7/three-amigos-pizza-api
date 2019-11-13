@@ -66,6 +66,11 @@ public class Store {
   }
 
 
+  /**
+   * Validates a customer's card based on length.
+   * @param customerCard customer's credit card
+   * @return true if valid, false otherwise
+   */
   public Boolean validateCard(String customerCard) {
     if (customerCard.length() == 16) {
       return true;
@@ -73,21 +78,20 @@ public class Store {
     return false;
   }
 
+  /**
+   * Moves an order into the list of current orders.
+   * @param order an order provided by the customer at checkout
+   */
   public void processOrder(Order order) {
     this.currentOrders.put(order.get_id(), order);
   }
 
-//  public void completeOrder(String OrderId) {
-//    Order completedOrder = this.currentOrders.get(OrderId);
-//    Receipt customerReciept = new Receipt(
-//        completedOrder.get_id(),
-//        completedOrder.getOrderDetails().getPizzas(),
-//        completedOrder.getPrice()
-//        );
-//
-//    completedOrder.getCustomer().receipts.add(customerReciept);
-//    this.completedOrders.put(completedOrder.get_id(), completedOrder);
-//  }
-
-
+  /**
+   * Moves an order from current orders into the list of completed orders.
+   * @param OrderId
+   */
+  public void completeOrder(String OrderId) {
+    Order completedOrder = this.currentOrders.get(OrderId);
+    this.completedOrders.put(completedOrder.get_id(), completedOrder);
+  }
 }

@@ -203,6 +203,7 @@ public class OrderController {
       return ResponseEntity.badRequest().header("message",
           "specialId " + specialId + " not found in menu associated with this order.").build();
     }
+    return null;
   }
 
   private void validateSpecial(Special special, Order order) throws InvalidSpecialApplicationException {
@@ -232,7 +233,7 @@ public class OrderController {
   }
 
   private Double calculatePrice(Order order) {
-
+    return 0.0;
   }
 
 }
