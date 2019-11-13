@@ -1,36 +1,36 @@
 package io.swagger.model.order;
 
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.model.Priceable;
 import io.swagger.model.customer.Customer;
 import io.swagger.model.pizza.Pizza;
-import java.util.List;
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "orders")
-public class Order {
+public class Order implements Priceable {
 
   @ApiModelProperty(hidden = true)
   private String _id;
   @NotNull
+  private LocalDateTime timeCreated = LocalDateTime.now();
+  @NotNull
   private String storeId;
   @NotNull
-  private OrderDetails orderDetails;
+  private OrderItems orderItems;
   @DBRef
   private Customer customer;
-
+  private Double price = BASE_PRICE;
   private String creditCard;
-
-//  @ApiModelProperty(hidden=true)
-//  private OrderStatus status;
 
   public Order() {
   }
 
   public Order(@NotNull String storeId) {
     this.storeId = storeId;
-    this.orderDetails = new OrderDetails();
+    this.orderItems = new OrderItems();
   }
 
   /**
@@ -42,25 +42,28 @@ public class Order {
     return _id;
   }
 
+  /**
+   * Get timeCreated
+   * @return timeCreated
+   */
+  public LocalDateTime getTimeCreated() {
+    return timeCreated;
+  }
+
+  public void setTimeCreated(LocalDateTime timeCreated) {
+    this.timeCreated = timeCreated;
+  }
+
+  /**
+   * Get storeId
+   * @return storeId
+   */
   public String getStoreId() {
     return storeId;
   }
 
   public void setStoreId(String storeId) {
     this.storeId = storeId;
-  }
-
-  /**
-   * Get orderDetails
-   *
-   * @return orderDetails
-   */
-  public OrderDetails getOrderDetails() {
-    return orderDetails;
-  }
-
-  public void setOrderDetails(OrderDetails orderDetails) {
-    this.orderDetails = orderDetails;
   }
 
   /**
@@ -72,12 +75,44 @@ public class Order {
     return customer;
   }
 
+  @Override
+  public Double getPrice() {
+    return price;
+  }
+
+  @Override
+  public void setPrice() {
+    this.price = orderItems.getPrice(BASE_PRICE);
+  }
+
+  public OrderItems getOrderItems() {
+    return orderItems;
+  }
+
   public void setCustomer(Customer customer) {
     this.customer = customer;
   }
 
-  public void addPizzas(List<Pizza> pizzas) {
-    this.orderDetails.addPizzas(pizzas);
+  public void addPizza(Pizza pizza) {
+    orderItems.addPizza(pizza);
+    setPrice();
+  }
+
+  public Pizza removePizzaById(String pizzaId) {
+    Pizza removedPizza = orderItems.removePizzaById(pizzaId);
+    setPrice();
+    return removedPizza;
+  }
+
+  public void addSpecial(OrderSpecial special) {
+    orderItems.addSpecial(special);
+    setPrice();
+  }
+
+  public OrderSpecial removeSpecialById(String specialId) {
+    OrderSpecial removedSpecial = orderItems.removeSpecialById(specialId);
+    setPrice();
+    return removedSpecial;
   }
 
   public void addCreditCard(String cardNum) {
@@ -86,5 +121,9 @@ public class Order {
 
   public String getCreditCard() {
     return this.creditCard;
+  }
+
+  public Boolean isEmpty() {
+    return orderItems.isEmpty();
   }
 }

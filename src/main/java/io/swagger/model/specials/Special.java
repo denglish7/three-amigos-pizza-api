@@ -15,7 +15,9 @@ public class Special {
   private String name;
   @NotNull
   private Double specialPriceRatio;
+  @NotNull
   private Integer requiredNumberPizzas;
+  @NotNull
   @DBRef
   private Size requiredSizeOfPizzas;
 
@@ -23,8 +25,9 @@ public class Special {
   }
 
   public Special(@NotNull String name,
-      @NotNull Double specialPriceRatio, Integer requiredNumberPizzas,
-      Size requiredSizeOfPizzas) {
+      @NotNull Double specialPriceRatio,
+      @NotNull Integer requiredNumberPizzas,
+      @NotNull Size requiredSizeOfPizzas) {
     this.name = name;
     this.specialPriceRatio = specialPriceRatio;
     this.requiredNumberPizzas = requiredNumberPizzas;
@@ -77,7 +80,7 @@ public class Special {
    *
    * @return requiredNumberPizzas
    */
-  @ApiModelProperty(example = "2")
+  @ApiModelProperty(allowableValues = ">= 1", example = "2", required = true)
   public Integer getRequiredNumberPizzas() {
     return requiredNumberPizzas;
   }
@@ -91,6 +94,7 @@ public class Special {
    *
    * @return requiredSizeOfPizzas
    */
+  @ApiModelProperty(required = true)
   public Size getRequiredSizeOfPizzas() {
     return requiredSizeOfPizzas;
   }

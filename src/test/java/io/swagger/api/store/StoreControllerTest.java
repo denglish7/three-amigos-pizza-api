@@ -12,7 +12,6 @@ import io.swagger.model.pizza.Topping;
 import io.swagger.model.specials.Special;
 import io.swagger.model.store.Menu;
 import io.swagger.model.store.Store;
-import io.swagger.repositories.MenuRepository;
 import io.swagger.repositories.SpecialRepository;
 import io.swagger.repositories.StoreRepository;
 import org.junit.After;
