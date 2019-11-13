@@ -13,17 +13,21 @@ public class ReceiptTest {
 
   @Before
   public void setUp() throws Exception {
-    String customerName = "DanDanJonah";
-    List <String> pizzasOrdered = new ArrayList <>();
-    pizzasOrdered.add("CHEESE");
-    pizzasOrdered.add("PEPPERONI");
-    pizzasOrdered.add("SAUSAGE-ONION");
+    String STORENAME = "UptownGurl";
+    String CUSTOMERNAME = "DanDanJonah";
+    List <String> PIZZASORDERED = new ArrayList <>();
+    PIZZASORDERED.add("CHEESE");
+    PIZZASORDERED.add("PEPPERONI");
+    PIZZASORDERED.add("SAUSAGE-ONION");
+    String SPECIALAPPLIED = "241";
     Double PRICEPAID = 45.60;
 
     receipt = new Receipt(
-        customerName,
+        STORENAME,
+        CUSTOMERNAME,
         "sskjdbf",
-        pizzasOrdered,
+        PIZZASORDERED,
+        SPECIALAPPLIED,
         PRICEPAID
     );
   }
@@ -32,7 +36,12 @@ public class ReceiptTest {
   public void testToString() {
     String printedReceipt = receipt.toString();
     assertEquals(
-        "Customer: DanDanJonah'Order Id: sskjdbf'Pizzas: [CHEESE, PEPPERONI, SAUSAGE-ONION]'Total: $45.6",
+        "Store: UptownGurl" +
+            "'Customer: DanDanJonah" +
+            "'Order Id: sskjdbf" +
+            "'Pizzas: [CHEESE, PEPPERONI, SAUSAGE-ONION]" +
+            "'Promotion Applied: 241" +
+            "'Total: $45.6",
         printedReceipt);
   }
 }

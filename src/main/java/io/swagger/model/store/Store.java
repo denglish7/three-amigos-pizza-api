@@ -1,16 +1,10 @@
 package io.swagger.model.store;
 
 import io.swagger.annotations.ApiModelProperty;
-
 import javax.validation.constraints.NotNull;
-
-import io.swagger.model.customer.Receipt;
 import io.swagger.model.order.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Document(collection = "stores")
 public class Store {
@@ -20,7 +14,7 @@ public class Store {
   @NotNull
   private String name;
   @NotNull
-  private String location;
+  private String address;
 
   private HashMap <String, Order> currentOrders;
 
@@ -28,10 +22,10 @@ public class Store {
 
   private Menu menu;
 
-  public Store(@NotNull String name, @NotNull String location,
+  public Store(@NotNull String name, @NotNull String address,
       Menu menu) {
     this.name = name;
-    this.location = location;
+    this.address = address;
     this.menu = menu;
     this.currentOrders = new HashMap <>();
     this.completedOrders = new HashMap <>();
@@ -57,14 +51,17 @@ public class Store {
     this.menu = menu;
   }
 
-  public String getLocation() {
-    return location;
+  public String getAddress() {
+    return address;
   }
 
-  public void setLocation(String location) {
-    this.location = location;
+  /**
+   * Update the Store's Address.
+   * @param address a new address
+   */
+  public void setAddress(String address) {
+    this.address = address;
   }
-
 
   /**
    * Validates a customer's card based on length.
@@ -74,8 +71,9 @@ public class Store {
   public Boolean validateCard(String customerCard) {
     if (customerCard.length() == 16) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
   /**
@@ -88,7 +86,7 @@ public class Store {
 
   /**
    * Moves an order from current orders into the list of completed orders.
-   * @param OrderId
+   * @param OrderId orderId being completed
    */
   public void completeOrder(String OrderId) {
     Order completedOrder = this.currentOrders.get(OrderId);
