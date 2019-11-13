@@ -158,26 +158,6 @@ public class OrderController {
     return ResponseEntity.ok(orderRepository.save(order));
   }
 
-  @RequestMapping(path = "/{orderId}/removePizzaById", method = RequestMethod.DELETE)
-  @ApiOperation(value = "Removes a pizza from an order", tags = {"order",})
-  public ResponseEntity<Order> removePizzaById(
-      @ApiParam("Order Id to remove pizza from.") @PathVariable(value = "orderId") String orderId,
-      @ApiParam("Pizza Id to remove from order.") @RequestParam(value = "pizzaId") String pizzaId) {
-    Optional<Order> orderToGet = orderRepository.findById(orderId);
-    if (!orderToGet.isPresent()) {
-      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
-          .build();
-    }
-    Order order = orderToGet.get();
-    Pizza removedPizza = order.removePizzaById(pizzaId);
-    if (removedPizza == null) {
-      return ResponseEntity.badRequest()
-          .header("message", "pizza with Id " + pizzaId + " not found in order with Id " + orderId)
-          .build();
-    }
-    return ResponseEntity.ok(orderRepository.save(order));
-  }
-
   @RequestMapping(path = "/{orderId}/addSpecial", method = RequestMethod.PUT)
   @ApiOperation(value = "Adds a special to an order", tags = {"order",})
   public ResponseEntity<Order> addSpecial(
@@ -195,6 +175,27 @@ public class OrderController {
       order.addSpecial(orderSpecial);
     } catch (InvalidSpecialApplicationException e) {
       return ResponseEntity.badRequest().header("message", e.getMessage()).build();
+    }
+    return ResponseEntity.ok(orderRepository.save(order));
+  }
+
+  @RequestMapping(path = "/{orderId}/removePizza", method = RequestMethod.DELETE)
+  @ApiOperation(value = "Removes a pizza from an order", tags = {"order",})
+  public ResponseEntity<Order> removePizza(
+      @ApiParam("Order Id to remove pizza from.") @PathVariable(value = "orderId") String orderId,
+      @ApiParam("Pizza Id to remove from order.") @RequestParam(value = "pizzaId") String pizzaId,
+      @ApiParam("Size Id of pizza to remove from order.") @RequestParam(value = "sizeId") String sizeId) {
+    Optional<Order> orderToGet = orderRepository.findById(orderId);
+    if (!orderToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "orderId " + orderId + " not found.")
+          .build();
+    }
+    Order order = orderToGet.get();
+    boolean removedPizza = order.removePizza(pizzaId, sizeId);
+    if (!removedPizza) {
+      return ResponseEntity.badRequest()
+          .header("message", "pizza with Id " + pizzaId + " and sizeId " + sizeId + " not found in order")
+          .build();
     }
     return ResponseEntity.ok(orderRepository.save(order));
   }

@@ -178,6 +178,8 @@ public class OrderControllerTest {
     System.out.println("price 1: " + response.getBody().getPrice());
     response = orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
     System.out.println("price 2: " + response.getBody().getPrice());
+    response = orderController.removePizza(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
+    System.out.println("price 3: " + response.getBody().getPrice());
   }
 
   @Test
@@ -279,19 +281,19 @@ public class OrderControllerTest {
   }
 
   @Test
-  public void removePizzaByIdSuccess() {
+  public void removePizzaSuccess() {
     ResponseEntity<Order> response = orderController.createOrder(
         store.get_id()
     );
     String orderId = response.getBody().get_id();
     orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
     ResponseEntity<Order> removePizzaResponse = orderController
-        .removePizzaById(orderId, pizzaOnMenu.get_id());
+        .removePizza(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
     assertTrue(removePizzaResponse.getStatusCode().is2xxSuccessful());
   }
 
   @Test
-  public void removePizzaByIdOrderNotFound() {
+  public void removePizzaOrderNotFound() {
     String BAD_ORDER_ID = "42";
     String message = "orderId " + BAD_ORDER_ID + " not found.";
     ResponseEntity<Order> response = orderController.createOrder(
@@ -300,19 +302,22 @@ public class OrderControllerTest {
     String orderId = response.getBody().get_id();
     orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
     ResponseEntity<Order> removePizzaResponse = orderController
-        .removePizzaById(BAD_ORDER_ID, pizzaOnMenu.get_id());
+        .removePizza(BAD_ORDER_ID, pizzaOnMenu.get_id(), sizeLarge.get_id());
     assertTrue(removePizzaResponse.getStatusCode().is4xxClientError());
     assertEquals(message, removePizzaResponse.getHeaders().getFirst("message"));
   }
 
   @Test
-  public void removePizzaByIdPizzaNotOnOrder() {
+  public void removePizzaPizzaNotFound() {
+    Size sizeSmall = new Size("small", 8.0);
+    sizeRepository.insert(sizeSmall);
     ResponseEntity<Order> response = orderController.createOrder(
         store.get_id()
     );
     String orderId = response.getBody().get_id();
+    orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
     ResponseEntity<Order> removePizzaResponse = orderController
-        .removePizzaById(orderId, pizzaOnMenu.get_id());
+        .removePizza(orderId, pizzaOnMenu.get_id(), sizeSmall.get_id());
     assertTrue(removePizzaResponse.getStatusCode().is4xxClientError());
   }
 

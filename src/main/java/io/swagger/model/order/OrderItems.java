@@ -1,12 +1,14 @@
 package io.swagger.model.order;
 
 import io.swagger.model.pizza.Pizza;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class OrderItems {
 
-  private Map<String, Pizza> pizzas;
+  private Map<String, List<Pizza>> pizzas;
   private Map<String, OrderSpecial> specials;
 
   public OrderItems() {
@@ -15,14 +17,28 @@ public class OrderItems {
   }
 
   public void addPizza(Pizza pizza) {
-    pizzas.put(pizza.get_id(), pizza);
+    List<Pizza> pizzasToPut = new ArrayList<>();
+    if (pizzas.containsKey(pizza.get_id())) {
+      pizzasToPut = pizzas.get(pizza.get_id());
+    }
+    pizzasToPut.add(pizza);
+    pizzas.put(pizza.get_id(), pizzasToPut);
   }
 
-  public Pizza removePizzaById(String pizzaId) {
-    return pizzas.remove(pizzaId);
+  public boolean removePizza(String pizzaId, String sizeId) {
+    if (!pizzas.containsKey(pizzaId)) {
+      return false;
+    }
+    List<Pizza> pizzasWithId = pizzas.get(pizzaId);
+    for (Pizza pizza : pizzasWithId) {
+      if (pizza.getSize().get_id().equals(sizeId)) {
+        pizzasWithId.remove(pizza);
+        pizzas.put(pizzaId, pizzasWithId);
+        return true;
+      }
+    }
+    return false;
   }
-
-  public Pizza getPizzaById(String pizzaId) {return pizzas.get(pizzaId);}
 
   public void addSpecial(OrderSpecial special) {
     specials.put(special.getSpecialId(), special);
@@ -40,8 +56,10 @@ public class OrderItems {
 
   public Double getPrice(Double basePrice) {
     Double price = basePrice;
-    for (Pizza pizza : pizzas.values()) {
-      price += pizza.getPrice();
+    for (List<Pizza> pizzas : pizzas.values()) {
+      for (Pizza pizza : pizzas) {
+        price += pizza.getPrice();
+      }
     }
     for (OrderSpecial special : specials.values()) {
       price += special.getPrice();

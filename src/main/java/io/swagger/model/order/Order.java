@@ -98,10 +98,10 @@ public class Order implements Priceable {
     setPrice();
   }
 
-  public Pizza removePizzaById(String pizzaId) {
-    Pizza removedPizza = orderItems.removePizzaById(pizzaId);
+  public boolean removePizza(String pizzaId, String sizeId) {
+    boolean pizzaRemoved = orderItems.removePizza(pizzaId, sizeId);
     setPrice();
-    return removedPizza;
+    return pizzaRemoved;
   }
 
   public void addSpecial(OrderSpecial special) {
