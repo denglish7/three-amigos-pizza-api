@@ -21,6 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("special")
 public class SpecialController {
 
+  private static final Double MINIMUM_PRICE_RATIO = 0.0;
+  private static final Double MAXIMUM_PRICE_RATIO = 1.0;
+  private static final String PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE =
+      "Price ratio must be in range [" + MINIMUM_PRICE_RATIO + ", " + MAXIMUM_PRICE_RATIO + "]";
+  private static final Integer MINIMUM_NUMBER_REQUIRED_PIZZAS = 1;
+  private static final String TOO_FEW_REQUIRED_PIZZAS_MESSAGE =
+      "Minimum number of required pizzas for a special is " + MINIMUM_NUMBER_REQUIRED_PIZZAS;
+
   @Autowired
   private SpecialRepository specialRepository;
   @Autowired
@@ -40,6 +48,14 @@ public class SpecialController {
       @ApiParam("Price ratio for new special") @RequestParam(value = "priceRatio") Double priceRatio,
       @ApiParam("Required number of pizzas for special") @RequestParam(value = "requiredNumberPizzas") Integer requiredNumberPizzas,
       @ApiParam("Id of required size of pizzas for special") @RequestParam(value = "requiredSizeOfPizzas", required = false) String requiredSizeId) {
+    if (requiredNumberPizzas < MINIMUM_NUMBER_REQUIRED_PIZZAS) {
+      return ResponseEntity.badRequest()
+          .header("message", TOO_FEW_REQUIRED_PIZZAS_MESSAGE).build();
+    }
+    if (priceRatio < MINIMUM_PRICE_RATIO || priceRatio > MAXIMUM_PRICE_RATIO) {
+      return ResponseEntity.badRequest()
+          .header("message", PRICE_RATIO_OUT_OF_BOUNDS_MESSAGE).build();
+    }
     Size requiredSize = null;
     if (requiredSizeId != null) {
       Optional<Size> size = sizeRepository.findById(requiredSizeId);
