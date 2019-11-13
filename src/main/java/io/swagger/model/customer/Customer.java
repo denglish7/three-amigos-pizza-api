@@ -16,6 +16,8 @@ public class Customer {
   @NotNull
   private String address;
 
+  private CreditCard creditCard;
+
   public Customer(@NotNull String name, @NotNull String phone,
       @NotNull String address) {
     this.name = name;
@@ -72,5 +74,20 @@ public class Customer {
 
   public void setAddress(String address) {
     this.address = address;
+  }
+
+  /**
+   * Gathers credit card details from the customer to be submitted with their order.
+   * @param cardNumber card number
+   * @param expirationMonth expiration month
+   * @param expirationYear expiration year
+   * @param cvv cvv
+   */
+  public void setCreditCard(String cardNumber, Integer expirationMonth, Integer expirationYear, String cvv) {
+    this.creditCard = new CreditCard(cardNumber, expirationMonth, expirationYear, cvv);
+  }
+
+  public CreditCard getCreditCard() {
+    return this.creditCard;
   }
 }

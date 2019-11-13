@@ -21,6 +21,10 @@ public class OrderSpecial implements Priceable {
     return special.get_id();
   }
 
+  public String getSpecialName() {
+    return special.getName();
+  }
+
   @Override
   public void setPrice() {
     Double price = BASE_PRICE;
