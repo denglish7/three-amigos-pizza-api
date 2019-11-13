@@ -3,6 +3,8 @@ package io.swagger.api.pizza;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.api.exceptions.InvalidPizzaException;
+import io.swagger.model.order.OrderPizza;
 import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
 import io.swagger.model.pizza.Size;
@@ -50,33 +52,49 @@ public class PizzaController {
   public ResponseEntity<Pizza> createPizza(
       @ApiParam("Name for new pizza") @RequestParam(value = "pizzaName") String pizzaName,
       @ApiParam("Crust ID for new pizza") @RequestParam(value = "crustId") String crustId,
-      @ApiParam("Topping ID's for new pizza") @RequestParam(value = "toppingIds") List<String> toppingIds,
-      @ApiParam("Size ID for new pizza") @RequestParam(value = "sizeId", required = false) String sizeId) {
+      @ApiParam("Topping ID's for new pizza") @RequestParam(value = "toppingIds") List<String> toppingIds) {
+    try {
+      Pizza newPizza = validatePizza(pizzaName, crustId, toppingIds);
+      return ResponseEntity.ok(pizzaRepository.save(newPizza));
+    } catch (InvalidPizzaException e) {
+      return ResponseEntity.badRequest().header("message", e.getMessage()).build();
+    }
+  }
+
+  /**
+   * Verifies input parameters and returns a pizza object.
+   *
+   * @param pizzaName String name for pizza
+   * @param crustId String crustId for crust of pizza
+   * @param toppingIds List of toppingIds for toppings of pizza
+   * @return Pizza object
+   * @throws InvalidPizzaException if any of the input Id's are not found in respective repository.
+   */
+  public Pizza validatePizza(String pizzaName, String crustId, List<String> toppingIds)
+      throws InvalidPizzaException {
     Optional<Crust> crust = crustRepository.findById(crustId);
     if (!crust.isPresent()) {
-      return ResponseEntity.notFound().header("message", "crustId " + crustId + " not found.")
-          .build();
+      throw new InvalidPizzaException("crustId " + crustId + " not found.");
     }
     List<Topping> toppings = new ArrayList<>();
     for (String toppingId : toppingIds) {
       Optional<Topping> topping = toppingRepository.findById(toppingId);
       if (!topping.isPresent()) {
-        return ResponseEntity.notFound().header("message", "toppingId " + toppingId + " not found.")
-            .build();
+        throw new InvalidPizzaException("toppingId " + toppingId + " not found.");
       } else {
         toppings.add(topping.get());
       }
     }
-    Pizza newPizza = new Pizza(pizzaName, crust.get(), toppings);
-    if (sizeId != null) {
-      Optional<Size> size = sizeRepository.findById(sizeId);
-      if (!size.isPresent()) {
-        return ResponseEntity.notFound().header("message", "sizeId " + sizeId + " not found.")
-            .build();
-      }
-      newPizza.setSize(size.get());
+    return new Pizza(pizzaName, crust.get(), toppings);
+  }
+
+  public OrderPizza validateOrderPizza(String pizzaName, String crustId, List<String> toppingIds,
+      String sizeId) throws InvalidPizzaException {
+    Pizza pizza = validatePizza(pizzaName, crustId, toppingIds);
+    Optional<Size> size = sizeRepository.findById(sizeId);
+    if (!size.isPresent()) {
+      throw new InvalidPizzaException("sizeId " + sizeId + " not found.");
     }
-    newPizza.setPrice();
-    return ResponseEntity.ok(pizzaRepository.save(newPizza));
+    return new OrderPizza(pizza, size.get());
   }
 }

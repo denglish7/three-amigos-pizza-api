@@ -24,7 +24,6 @@ public class Order implements Priceable {
   @DBRef
   private Customer customer;
   private Double price = BASE_PRICE;
-  private CreditCard creditCard;
 
   public Order() {
   }
@@ -45,6 +44,7 @@ public class Order implements Priceable {
 
   /**
    * Get timeCreated
+   *
    * @return timeCreated
    */
   public LocalDateTime getTimeCreated() {
@@ -57,6 +57,7 @@ public class Order implements Priceable {
 
   /**
    * Get storeId
+   *
    * @return storeId
    */
   public String getStoreId() {
@@ -76,6 +77,44 @@ public class Order implements Priceable {
     return customer;
   }
 
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
+  }
+
+  public OrderItems getOrderItems() {
+    return orderItems;
+  }
+
+  public void addPizza(OrderPizza pizza) {
+    orderItems.addPizza(pizza);
+    setPrice();
+  }
+
+  public boolean removePizza(String pizzaId) {
+    boolean pizzaRemoved = orderItems.removePizza(pizzaId);
+    setPrice();
+    return pizzaRemoved;
+  }
+
+  public void addSpecial(OrderSpecial special) {
+    orderItems.addSpecial(special);
+    setPrice();
+  }
+
+  public boolean removeSpecialById(String specialId) {
+    boolean specialRemoved = orderItems.removeSpecialById(specialId);
+    setPrice();
+    return specialRemoved;
+  }
+
+  public CreditCard getCreditCard() {
+    return this.customer.getCreditCard();
+  }
+
+  public Boolean isEmpty() {
+    return orderItems.isEmpty();
+  }
+
   @Override
   public Double getPrice() {
     return price;
@@ -86,41 +125,11 @@ public class Order implements Priceable {
     this.price = orderItems.getPrice(BASE_PRICE);
   }
 
-  public OrderItems getOrderItems() {
-    return orderItems;
-  }
-
-  public void setCustomer(Customer customer) {
-    this.customer = customer;
-  }
-
-  public void addPizza(Pizza pizza) {
-    orderItems.addPizza(pizza);
-    setPrice();
-  }
-
-  public Pizza removePizzaById(String pizzaId) {
-    Pizza removedPizza = orderItems.removePizzaById(pizzaId);
-    setPrice();
-    return removedPizza;
-  }
-
-  public void addSpecial(OrderSpecial special) {
-    orderItems.addSpecial(special);
-    setPrice();
-  }
-
-  public OrderSpecial removeSpecialById(String specialId) {
-    OrderSpecial removedSpecial = orderItems.removeSpecialById(specialId);
-    setPrice();
-    return removedSpecial;
-  }
-
-  public CreditCard getCreditCard() {
-    return this.customer.getCreditCard();
-  }
-
-  public Boolean isEmpty() {
-    return orderItems.isEmpty();
+  @Override
+  public String toString() {
+    return "Customer: " + customer.getName() + '\'' +
+        "Order Id: " + _id + '\'' +
+        "Order Items: " + orderItems.toString() + '\'' +
+        "Order price " + price + '\'';
   }
 }

@@ -1,7 +1,5 @@
 package io.swagger.model.order;
 
-import io.swagger.model.pizza.Pizza;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,47 +7,66 @@ import java.util.Map;
 
 public class OrderItems {
 
-  private Map<String, Pizza> pizzas;
+  private Map<String, OrderPizza> pizzas;
   private Map<String, OrderSpecial> specials;
 
-  public OrderItems() {
+  OrderItems() {
     this.pizzas = new HashMap<>();
     this.specials = new HashMap<>();
   }
 
-  public List <String> getPizzaNames() {
-    List <String> pizzaNames = new ArrayList <>();
-    for (String key: this.pizzas.keySet()) {
-      String pizzaName = pizzas.get(key).getName();
-      pizzaNames.add(pizzaName);
+  public Map<String, OrderPizza> getPizzas() {
+    return pizzas;
+  }
+
+  public Map<String, OrderSpecial> getSpecials() {
+    return specials;
+  }
+
+  public List<String> getPizzaNames() {
+    List<String> pizzaNames = new ArrayList<>();
+    for (OrderPizza pizza : pizzas.values()) {
+      pizzaNames.add(pizza.getName());
     }
     return pizzaNames;
   }
 
 
-  public void addPizza(Pizza pizza) {
+  public void addPizza(OrderPizza pizza) {
     pizzas.put(pizza.get_id(), pizza);
   }
 
-  public Pizza removePizzaById(String pizzaId) {
-    return pizzas.remove(pizzaId);
+  public boolean removePizza(String pizzaId) {
+    if (containsPizza(pizzaId)) {
+      pizzas.remove(pizzaId);
+      return true;
+    }
+    return false;
   }
-
-  public Pizza getPizzaById(String pizzaId) {return pizzas.get(pizzaId);}
 
   public void addSpecial(OrderSpecial special) {
     specials.put(special.getSpecialId(), special);
   }
 
-  public OrderSpecial removeSpecialById(String specialId) {
-    return specials.remove(specialId);
+  public boolean removeSpecialById(String specialId) {
+    if (containsSpecial(specialId)) {
+      specials.remove(specialId);
+      return true;
+    }
+    return false;
   }
 
-  //Can we get the specialId to use this in StoreController.processOrder()?
-  public OrderSpecial getSpecialById(String specialId) {return specials.get(specialId);}
+  public boolean containsPizza(String pizzaId) { return pizzas.containsKey(pizzaId); }
+
+  public boolean containsSpecial(String specialId) { return specials.containsKey(specialId); }
+
+  //TODO: Can we get the specialId to use this in StoreController.processOrder()?
+  public OrderSpecial getSpecialById(String specialId) {
+    return specials.get(specialId);
+  }
 
   public List<String> getSpecialNames() {
-    List <String> specialNames = new ArrayList <>();
+    List<String> specialNames = new ArrayList<>();
     for (String key : this.specials.keySet()) {
       String specialName = specials.get(key).getSpecialName();
       specialNames.add(specialName);
@@ -63,12 +80,20 @@ public class OrderItems {
 
   public Double getPrice(Double basePrice) {
     Double price = basePrice;
-    for (Pizza pizza : pizzas.values()) {
-      price += pizza.getPrice();
+    for (OrderPizza pizza : pizzas.values()) {
+      if (pizza != null) {
+        price += pizza.getPrice();
+      }
     }
     for (OrderSpecial special : specials.values()) {
       price += special.getPrice();
     }
     return price;
+  }
+
+  @Override
+  public String toString() {
+    return "Pizzas: " + pizzas.values().toString() + '\'' +
+        "Specials: " + specials.values().toString();
   }
 }

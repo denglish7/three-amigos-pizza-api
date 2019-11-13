@@ -67,7 +67,6 @@ public class PizzaRepositoryTest {
     pizza.setName("pepperoni");
     pizza.setCrust(crust);
     pizza.setToppings(toppings);
-    pizza.setSize(size);
     pizzaRepository.insert(pizza);
     assertEquals(1, pizzaRepository.count());
   }

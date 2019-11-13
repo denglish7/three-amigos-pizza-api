@@ -14,7 +14,7 @@ public class Size {
   private String name;
 
   @NotNull
-  private Double basePrice;
+  private Double priceMultiplier;
 
   private Integer diameter;
   private Integer numberOfServings;
@@ -23,15 +23,15 @@ public class Size {
   public Size() {
   }
 
-  public Size(@NotNull String name, @NotNull Double basePrice) {
+  public Size(@NotNull String name, @NotNull Double priceMultiplier) {
     this.name = name;
-    this.basePrice = basePrice;
+    this.priceMultiplier = priceMultiplier;
   }
 
-  public Size(@NotNull String name, @NotNull Double basePrice, Integer diameter,
+  public Size(@NotNull String name, @NotNull Double priceMultiplier, Integer diameter,
       Integer numberOfServings, Integer numberOfSlices) {
     this.name = name;
-    this.basePrice = basePrice;
+    this.priceMultiplier = priceMultiplier;
     this.diameter = diameter;
     this.numberOfServings = numberOfServings;
     this.numberOfSlices = numberOfSlices;
@@ -65,12 +65,12 @@ public class Size {
    * @return base price
    */
   @ApiModelProperty(example = "12.0", required = true)
-  public Double getBasePrice() {
-    return basePrice;
+  public Double getPriceMultiplier() {
+    return priceMultiplier;
   }
 
-  public void setBasePrice(Double basePrice) {
-    this.basePrice = basePrice;
+  public void setPriceMultiplier(Double priceMultiplier) {
+    this.priceMultiplier = priceMultiplier;
   }
 
   /**

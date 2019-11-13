@@ -172,7 +172,7 @@ public class StoreControllerTest {
     String crustId = saveCrust.getBody().get_id();
 
     String PIZZANAME = "shroomzaa";
-    ResponseEntity <Pizza> newPizza = pizzaController.createPizza(PIZZANAME, crustId, newToppingIds, null);
+    ResponseEntity <Pizza> newPizza = pizzaController.createPizza(PIZZANAME, crustId, newToppingIds);
     String newPizzaId = newPizza.getBody().get_id();
     String storeOneId = storeOne.getBody().get_id();
     List<String> storeOnePizzaIds = new ArrayList <>();
