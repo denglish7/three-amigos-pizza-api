@@ -246,10 +246,10 @@ public class StoreController {
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
-  @ApiOperation(value = "Submit your order.", tags = {"store",})
+  @ApiOperation(value = "Complete an order.", tags = {"store",})
   public ResponseEntity <Store> completeOrder(
       @ApiParam("Store Id of the Store completing the order.") @PathVariable("storeId") String storeId,
-      @ApiParam("Order Id of the completed Order.") @RequestParam(value = "OrderId", required = true) String orderId) {
+      @ApiParam("Order Id of the completed Order.") @RequestParam(value = "OrderId") String orderId) {
     Optional <Store> storeToGet = storeRepository.findById(storeId);
     if (!storeToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "storeId " + storeId + " not found.")
