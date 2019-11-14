@@ -1,5 +1,3 @@
-/** This class is important for some reason */
-
 package io.swagger;
 
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;

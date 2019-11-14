@@ -73,6 +73,7 @@ public class OrderControllerTest {
 
   @Before
   public void setUp() {
+    tearDown();
     makeCrust();
     makeToppings();
     makeSizes();
