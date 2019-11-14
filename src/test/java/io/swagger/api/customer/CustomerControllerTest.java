@@ -3,6 +3,7 @@ package io.swagger.api.customer;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
+import io.swagger.model.customer.CreditCard;
 import io.swagger.model.customer.Customer;
 import io.swagger.repositories.CustomerRepository;
 import org.junit.After;
@@ -83,5 +84,33 @@ public class CustomerControllerTest {
     String message = "customerId 3958304 not found.";
     assertEquals(message, response.getHeaders().getFirst("message"));
   }
+
+  @Test
+  public void addPaymentDetails() {
+    String NAME = "Daniel English";
+    String PHONE = "395-284-2463";
+    String ADDRESS = "9284 1st Ave Seattle, WA 98352";
+    Customer newCustomer = new Customer(NAME, PHONE, ADDRESS);
+    ResponseEntity<Customer> saveResponse = customerController.createCustomer(newCustomer);
+    String id = saveResponse.getBody().get_id();
+    ResponseEntity<Customer> response = customerController.findById(id);
+    String CARDNUM = "1234567891234567";
+    Integer EXPMONTH = 12;
+    Integer EXPYEAR = 19;
+    String CVV = "888";
+
+    ResponseEntity<Customer> customerHasCard = customerController.addPaymentDetails(
+        id,
+        CARDNUM,
+        EXPMONTH,
+        EXPYEAR,
+        CVV);
+
+    CreditCard customerCard = customerHasCard.getBody().getCreditCard();
+    CreditCard creditCard = new CreditCard(CARDNUM, EXPMONTH, EXPYEAR, CVV);
+
+    assertEquals(creditCard.getCardNumber(), customerCard.getCardNumber());
+  }
+
 
 }

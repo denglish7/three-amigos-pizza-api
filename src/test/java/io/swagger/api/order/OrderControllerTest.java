@@ -173,22 +173,6 @@ public class OrderControllerTest {
   }
 
   @Test
-  public void samePizzaTwice() {
-    ResponseEntity<Order> response = orderController.createOrder(
-        store.get_id()
-    );
-    String orderId = response.getBody().get_id();
-    orderController.addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
-    ResponseEntity<OrderPizza> addPizzaResponse = orderController
-        .addPizzaById(orderId, pizzaOnMenu.get_id(), sizeLarge.get_id());
-    System.out.println(response.getBody().getOrderItems().getPizzas());
-    response = orderController.removePizzaById(orderId, "bad id");
-//    System.out.println("price 2: " + response.getBody().getPrice());
-//    response = orderController.removePizzaById(orderId, pizzaOnMenu.get_id());
-//    System.out.println("price 3: " + response.getBody().getPrice());
-  }
-
-  @Test
   public void addCustomPizzaSuccess() {
     String pizzaName = "customPizzaName";
     ResponseEntity<Order> response = orderController.createOrder(

@@ -126,4 +126,12 @@ public class StoreTest {
     assertEquals(1, store.getCurrentOrderIds().size(), 0);
   }
 
+  @Test
+  public void completeOrderSuccess() {
+    String fakeOrderId = "srgdv";
+    store.processOrder(fakeOrderId);
+    store.completeOrder(fakeOrderId);
+    assertEquals(1, store.getCompletedOrders().size(), 0);
+  }
+
 }

@@ -12,11 +12,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Api
 @RestController
@@ -55,5 +51,23 @@ public class CustomerController {
     }
     return ResponseEntity.notFound().header("message", "customerId " + customerId + " not found.")
         .build();
+  }
+
+  @RequestMapping(path = "/{customerId}/PaymentInformation", method = RequestMethod.PUT)
+  @ApiOperation(value = "Customer Id of customer inputting credit card information.", tags = {"user",})
+  public ResponseEntity <Customer> addPaymentDetails(
+      @ApiParam("Customer Id of customer inputting card information.") @PathVariable("customerId") String customerId,
+      @ApiParam("Card number.") @RequestParam(value = "cardNum") String cardNum,
+      @ApiParam("Card month.") @RequestParam(value = "cardNum") Integer cardMonth,
+      @ApiParam("Card year.") @RequestParam(value = "cardNum") Integer cardYear,
+      @ApiParam("Card cvv.") @RequestParam(value = "cardNum") String cardCvv) {
+    Optional<Customer> customerToGet = customerRepository.findById(customerId);
+    if (!customerToGet.isPresent()) {
+      return ResponseEntity.notFound().header("message", "customerId " + customerId + " not found.")
+          .build();
+    }
+    Customer customer = customerToGet.get();
+    customer.setCreditCard(cardNum, cardMonth, cardYear, cardCvv);
+    return ResponseEntity.ok(customerRepository.save(customer));
   }
 }
