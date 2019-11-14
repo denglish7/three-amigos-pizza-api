@@ -34,10 +34,6 @@ public class Pizza {
     return _id;
   }
 
-  protected void set_id(String _id) {
-    this._id = _id;
-  }
-
   /**
    * Get name
    *

@@ -3,6 +3,7 @@ package io.swagger.model.specials;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.pizza.Size;
 import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,6 +29,7 @@ public class Special {
       @NotNull Double specialPriceRatio,
       @NotNull Integer requiredNumberPizzas,
       @NotNull Size requiredSizeOfPizzas) {
+    this._id = new ObjectId().toString();
     this.name = name;
     this.specialPriceRatio = specialPriceRatio;
     this.requiredNumberPizzas = requiredNumberPizzas;
@@ -41,10 +43,6 @@ public class Special {
    */
   public String get_id() {
     return _id;
-  }
-
-  public void set_id(String _id) {
-    this._id = _id;
   }
 
   /**

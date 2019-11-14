@@ -4,9 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Priceable;
 import io.swagger.model.customer.CreditCard;
 import io.swagger.model.customer.Customer;
-import io.swagger.model.pizza.Pizza;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,10 +25,11 @@ public class Order implements Priceable {
   private Customer customer;
   private Double price = BASE_PRICE;
 
-  public Order() {
-  }
+//  public Order() {
+//  }
 
   public Order(@NotNull String storeId) {
+    this._id = new ObjectId().toString();
     this.storeId = storeId;
     this.orderItems = new OrderItems();
   }
@@ -127,9 +128,12 @@ public class Order implements Priceable {
 
   @Override
   public String toString() {
-    return "Customer: " + customer.getName() + '\'' +
-        "Order Id: " + _id + '\'' +
+    String string = "Order Id: " + _id + '\'' +
         "Order Items: " + orderItems.toString() + '\'' +
         "Order price " + price + '\'';
+    if (customer != null) {
+      string += "Customer: " + customer.getName();
+    }
+    return string;
   }
 }
