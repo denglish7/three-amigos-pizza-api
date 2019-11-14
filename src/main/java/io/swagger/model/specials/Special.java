@@ -69,10 +69,6 @@ public class Special {
     return specialPriceRatio;
   }
 
-  public void setSpecialPriceRatio(Double specialPriceRatio) {
-    this.specialPriceRatio = specialPriceRatio;
-  }
-
   /**
    * Get requiredNumberPizzas
    *
@@ -83,10 +79,6 @@ public class Special {
     return requiredNumberPizzas;
   }
 
-  public void setRequiredNumberPizzas(Integer requiredNumberPizzas) {
-    this.requiredNumberPizzas = requiredNumberPizzas;
-  }
-
   /**
    * Get requiredSizeOfPizzas
    *
@@ -95,9 +87,5 @@ public class Special {
   @ApiModelProperty(required = true)
   public Size getRequiredSizeOfPizzas() {
     return requiredSizeOfPizzas;
-  }
-
-  public void setRequiredSizeOfPizzas(Size requiredSizeOfPizzas) {
-    this.requiredSizeOfPizzas = requiredSizeOfPizzas;
   }
 }

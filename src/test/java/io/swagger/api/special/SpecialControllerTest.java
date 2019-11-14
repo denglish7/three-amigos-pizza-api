@@ -35,9 +35,10 @@ public class SpecialControllerTest {
 
   @Before
   public void setUp() throws Exception {
+    specialRepository.deleteAll();
+    sizeRepository.deleteAll();
     sizeLarge = new Size("Large", 10.2);
     sizeRepository.insert(sizeLarge);
-    specialRepository.deleteAll();
   }
 
   @After
