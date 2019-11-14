@@ -19,8 +19,6 @@ import io.swagger.model.specials.Special;
 import io.swagger.model.store.Menu;
 import io.swagger.model.store.Store;
 import io.swagger.repositories.*;
-import javax.xml.ws.Response;
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,12 +87,24 @@ public class StoreControllerTest {
   public void setUp() throws Exception {
     receiptRepository.deleteAll();
     storeRepository.deleteAll();
+    orderRepository.deleteAll();
+    toppingRepository.deleteAll();
+    sizeRepository.deleteAll();
+    specialRepository.deleteAll();
+    crustRepository.deleteAll();
+    pizzaRepository.deleteAll();
   }
 
   @After
   public void tearDown() throws Exception {
     receiptRepository.deleteAll();
     storeRepository.deleteAll();
+    orderRepository.deleteAll();
+    toppingRepository.deleteAll();
+    sizeRepository.deleteAll();
+    specialRepository.deleteAll();
+    crustRepository.deleteAll();
+    pizzaRepository.deleteAll();
   }
 
   @Test
@@ -284,6 +294,87 @@ public class StoreControllerTest {
     );
     assertTrue(receiptRepository.count() > 0);
 
+  }
+
+  @Test
+  public void completeOrderSuccess() {
+    Customer newCustomer = new Customer(
+        "Daniel English",
+        "492-372-3714",
+        "4256 2nd Ave Seattle, WA 98362"
+    );
+    ResponseEntity<Customer> customer = customerController.createCustomer(newCustomer);
+    String customerId = customer.getBody().get_id();
+    String CARDNUM = "1234567891234567";
+    Integer EXPMONTH = 12;
+    Integer EXPYEAR = 19;
+    String CVV = "888";
+    ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
+        customerId,
+        CARDNUM,
+        EXPMONTH,
+        EXPYEAR,
+        CVV
+    );
+
+    String STORENAME = "UptownGurl";
+    String ADDRESS = "123 Jerry St.";
+    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    String storeId = store.getBody().get_id();
+    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    String orderId = order.getBody().get_id();
+    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
+    crust = new Crust(4.50, false, "thin crust");
+    ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
+    String crustId = newCrust.getBody().get_id();
+    topping = new Topping("pepperoni", .10);
+    toppingRepository.insert(topping);
+    topping2 = new Topping("sausage", .10);
+    toppingRepository.insert(topping2);
+    toppingIds = new ArrayList<>();
+    toppingIds.add(topping.get_id());
+    toppingIds.add(topping2.get_id());
+    List<Topping> toppings = new ArrayList<>();
+    toppings.add(topping);
+    toppings.add(topping2);
+    pizza = new Pizza(
+        "Pepperoni",
+        crust,
+        toppings
+    );
+    ResponseEntity<Pizza> response = pizzaController.createPizza(
+        pizza.getName(),
+        crust.get_id(),
+        toppingIds
+    );
+    String NAME = "large";
+    Double PRICE = 15.5;
+    Size size = new Size(NAME, PRICE);
+    ResponseEntity<Size> newSize = sizeController.saveSize(size);
+    String sizeId = newSize.getBody().get_id();
+    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+        orderId,
+        pizza.getName(),
+        crustId,
+        toppingIds,
+        sizeId
+    );
+    String pizzaForOrderId = pizzaForOrder.getBody().get_id();
+    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+        orderId,
+        pizzaForOrderId,
+        sizeId
+    );
+
+    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+        storeId,
+        orderId
+    );
+    ResponseEntity <Store> storeCompletedOrder = storeController.completeOrder(
+        storeId,
+        orderId
+    );
+    assertTrue(storeCompletedOrder.getStatusCode().is2xxSuccessful());
   }
 
   @Test

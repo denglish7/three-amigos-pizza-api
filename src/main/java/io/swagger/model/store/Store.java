@@ -3,11 +3,9 @@ package io.swagger.model.store;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 import io.swagger.model.customer.CreditCard;
-import io.swagger.model.order.Order;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Document(collection = "stores")
@@ -98,10 +96,10 @@ public class Store {
    * @param orderId orderId being completed
    */
   public void completeOrder(String orderId){
-    for(String id : this.currentOrderIds)
-      if (id == orderId) {
-        this.currentOrderIds.remove(id);
-        this.completedOrderIds.add(id);
+    for(int i = 0; i < currentOrderIds.size(); i++)
+      if (currentOrderIds.get(i) == orderId) {
+        currentOrderIds.remove(i);
+        completedOrderIds.add(orderId);
       }
   }
 
