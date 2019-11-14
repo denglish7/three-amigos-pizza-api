@@ -1,7 +1,6 @@
 package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.Priceable;
 import java.util.List;
 import javax.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
