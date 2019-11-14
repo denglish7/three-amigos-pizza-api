@@ -2,6 +2,7 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "toppings")
@@ -17,6 +18,7 @@ public class Topping {
   private Double pricePerUnit;
 
   public Topping(String name, Double pricePerUnit) {
+    this._id = new ObjectId().toString();
     this.name = name;
     this.pricePerUnit = pricePerUnit;
   }

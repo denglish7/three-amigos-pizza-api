@@ -60,10 +60,6 @@ public class OrderItems {
 
   public boolean containsSpecial(String specialId) { return specials.containsKey(specialId); }
 
-  //TODO: Can we get the specialId to use this in StoreController.processOrder()?
-  public OrderSpecial getSpecialById(String specialId) {
-    return specials.get(specialId);
-  }
 
   public List<String> getSpecialNames() {
     List<String> specialNames = new ArrayList<>();
@@ -86,7 +82,9 @@ public class OrderItems {
       }
     }
     for (OrderSpecial special : specials.values()) {
-      price += special.getPrice();
+      if (special != null) {
+        price += special.getPrice();
+      }
     }
     return price;
   }

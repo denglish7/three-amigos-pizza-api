@@ -2,6 +2,7 @@ package io.swagger.model.pizza;
 
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "crusts")
@@ -20,6 +21,7 @@ public class Crust {
 
   public Crust(@NotNull Double price,
       @NotNull Boolean isGlutenFree, String name) {
+    this._id = new ObjectId().toString();
     this.price = price;
     this.isGlutenFree = isGlutenFree;
     this.name = name;
