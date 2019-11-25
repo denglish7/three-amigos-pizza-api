@@ -2,7 +2,6 @@ package io.swagger.api.user;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.api.pizza.PizzaController;
 import io.swagger.api.store.StoreController;
 import io.swagger.model.pizza.Crust;
 import io.swagger.model.pizza.Pizza;
@@ -11,10 +10,7 @@ import io.swagger.model.pizza.Topping;
 import io.swagger.model.specials.Special;
 import io.swagger.model.store.Store;
 import io.swagger.repositories.CrustRepository;
-import io.swagger.repositories.CustomerRepository;
-import io.swagger.repositories.OrderRepository;
 import io.swagger.repositories.PizzaRepository;
-import io.swagger.repositories.ReceiptRepository;
 import io.swagger.repositories.SizeRepository;
 import io.swagger.repositories.SpecialRepository;
 import io.swagger.repositories.StoreRepository;
@@ -48,22 +44,17 @@ public class AdminController {
   private StoreRepository storeRepository;
   @Autowired
   private StoreController storeController;
-  @Autowired
-  private OrderRepository orderRepository;
-  @Autowired
-  private CustomerRepository customerRepository;
-  @Autowired
-  private ReceiptRepository receiptRepository;
 
-  @RequestMapping(method = RequestMethod.POST)
-  @ApiOperation(value = "Resets database to default values", tags = {"admin",})
-  public ResponseEntity resetAll() {
+  @RequestMapping(path = "/setDefaults", method = RequestMethod.POST)
+  @ApiOperation(value = "Resets database to default values for Pizzas and stores", tags = {
+      "admin",})
+  public ResponseEntity setDefaults() {
     deleteAll();
-    addThreeCrustsSevenToppingsThreeSizesFivePizzasTwoSpecials();
+    createDefaultPizzaItems();
     return ResponseEntity.ok().build();
   }
 
-  private void addThreeCrustsSevenToppingsThreeSizesFivePizzasTwoSpecials() {
+  private void createDefaultPizzaItems() {
     Crust crust1 = new Crust(5.0, false, "regular");
     Crust crust2 = new Crust(6.5, true, "gluten free");
     Crust crust3 = new Crust(5.5, false, "thin");
@@ -126,8 +117,5 @@ public class AdminController {
     pizzaRepository.deleteAll();
     specialRepository.deleteAll();
     storeRepository.deleteAll();
-    orderRepository.deleteAll();
-    customerRepository.deleteAll();
-    receiptRepository.deleteAll();
   }
 }

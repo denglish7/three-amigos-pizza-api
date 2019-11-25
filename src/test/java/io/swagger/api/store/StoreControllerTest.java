@@ -43,6 +43,7 @@ import static org.junit.Assert.assertFalse;
 @TestPropertySource("classpath:/application-test.properties")
 @SpringBootTest
 public class StoreControllerTest {
+
   private Crust crust;
   private Topping topping;
   private Topping topping2;
@@ -126,15 +127,17 @@ public class StoreControllerTest {
     );
     TestCase.assertEquals(1, storeController.getAllStores().getBody().size());
   }
+
   @Test
   public void createStoreFailure() {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
     Store comparisonStore = new Store(STORENAME, ADDRESS, null);
-    ResponseEntity <Store> newStore = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> newStore = storeController.createStore(STORENAME, ADDRESS, null);
     Menu newMenu = new Menu();
     assertEquals(newMenu.getPizzas().size(), newStore.getBody().getMenu().getPizzas().size(), 0);
-    assertEquals(newMenu.getSpecials().size(), newStore.getBody().getMenu().getSpecials().size(), 0);
+    assertEquals(newMenu.getSpecials().size(), newStore.getBody().getMenu().getSpecials().size(),
+        0);
   }
 
   @Test
@@ -142,17 +145,18 @@ public class StoreControllerTest {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
     Store comparisonStore = new Store(STORENAME, ADDRESS, null);
-    ResponseEntity <Store> newStore = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> newStore = storeController.createStore(STORENAME, ADDRESS, null);
     Menu newMenu = new Menu();
     assertEquals(newMenu.getPizzas().size(), newStore.getBody().getMenu().getPizzas().size(), 0);
-    assertEquals(newMenu.getSpecials().size(), newStore.getBody().getMenu().getSpecials().size(), 0);
+    assertEquals(newMenu.getSpecials().size(), newStore.getBody().getMenu().getSpecials().size(),
+        0);
   }
 
   @Test
   public void createStoreExistingMenuWithSpecials() {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> storeOne = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> storeOne = storeController.createStore(STORENAME, ADDRESS, null);
 
     String SPECIALNAME = "2Large41";
     Double PRICERATIO = 0.5;
@@ -162,35 +166,37 @@ public class StoreControllerTest {
     Size newSize = new Size(NAME, PRICE);
     ResponseEntity<Size> saveSize = sizeController.saveSize(newSize);
     String sizeId = saveSize.getBody().get_id();
-    ResponseEntity <Special> newSpecial = specialController.createSpecial(
+    ResponseEntity<Special> newSpecial = specialController.createSpecial(
         SPECIALNAME,
         PRICERATIO,
         NUMPIZZAS,
         sizeId);
     String newSpecialId = newSpecial.getBody().get_id();
-    List<String> storeOneSpecialIds = new ArrayList <>();
+    List<String> storeOneSpecialIds = new ArrayList<>();
     storeOneSpecialIds.add(newSpecialId);
 
     String storeOneId = storeOne.getBody().get_id();
-    ResponseEntity <Menu> storeOneMenuSpecialsUpdated = storeController.addToStoreMenu(storeOneId, null, storeOneSpecialIds);
-    ResponseEntity <Store> storeTwo = storeController.createStore(STORENAME, ADDRESS, storeOneId);
-    assertEquals(storeOneMenuSpecialsUpdated.getBody().getSpecials().get(0).get_id(), storeTwo.getBody().getMenu().getSpecials().get(0).get_id());
+    ResponseEntity<Menu> storeOneMenuSpecialsUpdated = storeController
+        .addToStoreMenu(storeOneId, null, storeOneSpecialIds);
+    ResponseEntity<Store> storeTwo = storeController.createStore(STORENAME, ADDRESS, storeOneId);
+    assertEquals(storeOneMenuSpecialsUpdated.getBody().getSpecials().get(0).get_id(),
+        storeTwo.getBody().getMenu().getSpecials().get(0).get_id());
   }
 
   @Test
   public void removePizzasFromStoreMenu() {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> storeOne = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> storeOne = storeController.createStore(STORENAME, ADDRESS, null);
 
     String TOPPINGNAME = "mushroom";
     Double TOPPINGPRICE = 1.5;
     Topping newTopping = new Topping(TOPPINGNAME, TOPPINGPRICE);
     ResponseEntity<Topping> saveTopping = toppingController.saveTopping(newTopping);
     String toppingsId = saveTopping.getBody().get_id();
-    List<Topping> newToppings = new ArrayList <>();
+    List<Topping> newToppings = new ArrayList<>();
     newToppings.add(newTopping);
-    List<String> newToppingIds = new ArrayList <>();
+    List<String> newToppingIds = new ArrayList<>();
     newToppingIds.add(toppingsId);
 
     String CRUSTNAME = "VEGGIEDOUGH";
@@ -201,23 +207,27 @@ public class StoreControllerTest {
     String crustId = saveCrust.getBody().get_id();
 
     String PIZZANAME = "shroomzaa";
-    ResponseEntity <Pizza> newPizza = pizzaController.createPizza(PIZZANAME, crustId, newToppingIds);
+    ResponseEntity<Pizza> newPizza = pizzaController.createPizza(PIZZANAME, crustId, newToppingIds);
     String newPizzaId = newPizza.getBody().get_id();
     String storeOneId = storeOne.getBody().get_id();
-    List<String> storeOnePizzaIds = new ArrayList <>();
+    List<String> storeOnePizzaIds = new ArrayList<>();
     storeOnePizzaIds.add(newPizzaId);
-    ResponseEntity <Menu> addPizzaToStore = storeController.addToStoreMenu(storeOneId, storeOnePizzaIds, null);
+    ResponseEntity<Menu> addPizzaToStore = storeController
+        .addToStoreMenu(storeOneId, storeOnePizzaIds, null);
     List<Pizza> currentPizzas = storeController.getMenu(storeOneId).getBody().getPizzas();
-    ResponseEntity <Menu> removePizzaFromStore = storeController.removeFromStoreMenu(storeOneId, storeOnePizzaIds, null);
-    assertFalse(addPizzaToStore.getBody().getPizzas().size() == removePizzaFromStore.getBody().getPizzas().size());
+    ResponseEntity<Menu> removePizzaFromStore = storeController
+        .removeFromStoreMenu(storeOneId, storeOnePizzaIds, null);
+    assertFalse(
+        addPizzaToStore.getBody().getPizzas().size() == removePizzaFromStore.getBody().getPizzas()
+            .size());
   }
 
   @Test
   public void getStoreAddress() {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
-    ResponseEntity <String> getStoreAddr = storeController.getLocation(store.getBody().get_id());
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<String> getStoreAddr = storeController.getLocation(store.getBody().get_id());
     assertTrue(getStoreAddr.getStatusCode().is2xxSuccessful());
   }
 
@@ -225,24 +235,25 @@ public class StoreControllerTest {
   public void updateStoreAddress() {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = store.getBody().get_id();
     String NEWADDRESS = "456 Sherry Ave.";
-    ResponseEntity <Store> updatedStore = storeController.changeLocation(storeId, NEWADDRESS);
+    ResponseEntity<Store> updatedStore = storeController.changeLocation(storeId, NEWADDRESS);
     String currentAddress = updatedStore.getBody().getAddress();
-    assertEquals(NEWADDRESS, currentAddress );
+    assertEquals(NEWADDRESS, currentAddress);
   }
 
   @Test
   public void updateInvalidStoreAddress() {
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = "ajbsdf";
     String NEWADDRESS = "456 Sherry Ave.";
-    ResponseEntity <Store> updatedStore = storeController.changeLocation(storeId, NEWADDRESS);
-    assertTrue(updatedStore .getStatusCode().is4xxClientError());
+    ResponseEntity<Store> updatedStore = storeController.changeLocation(storeId, NEWADDRESS);
+    assertTrue(updatedStore.getStatusCode().is4xxClientError());
   }
+
   @Test
   public void processNewOrderSuccess() {
     Customer newCustomer = new Customer(
@@ -266,11 +277,11 @@ public class StoreControllerTest {
 
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = store.getBody().get_id();
-    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    ResponseEntity<Order> order = orderController.createOrder(storeId);
     String orderId = order.getBody().get_id();
-    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
+    ResponseEntity<Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
     crust = new Crust(4.50, false, "thin crust");
     ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
     String crustId = newCrust.getBody().get_id();
@@ -299,7 +310,7 @@ public class StoreControllerTest {
     Size size = new Size(NAME, PRICE);
     ResponseEntity<Size> newSize = sizeController.saveSize(size);
     String sizeId = newSize.getBody().get_id();
-    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+    ResponseEntity<OrderPizza> pizzaForOrder = orderController.addCustomPizza(
         orderId,
         pizza.getName(),
         crustId,
@@ -307,13 +318,13 @@ public class StoreControllerTest {
         sizeId
     );
     String pizzaForOrderId = pizzaForOrder.getBody().get_id();
-    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+    ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,
         sizeId
     );
 
-    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+    ResponseEntity<Receipt> orderReceipt = storeController.processNewOrder(
         storeId,
         orderId
     );
@@ -344,11 +355,11 @@ public class StoreControllerTest {
 
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = store.getBody().get_id();
-    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    ResponseEntity<Order> order = orderController.createOrder(storeId);
     String orderId = order.getBody().get_id();
-    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
+    ResponseEntity<Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
     crust = new Crust(4.50, false, "thin crust");
     ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
     String crustId = newCrust.getBody().get_id();
@@ -377,7 +388,7 @@ public class StoreControllerTest {
     Size size = new Size(NAME, PRICE);
     ResponseEntity<Size> newSize = sizeController.saveSize(size);
     String sizeId = newSize.getBody().get_id();
-    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+    ResponseEntity<OrderPizza> pizzaForOrder = orderController.addCustomPizza(
         orderId,
         pizza.getName(),
         crustId,
@@ -385,17 +396,17 @@ public class StoreControllerTest {
         sizeId
     );
     String pizzaForOrderId = pizzaForOrder.getBody().get_id();
-    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+    ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,
         sizeId
     );
 
-    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+    ResponseEntity<Receipt> orderReceipt = storeController.processNewOrder(
         storeId,
         orderId
     );
-    ResponseEntity <Store> storeCompletedOrder = storeController.completeOrder(
+    ResponseEntity<Store> storeCompletedOrder = storeController.completeOrder(
         storeId,
         orderId
     );
@@ -425,11 +436,11 @@ public class StoreControllerTest {
 
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = store.getBody().get_id();
-    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    ResponseEntity<Order> order = orderController.createOrder(storeId);
     String orderId = order.getBody().get_id();
-    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
+    ResponseEntity<Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
     crust = new Crust(4.50, false, "thin crust");
     ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
     String crustId = newCrust.getBody().get_id();
@@ -458,7 +469,7 @@ public class StoreControllerTest {
     Size size = new Size(NAME, PRICE);
     ResponseEntity<Size> newSize = sizeController.saveSize(size);
     String sizeId = newSize.getBody().get_id();
-    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+    ResponseEntity<OrderPizza> pizzaForOrder = orderController.addCustomPizza(
         orderId,
         pizza.getName(),
         crustId,
@@ -466,18 +477,18 @@ public class StoreControllerTest {
         sizeId
     );
     String pizzaForOrderId = pizzaForOrder.getBody().get_id();
-    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+    ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,
         sizeId
     );
 
-    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+    ResponseEntity<Receipt> orderReceipt = storeController.processNewOrder(
         storeId,
         orderId
     );
     String invalideStoreId = "sldjbg";
-    ResponseEntity <Store> storeCompletedOrder = storeController.completeOrder(
+    ResponseEntity<Store> storeCompletedOrder = storeController.completeOrder(
         invalideStoreId,
         orderId
     );
@@ -507,11 +518,11 @@ public class StoreControllerTest {
 
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = store.getBody().get_id();
-    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    ResponseEntity<Order> order = orderController.createOrder(storeId);
     String orderId = order.getBody().get_id();
-    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
+    ResponseEntity<Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
     crust = new Crust(4.50, false, "thin crust");
     ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
     String crustId = newCrust.getBody().get_id();
@@ -540,7 +551,7 @@ public class StoreControllerTest {
     Size size = new Size(NAME, PRICE);
     ResponseEntity<Size> newSize = sizeController.saveSize(size);
     String sizeId = newSize.getBody().get_id();
-    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+    ResponseEntity<OrderPizza> pizzaForOrder = orderController.addCustomPizza(
         orderId,
         pizza.getName(),
         crustId,
@@ -548,18 +559,18 @@ public class StoreControllerTest {
         sizeId
     );
     String pizzaForOrderId = pizzaForOrder.getBody().get_id();
-    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+    ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,
         sizeId
     );
 
-    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+    ResponseEntity<Receipt> orderReceipt = storeController.processNewOrder(
         storeId,
         orderId
     );
     String invalideOrderId = "sldjbg";
-    ResponseEntity <Store> storeCompletedOrder = storeController.completeOrder(
+    ResponseEntity<Store> storeCompletedOrder = storeController.completeOrder(
         storeId,
         invalideOrderId
     );
@@ -647,11 +658,11 @@ public class StoreControllerTest {
 
     String STORENAME = "UptownGurl";
     String ADDRESS = "123 Jerry St.";
-    ResponseEntity <Store> store = storeController.createStore(STORENAME, ADDRESS, null);
+    ResponseEntity<Store> store = storeController.createStore(STORENAME, ADDRESS, null);
     String storeId = store.getBody().get_id();
-    ResponseEntity <Order> order = orderController.createOrder(storeId);
+    ResponseEntity<Order> order = orderController.createOrder(storeId);
     String orderId = order.getBody().get_id();
-    ResponseEntity <Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
+    ResponseEntity<Order> orderWithCustomer = orderController.setCustomerById(orderId, customerId);
     crust = new Crust(4.50, false, "thin crust");
     ResponseEntity<Crust> newCrust = crustController.saveCrust(crust);
     String crustId = newCrust.getBody().get_id();
@@ -680,7 +691,7 @@ public class StoreControllerTest {
     Size size = new Size(NAME, PRICE);
     ResponseEntity<Size> newSize = sizeController.saveSize(size);
     String sizeId = newSize.getBody().get_id();
-    ResponseEntity <OrderPizza> pizzaForOrder = orderController.addCustomPizza(
+    ResponseEntity<OrderPizza> pizzaForOrder = orderController.addCustomPizza(
         orderId,
         pizza.getName(),
         crustId,
@@ -688,13 +699,13 @@ public class StoreControllerTest {
         sizeId
     );
     String pizzaForOrderId = pizzaForOrder.getBody().get_id();
-    ResponseEntity <OrderPizza> orderWithPizza = orderController.addPizzaById(
+    ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,
         sizeId
     );
 
-    ResponseEntity <Receipt> orderReceipt = storeController.processNewOrder(
+    ResponseEntity<Receipt> orderReceipt = storeController.processNewOrder(
         storeId,
         orderId
     );
@@ -718,7 +729,8 @@ public class StoreControllerTest {
 
   @Test
   public void addToMenuStoreIdNotFound() {
-    ResponseEntity<Menu> response = storeController.addToStoreMenu("bad id", Arrays.asList(""), Arrays.asList(""));
+    ResponseEntity<Menu> response = storeController
+        .addToStoreMenu("bad id", Arrays.asList(""), Arrays.asList(""));
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 }

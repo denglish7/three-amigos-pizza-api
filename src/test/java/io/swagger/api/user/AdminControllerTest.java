@@ -3,10 +3,7 @@ package io.swagger.api.user;
 import static org.junit.Assert.assertEquals;
 
 import io.swagger.repositories.CrustRepository;
-import io.swagger.repositories.CustomerRepository;
-import io.swagger.repositories.OrderRepository;
 import io.swagger.repositories.PizzaRepository;
-import io.swagger.repositories.ReceiptRepository;
 import io.swagger.repositories.SizeRepository;
 import io.swagger.repositories.SpecialRepository;
 import io.swagger.repositories.StoreRepository;
@@ -40,12 +37,6 @@ public class AdminControllerTest {
   private SpecialRepository specialRepository;
   @Autowired
   private StoreRepository storeRepository;
-  @Autowired
-  private OrderRepository orderRepository;
-  @Autowired
-  private CustomerRepository customerRepository;
-  @Autowired
-  private ReceiptRepository receiptRepository;
 
   @Before
   public void setUp() throws Exception {
@@ -55,9 +46,6 @@ public class AdminControllerTest {
     pizzaRepository.deleteAll();
     specialRepository.deleteAll();
     storeRepository.deleteAll();
-    orderRepository.deleteAll();
-    customerRepository.deleteAll();
-    receiptRepository.deleteAll();
   }
 
   @After
@@ -68,14 +56,11 @@ public class AdminControllerTest {
     pizzaRepository.deleteAll();
     specialRepository.deleteAll();
     storeRepository.deleteAll();
-    orderRepository.deleteAll();
-    customerRepository.deleteAll();
-    receiptRepository.deleteAll();
   }
 
   @Test
   public void resetAll() {
-    adminController.resetAll();
+    adminController.setDefaults();
     assertEquals(2, storeRepository.count());
   }
 }
