@@ -19,6 +19,7 @@ import io.swagger.model.specials.Special;
 import io.swagger.model.store.Menu;
 import io.swagger.model.store.Store;
 import io.swagger.repositories.*;
+import java.util.Arrays;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
@@ -26,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -700,5 +702,23 @@ public class StoreControllerTest {
     assertTrue(orderReceipt.getStatusCode().is4xxClientError());
     assertEquals(message,
         orderReceipt.getHeaders().getFirst(OrderController.getMessageHeaderName()));
+  }
+
+  @Test
+  public void newStoreStoreIdNotFound() {
+    ResponseEntity<Store> response = storeController.createStore("new store", "address", "bad id");
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void getMenuStoreIdNotFound() {
+    ResponseEntity<Menu> response = storeController.getMenu("bad id");
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  public void addToMenuStoreIdNotFound() {
+    ResponseEntity<Menu> response = storeController.addToStoreMenu("bad id", Arrays.asList(""), Arrays.asList(""));
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
 }

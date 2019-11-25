@@ -112,5 +112,15 @@ public class CustomerControllerTest {
     assertEquals(creditCard.getCardNumber(), customerCard.getCardNumber());
   }
 
+  @Test
+  public void addPaymentDetailsBadId() {
+    String CARDNUM = "1234567891234567";
+    Integer EXPMONTH = 12;
+    Integer EXPYEAR = 19;
+    String CVV = "888";
+    ResponseEntity<Customer> response = customerController
+        .addPaymentDetails("bad id", CARDNUM, EXPMONTH, EXPYEAR, CVV);
+    assertTrue(response.getStatusCode().is4xxClientError());
+  }
 
 }
