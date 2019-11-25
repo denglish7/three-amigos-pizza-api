@@ -1,4 +1,4 @@
-package io.swagger.api.customer;
+package io.swagger.api.user;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

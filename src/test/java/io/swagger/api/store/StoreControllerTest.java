@@ -1,6 +1,6 @@
 package io.swagger.api.store;
 
-import io.swagger.api.customer.CustomerController;
+import io.swagger.api.user.CustomerController;
 import io.swagger.api.order.ReceiptController;
 import io.swagger.api.order.OrderController;
 import io.swagger.api.pizza.CrustController;

@@ -1,4 +1,4 @@
-package io.swagger.api.customer;
+package io.swagger.api.user;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;

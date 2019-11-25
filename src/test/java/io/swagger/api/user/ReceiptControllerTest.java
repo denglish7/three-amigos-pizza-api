@@ -1,4 +1,4 @@
-package io.swagger.api.customer;
+package io.swagger.api.user;
 
 import io.swagger.api.order.ReceiptController;
 import io.swagger.model.customer.Receipt;

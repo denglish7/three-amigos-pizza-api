@@ -1,4 +1,4 @@
-package io.swagger.api.customer;
+package io.swagger.api.user;
 
 import io.swagger.model.customer.Customer;
 import io.swagger.repositories.CustomerRepository;
