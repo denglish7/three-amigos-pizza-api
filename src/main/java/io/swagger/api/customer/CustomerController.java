@@ -24,13 +24,13 @@ public class CustomerController {
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Customers in the system.", response = Customer.class, responseContainer = "List", tags = {
-      "user",})
+      "customer",})
   public ResponseEntity<List<Customer>> getAllCustomers() {
     return ResponseEntity.ok(customerRepository.findAll());
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "Creates a customer", tags = {"user",})
+  @ApiOperation(value = "Creates a customer", tags = {"customer",})
   public ResponseEntity<Customer> createCustomer(
       @ApiParam("Customer information for a new customer") @Valid @RequestBody Customer customer) {
     return ResponseEntity.ok(customerRepository.save(customer));
@@ -39,7 +39,7 @@ public class CustomerController {
   @RequestMapping(path = "/{customerId}", produces = {
       "application/json"}, method = RequestMethod.GET)
   @ApiOperation(value = "Searches for a customer by id", response = Customer.class, tags = {
-      "user",})
+      "customer",})
   @ApiResponses(value = {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Customer.class),
       @ApiResponse(code = 404, message = "customer not found")})
@@ -54,13 +54,13 @@ public class CustomerController {
   }
 
   @RequestMapping(path = "/{customerId}/PaymentInformation", method = RequestMethod.PUT)
-  @ApiOperation(value = "Customer Id of customer inputting credit card information.", tags = {"user",})
+  @ApiOperation(value = "Customer Id of customer inputting credit card information.", tags = {"customer",})
   public ResponseEntity <Customer> addPaymentDetails(
       @ApiParam("Customer Id of customer inputting card information.") @PathVariable("customerId") String customerId,
       @ApiParam("Card number.") @RequestParam(value = "cardNum") String cardNum,
-      @ApiParam("Card month.") @RequestParam(value = "cardNum") Integer cardMonth,
-      @ApiParam("Card year.") @RequestParam(value = "cardNum") Integer cardYear,
-      @ApiParam("Card cvv.") @RequestParam(value = "cardNum") String cardCvv) {
+      @ApiParam("Card month.") @RequestParam(value = "cardMonth") Integer cardMonth,
+      @ApiParam("Card year.") @RequestParam(value = "cardYear") Integer cardYear,
+      @ApiParam("Card cvv.") @RequestParam(value = "cardCvv") String cardCvv) {
     Optional<Customer> customerToGet = customerRepository.findById(customerId);
     if (!customerToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "customerId " + customerId + " not found.")
