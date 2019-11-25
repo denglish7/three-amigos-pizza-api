@@ -58,9 +58,9 @@ public class CustomerController {
   public ResponseEntity <Customer> addPaymentDetails(
       @ApiParam("Customer Id of customer inputting card information.") @PathVariable("customerId") String customerId,
       @ApiParam("Card number.") @RequestParam(value = "cardNum") String cardNum,
-      @ApiParam("Card month.") @RequestParam(value = "cardNum") Integer cardMonth,
-      @ApiParam("Card year.") @RequestParam(value = "cardNum") Integer cardYear,
-      @ApiParam("Card cvv.") @RequestParam(value = "cardNum") String cardCvv) {
+      @ApiParam("Card month.") @RequestParam(value = "cardMonth") Integer cardMonth,
+      @ApiParam("Card year.") @RequestParam(value = "cardYear") Integer cardYear,
+      @ApiParam("Card cvv.") @RequestParam(value = "cardCvv") String cardCvv) {
     Optional<Customer> customerToGet = customerRepository.findById(customerId);
     if (!customerToGet.isPresent()) {
       return ResponseEntity.notFound().header("message", "customerId " + customerId + " not found.")
