@@ -198,4 +198,10 @@ public class OrderTest {
     order.removeSpecialById(orderSpecial1.getSpecialId());
     assertEquals(expectedPrice, order.getPrice(), 0.0001);
   }
+
+  @Test
+  public void testToString() {
+    order.setCustomer(customer);
+    assertTrue(order.toString().contains(new StringBuffer("Customer: " + customer.getName())));
+  }
 }

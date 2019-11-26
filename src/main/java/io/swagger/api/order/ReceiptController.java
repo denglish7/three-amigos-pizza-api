@@ -1,4 +1,4 @@
-package io.swagger.api.customer;
+package io.swagger.api.order;
 
 import io.swagger.annotations.*;
 import io.swagger.model.customer.Receipt;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Api
 @RestController
-@RequestMapping("/receipt")
+@RequestMapping("/order/receipt")
 public class ReceiptController {
 
   @Autowired
@@ -20,13 +20,13 @@ public class ReceiptController {
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
   @ApiOperation(value = "Returns list of all Receipts in the system.", response = Receipt.class, responseContainer = "List", tags = {
-      "user",})
+      "order",})
   public ResponseEntity<List<Receipt>> getAllReceipts() {
     return ResponseEntity.ok(receiptRepository.findAll());
   }
 
   @RequestMapping(path = "/", method = RequestMethod.POST)
-  @ApiOperation(value = "Creates a receipt", tags = {"user",})
+  @ApiOperation(value = "Creates a receipt", tags = {"order",})
   public ResponseEntity<Receipt> createReceipt(
       @ApiParam("Order information for a new receipt") @Valid @RequestBody String storeName,
       @ApiParam("Customer's name.") @RequestParam(value = "customer name") String customerName,

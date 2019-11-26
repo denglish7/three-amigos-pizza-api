@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/pizza")
 public class PizzaController {
 
-  private static final Double PIZZA_BASE_PRICE = 0.0;
-
   @Autowired
   private PizzaRepository pizzaRepository;
   @Autowired
