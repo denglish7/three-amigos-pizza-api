@@ -2,7 +2,6 @@ package io.swagger.model.order;
 
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.model.Priceable;
-import io.swagger.model.customer.CreditCard;
 import io.swagger.model.customer.Customer;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
@@ -106,10 +105,6 @@ public class Order implements Priceable {
     boolean specialRemoved = orderItems.removeSpecialById(specialId);
     setPrice();
     return specialRemoved;
-  }
-
-  public CreditCard getCreditCard() {
-    return this.customer.getCreditCard();
   }
 
   public Boolean isEmpty() {
