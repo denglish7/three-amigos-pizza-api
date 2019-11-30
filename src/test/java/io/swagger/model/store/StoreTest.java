@@ -71,7 +71,7 @@ public class StoreTest {
   public void validateValidCard() {
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2029;
     String CVV = "888";
     CreditCard creditCard = new CreditCard(CARDNUM, EXPMONTH, EXPYEAR, CVV);
     assertEquals(true, store.validateCard(creditCard));
@@ -81,7 +81,7 @@ public class StoreTest {
   public void validateCardExpiredMonth() {
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 10;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2019;
     String CVV = "888";
     CreditCard creditCard = new CreditCard(CARDNUM, EXPMONTH, EXPYEAR, CVV);
     assertEquals(false, store.validateCard(creditCard));
@@ -91,7 +91,7 @@ public class StoreTest {
   public void validateCardExpiredYear() {
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 18;
+    Integer EXPYEAR = 2018;
     String CVV = "888";
     CreditCard creditCard = new CreditCard(CARDNUM, EXPMONTH, EXPYEAR, CVV);
     assertEquals(false, store.validateCard(creditCard));
@@ -101,7 +101,7 @@ public class StoreTest {
   public void validateCardInvalidCvv() {
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2019;
     String CVV = "88";
     CreditCard creditCard = new CreditCard(CARDNUM, EXPMONTH, EXPYEAR, CVV);
     assertEquals(false, store.validateCard(creditCard));

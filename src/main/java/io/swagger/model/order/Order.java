@@ -23,7 +23,7 @@ public class Order implements Priceable {
   @DBRef
   private Customer customer;
   private Double price = BASE_PRICE;
-  
+
 
   public Order(@NotNull String storeId) {
     this._id = new ObjectId().toString();
