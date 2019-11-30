@@ -67,15 +67,20 @@ public class Store {
    * @return true if valid, false otherwise
    */
   public Boolean validateCard(CreditCard customerCard) {
-    if (customerCard.getCardNumber().matches("[0-9]+")
+    return customerCard.getCardNumber().matches("[0-9]+")
         && customerCard.getCardNumber().length() == 16
-        && customerCard.getExpirationMonth() >= LocalDate.now().getMonthValue()
-        && customerCard.getExpirationYear() >= LocalDate.now().getYear() - 2000
         && customerCard.getCvv().matches("[0-9]+")
         && customerCard.getCvv().length() == 3
-    ) { return true;
-    } else {
+        && validateExpiration(customerCard);
+  }
+
+  private Boolean validateExpiration(CreditCard customerCard) {
+    if ((customerCard.getExpirationYear()) > LocalDate.now().getYear()) {
+      return true;
+    } else if ((customerCard.getExpirationYear()) < LocalDate.now().getYear()) {
       return false;
+    } else {
+      return customerCard.getExpirationMonth() >= LocalDate.now().getMonthValue();
     }
   }
 
