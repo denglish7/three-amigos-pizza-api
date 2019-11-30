@@ -142,12 +142,6 @@ public class OrderTest {
   }
 
   @Test
-  public void getCreditCard() {
-    order.setCustomer(customer);
-    assertNull(order.getCreditCard());
-  }
-
-  @Test
   public void isNotEmpty() {
     order.addPizza(orderPizza1);
     assertFalse(order.isEmpty());
