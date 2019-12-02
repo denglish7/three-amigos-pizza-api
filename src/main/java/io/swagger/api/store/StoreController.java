@@ -235,7 +235,6 @@ public class StoreController {
     String paymentDetails = customerCreditCard.getCardNumber()
         .substring(customerCreditCard.getCardNumber().length() - 4);
 
-
     Receipt receipt = new Receipt(
         store.getName(),
         order.getCustomer().getName(),

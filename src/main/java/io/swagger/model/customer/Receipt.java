@@ -1,6 +1,7 @@
 package io.swagger.model.customer;
 
 import io.swagger.annotations.ApiModelProperty;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ public class Receipt {
    * @param pricePaid price paid in dollars
    */
   public Receipt(String storeName, String customerName, String orderId, List <String> pizzas, List <String> specialApplied, String paymentMethod, Double pricePaid) {
+    this._id = new ObjectId().toString();
     this.timeOfPurchase = LocalDateTime.now().toLocalDate().toString();
     this.storeName = storeName;
     this.customerName = customerName;

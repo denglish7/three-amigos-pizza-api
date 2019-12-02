@@ -41,5 +41,4 @@ public class ReceiptController {
             storeName, customerName, orderId, pizzas, specialApplied, paymentMethod, pricePaid);
     return ResponseEntity.ok(receiptRepository.save(receipt));
     }
-
 }
