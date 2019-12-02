@@ -59,4 +59,72 @@ public class Receipt {
         "Payment Method: Card Ending In " + paymentMethod + '\'' +
         "Total: $" + pricePaid;
   }
+
+  public void set_id(String _id) {
+    this._id = _id;
+  }
+
+  public String getTimeOfPurchase() {
+    return timeOfPurchase;
+  }
+
+  public void setTimeOfPurchase(String timeOfPurchase) {
+    this.timeOfPurchase = timeOfPurchase;
+  }
+
+  public String getStoreName() {
+    return storeName;
+  }
+
+  public void setStoreName(String storeName) {
+    this.storeName = storeName;
+  }
+
+  public String getCustomerName() {
+    return customerName;
+  }
+
+  public void setCustomerName(String customerName) {
+    this.customerName = customerName;
+  }
+
+  public String getOrderId() {
+    return orderId;
+  }
+
+  public void setOrderId(String orderId) {
+    this.orderId = orderId;
+  }
+
+  public List<String> getPizzas() {
+    return pizzas;
+  }
+
+  public void setPizzas(List<String> pizzas) {
+    this.pizzas = pizzas;
+  }
+
+  public List<String> getSpecialApplied() {
+    return specialApplied;
+  }
+
+  public void setSpecialApplied(List<String> specialApplied) {
+    this.specialApplied = specialApplied;
+  }
+
+  public String getPaymentMethod() {
+    return paymentMethod;
+  }
+
+  public void setPaymentMethod(String paymentMethod) {
+    this.paymentMethod = paymentMethod;
+  }
+
+  public Double getPricePaid() {
+    return pricePaid;
+  }
+
+  public void setPricePaid(Double pricePaid) {
+    this.pricePaid = pricePaid;
+  }
 }
