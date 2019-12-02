@@ -41,7 +41,7 @@ public class Receipt {
     this.pricePaid = pricePaid;
   }
 
-  private String get_id() {
+  public String get_id() {
     return this._id;
   }
 

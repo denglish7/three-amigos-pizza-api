@@ -39,6 +39,8 @@ public class StoreController {
   @Autowired
   private SpecialRepository specialRepository;
   @Autowired
+  private ReceiptRepository receiptRepository;
+  @Autowired
   private ReceiptController receiptController;
 
 
@@ -233,7 +235,7 @@ public class StoreController {
     String paymentDetails = customerCreditCard.getCardNumber()
         .substring(customerCreditCard.getCardNumber().length() - 4);
 
-    Receipt receipt = receiptController.createReceipt(
+    ResponseEntity<Receipt> receipt = receiptController.createReceipt(
         store.getName(),
         order.getCustomer().getName(),
         orderId,
@@ -243,9 +245,12 @@ public class StoreController {
         order.getOrderItems().getPrice(order.getPrice())
     );
 
+//    Optional<Receipt> receiptToGet = receiptRepository.findById(orderId);
+//    Receipt printReceipt = receiptToGet.get();
+
     store.processOrder(orderId);
     storeRepository.save(store);
-    return ResponseEntity.ok(receipt);
+    return ResponseEntity.ok(receipt.getBody());
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
