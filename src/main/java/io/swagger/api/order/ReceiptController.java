@@ -26,7 +26,7 @@ public class ReceiptController {
     return ResponseEntity.ok(receiptRepository.findAll());
   }
 
-  public ResponseEntity<Receipt> createReceipt(String storeName, String customerName,
+  public Receipt createReceipt(String storeName, String customerName,
       String orderId, List<String> pizzas, List<String> specialApplied, String paymentMethod,
       Double pricePaid) {
     Receipt receipt = new Receipt(
@@ -38,6 +38,7 @@ public class ReceiptController {
         paymentMethod,
         pricePaid
     );
-    return ResponseEntity.ok(receiptRepository.save(receipt));
+    receiptRepository.save(receipt);
+    return receipt;
   }
 }
