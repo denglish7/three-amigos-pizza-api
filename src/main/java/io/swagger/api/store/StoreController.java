@@ -198,7 +198,7 @@ public class StoreController {
 
   @RequestMapping(path = "/{storeId}/checkout", method = RequestMethod.PUT)
   @ApiOperation(value = "Submit your order.", tags = {"store",})
-  public ResponseEntity<Receipt> processNewOrder(
+  public ResponseEntity<Store> processNewOrder(
       @ApiParam("Store Id of the store processing the order.") @PathVariable("storeId") String storeId,
       @ApiParam("Order Id to process.") @RequestParam(value = "OrderId", required = true) String orderId) {
     Optional<Store> storeToGet = storeRepository.findById(storeId);
@@ -233,7 +233,7 @@ public class StoreController {
     String paymentDetails = customerCreditCard.getCardNumber()
         .substring(customerCreditCard.getCardNumber().length() - 4);
 
-    Receipt receipt = receiptController.createReceipt(
+    ResponseEntity<Receipt> receipt = receiptController.createReceipt(
         store.getName(),
         order.getCustomer().getName(),
         orderId,
@@ -244,8 +244,7 @@ public class StoreController {
     );
 
     store.processOrder(orderId);
-    storeRepository.save(store);
-    return ResponseEntity.ok(receipt);
+    return ResponseEntity.ok(storeRepository.save(store));
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
