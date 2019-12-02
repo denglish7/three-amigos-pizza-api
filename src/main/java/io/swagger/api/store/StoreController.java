@@ -244,8 +244,8 @@ public class StoreController {
     );
 
     store.processOrder(orderId);
-    ResponseEntity.ok(storeRepository.save(store));
-    return ResponseEntity.ok(receipt.getBody());
+    storeRepository.save(store);
+    return receipt;
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
