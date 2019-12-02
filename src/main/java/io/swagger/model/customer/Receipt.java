@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document(collection = "orders")
+@Document(collection = "receipts")
 public class Receipt {
 
   @ApiModelProperty(hidden = true)
