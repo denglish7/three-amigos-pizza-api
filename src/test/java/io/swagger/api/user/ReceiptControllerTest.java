@@ -50,7 +50,7 @@ public class ReceiptControllerTest {
     String CARDNUMLASTFOUR = "1234";
     Double PRICEPAID = 45.60;
 
-    ResponseEntity <Receipt> savedReceipt = receiptController.createReceipt(
+    receiptController.createReceipt(
         STORENAME,
         CUSTOMERNAME,
         "sskjdbf",
@@ -61,27 +61,27 @@ public class ReceiptControllerTest {
     assertTrue(receiptRepository.count() > 0);
   }
 
-  @Test
-  public void testGetAllReceipts() {
-    String STORENAME = "UptownGurl";
-    String CUSTOMERNAME = "DanDanJonah";
-    List <String> PIZZASORDERED = new ArrayList <>();
-    PIZZASORDERED.add("CHEESE");
-    PIZZASORDERED.add("PEPPERONI");
-    PIZZASORDERED.add("SAUSAGE-ONION");
-    List <String> SPECIALAPPLIED = new ArrayList <>();
-    SPECIALAPPLIED.add("241");
-    String CARDNUMLASTFOUR = "1234";
-    Double PRICEPAID = 45.60;
-
-    ResponseEntity <Receipt> savedReceipt = receiptController.createReceipt(
-        STORENAME,
-        CUSTOMERNAME,
-        "sskjdbf",
-        PIZZASORDERED,
-        SPECIALAPPLIED,
-        CARDNUMLASTFOUR,
-        PRICEPAID);
-    TestCase.assertTrue(savedReceipt.getStatusCode().is2xxSuccessful());
-  }
+//  @Test
+//  public void testGetAllReceipts() {
+//    String STORENAME = "UptownGurl";
+//    String CUSTOMERNAME = "DanDanJonah";
+//    List <String> PIZZASORDERED = new ArrayList <>();
+//    PIZZASORDERED.add("CHEESE");
+//    PIZZASORDERED.add("PEPPERONI");
+//    PIZZASORDERED.add("SAUSAGE-ONION");
+//    List <String> SPECIALAPPLIED = new ArrayList <>();
+//    SPECIALAPPLIED.add("241");
+//    String CARDNUMLASTFOUR = "1234";
+//    Double PRICEPAID = 45.60;
+//
+//    ResponseEntity <Receipt> savedReceipt = receiptController.createReceipt(
+//        STORENAME,
+//        CUSTOMERNAME,
+//        "sskjdbf",
+//        PIZZASORDERED,
+//        SPECIALAPPLIED,
+//        CARDNUMLASTFOUR,
+//        PRICEPAID);
+//    TestCase.assertTrue(savedReceipt.getStatusCode().is2xxSuccessful());
+//  }
 }
