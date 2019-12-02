@@ -25,4 +25,21 @@ public class ReceiptController {
   public ResponseEntity<List<Receipt>> getAllReceipts() {
     return ResponseEntity.ok(receiptRepository.findAll());
   }
+
+  @RequestMapping(path = "/", method = RequestMethod.POST)
+  @ApiOperation(value = "Creates a Receipt", tags = {"order",})
+  public ResponseEntity<Receipt> createReceipt(
+      String storeName,
+      String customerName,
+      String orderId,
+      List<String> pizzas,
+      List<String> specialApplied,
+      String paymentMethod,
+      Double pricePaid) {
+    Receipt receipt =
+        new Receipt(
+            storeName, customerName, orderId, pizzas, specialApplied, paymentMethod, pricePaid);
+    return ResponseEntity.ok(receiptRepository.save(receipt));
+    }
+
 }
