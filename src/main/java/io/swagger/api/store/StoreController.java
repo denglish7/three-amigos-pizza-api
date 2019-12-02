@@ -235,7 +235,8 @@ public class StoreController {
     String paymentDetails = customerCreditCard.getCardNumber()
         .substring(customerCreditCard.getCardNumber().length() - 4);
 
-    ResponseEntity<Receipt> receipt = receiptController.createReceipt(
+
+    Receipt receipt = new Receipt(
         store.getName(),
         order.getCustomer().getName(),
         orderId,
@@ -245,12 +246,9 @@ public class StoreController {
         order.getOrderItems().getPrice(order.getPrice())
     );
 
-//    Optional<Receipt> receiptToGet = receiptRepository.findById(orderId);
-//    Receipt printReceipt = receiptToGet.get();
-
     store.processOrder(orderId);
     storeRepository.save(store);
-    return ResponseEntity.ok(receipt.getBody());
+    return ResponseEntity.ok(receiptRepository.save(receipt));
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
