@@ -1,7 +1,6 @@
 package io.swagger.api.store;
 
 import io.swagger.api.user.CustomerController;
-import io.swagger.api.order.ReceiptController;
 import io.swagger.api.order.OrderController;
 import io.swagger.api.pizza.CrustController;
 import io.swagger.api.pizza.PizzaController;
@@ -84,8 +83,6 @@ public class StoreControllerTest {
   private OrderController orderController;
   @Autowired
   private ReceiptRepository receiptRepository;
-  @Autowired
-  private ReceiptController receiptController;
 
   @Before
   public void setUp() throws Exception {
@@ -265,7 +262,7 @@ public class StoreControllerTest {
     String customerId = customer.getBody().get_id();
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2020;
     String CVV = "888";
     ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
         customerId,
@@ -300,7 +297,7 @@ public class StoreControllerTest {
         crust,
         toppings
     );
-    ResponseEntity<Pizza> response = pizzaController.createPizza(
+    ResponseEntity<Pizza> newPizza = pizzaController.createPizza(
         pizza.getName(),
         crust.get_id(),
         toppingIds
@@ -317,7 +314,14 @@ public class StoreControllerTest {
         toppingIds,
         sizeId
     );
-    String pizzaForOrderId = pizzaForOrder.getBody().get_id();
+    String pizzaForOrderId = newPizza.getBody().get_id();
+
+    List<String> pizzaIds = new ArrayList<>();
+    pizzaIds.add(pizzaForOrderId);
+
+    ResponseEntity<Menu> addPizzaToMenu = storeController.addToStoreMenu(
+        storeId, pizzaIds, null);
+
     ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,
@@ -328,7 +332,7 @@ public class StoreControllerTest {
         storeId,
         orderId
     );
-    assertTrue(receiptRepository.count() > 0);
+    assertTrue(orderReceipt.getStatusCode().is2xxSuccessful());
 
   }
 
@@ -343,7 +347,7 @@ public class StoreControllerTest {
     String customerId = customer.getBody().get_id();
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2020;
     String CVV = "888";
     ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
         customerId,
@@ -424,7 +428,7 @@ public class StoreControllerTest {
     String customerId = customer.getBody().get_id();
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2020;
     String CVV = "888";
     ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
         customerId,
@@ -506,7 +510,7 @@ public class StoreControllerTest {
     String customerId = customer.getBody().get_id();
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 12;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2020;
     String CVV = "888";
     ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
         customerId,
@@ -646,7 +650,7 @@ public class StoreControllerTest {
     String customerId = customer.getBody().get_id();
     String CARDNUM = "1234567891234567";
     Integer EXPMONTH = 4;
-    Integer EXPYEAR = 19;
+    Integer EXPYEAR = 2018;
     String CVV = "888";
     ResponseEntity<Customer> addedCustomerCard = customerController.addPaymentDetails(
         customerId,
@@ -699,6 +703,7 @@ public class StoreControllerTest {
         sizeId
     );
     String pizzaForOrderId = pizzaForOrder.getBody().get_id();
+
     ResponseEntity<OrderPizza> orderWithPizza = orderController.addPizzaById(
         orderId,
         pizzaForOrderId,

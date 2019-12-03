@@ -4,7 +4,6 @@ package io.swagger.api.store;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.api.order.ReceiptController;
 import io.swagger.model.customer.CreditCard;
 import io.swagger.model.customer.Receipt;
 import io.swagger.model.specials.Special;
@@ -39,7 +38,7 @@ public class StoreController {
   @Autowired
   private SpecialRepository specialRepository;
   @Autowired
-  private ReceiptController receiptController;
+  private ReceiptRepository receiptRepository;
 
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")
@@ -233,7 +232,7 @@ public class StoreController {
     String paymentDetails = customerCreditCard.getCardNumber()
         .substring(customerCreditCard.getCardNumber().length() - 4);
 
-    Receipt receipt = receiptController.createReceipt(
+    Receipt receipt = new Receipt(
         store.getName(),
         order.getCustomer().getName(),
         orderId,
@@ -245,7 +244,15 @@ public class StoreController {
 
     store.processOrder(orderId);
     storeRepository.save(store);
-    return ResponseEntity.ok(receipt);
+    try
+    {
+      Thread.sleep(1000);
+    }
+    catch(InterruptedException ex)
+    {
+      Thread.currentThread().interrupt();
+    }
+    return ResponseEntity.ok(receiptRepository.save(receipt));
   }
 
   @RequestMapping(path = "/{storeId}/complete", method = RequestMethod.PUT)
@@ -266,6 +273,14 @@ public class StoreController {
           .build();
     }
     store.completeOrder(orderId);
+    try
+    {
+      Thread.sleep(1000);
+    }
+    catch(InterruptedException ex)
+    {
+      Thread.currentThread().interrupt();
+    }
     return ResponseEntity.ok(storeRepository.save(store));
   }
 }
