@@ -244,6 +244,14 @@ public class StoreController {
 
     store.processOrder(orderId);
     storeRepository.save(store);
+    try
+    {
+      Thread.sleep(1000);
+    }
+    catch(InterruptedException ex)
+    {
+      Thread.currentThread().interrupt();
+    }
     return ResponseEntity.ok(receiptRepository.save(receipt));
   }
 
@@ -265,6 +273,14 @@ public class StoreController {
           .build();
     }
     store.completeOrder(orderId);
+    try
+    {
+      Thread.sleep(1000);
+    }
+    catch(InterruptedException ex)
+    {
+      Thread.currentThread().interrupt();
+    }
     return ResponseEntity.ok(storeRepository.save(store));
   }
 }
