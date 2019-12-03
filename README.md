@@ -22,7 +22,7 @@ Heroku CLI: `heroku open -r heroku`
 * Run `mvn test` from root directory to run all unit tests.
 
 ## Links
-* **Heroku instance** with documentation is [here](https://radiant-springs-17894.herokuapp.com/swagger-ui.html)
+* **Heroku instance** with documentation is [here](https://three-amigos-prod.herokuapp.com/swagger-ui.html)
 * Code for a **mobile application** built on this API is [here](https://github.ccs.neu.edu/threeamigospizza/three-amigos-pizza-app)
 * [**Project Report**]()
 * [**Design Document**](https://docs.google.com/document/d/1VZtcA5NNcyMWSS2QwYAFwQQBZN_rs04QeOjs-8DIu-k/edit)
