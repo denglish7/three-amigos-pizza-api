@@ -44,7 +44,7 @@ public class CustomerController {
       @ApiResponse(code = 200, message = "search results matching criteria", response = Customer.class),
       @ApiResponse(code = 404, message = "customer not found")})
   public ResponseEntity<Customer> findById(
-      @ApiParam("Id of crust to get.") @PathVariable("customerId") String customerId) {
+      @ApiParam("Id of Customer to get.") @PathVariable("customerId") String customerId) {
     Optional<Customer> customer = customerRepository.findById(customerId);
     if (customer.isPresent()) {
       return ResponseEntity.of(customer);

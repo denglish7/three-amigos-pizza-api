@@ -4,7 +4,6 @@ package io.swagger.api.store;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.api.order.ReceiptController;
 import io.swagger.model.customer.CreditCard;
 import io.swagger.model.customer.Receipt;
 import io.swagger.model.specials.Special;
@@ -40,8 +39,6 @@ public class StoreController {
   private SpecialRepository specialRepository;
   @Autowired
   private ReceiptRepository receiptRepository;
-  @Autowired
-  private ReceiptController receiptController;
 
 
   @RequestMapping(method = RequestMethod.GET, produces = "application/json")

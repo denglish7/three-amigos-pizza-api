@@ -38,11 +38,11 @@ public class ReceiptTest {
   public void testToString() {
   String printedReceipt = this.receipt.toString();
   String now = LocalDateTime.now().toLocalDate().toString();
-  String top = "Time of Purchase: " + now + "'";
+  String top = "Time of Purchase: " + now;
   assertEquals("" +
-          "Receipt #: null'" +
+          "Receipt #: " + receipt.get_id() + "'" +
           top +
-          "Store: UptownGurl" +
+          "'Store: UptownGurl" +
           "'Customer: DanDanJonah" +
           "'Order Id: sskjdbf" +
           "'Pizzas: [CHEESE, PEPPERONI, SAUSAGE-ONION]" +
