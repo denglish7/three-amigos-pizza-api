@@ -23,7 +23,4 @@ Heroku CLI: `heroku open -r heroku`
 
 ## Links
 * **Heroku instance** with documentation is [here](https://three-amigos-prod.herokuapp.com/swagger-ui.html)
-* Code for a **mobile application** built on this API is [here](https://github.ccs.neu.edu/threeamigospizza/three-amigos-pizza-app)
-* [**Project Report**]()
-* [**Design Document**](https://docs.google.com/document/d/1VZtcA5NNcyMWSS2QwYAFwQQBZN_rs04QeOjs-8DIu-k/edit)
-* [**Trello Board**](https://trello.com/b/7n9BHOuq/pizza-app)
+* Code for a **mobile application** built on this API is [here](https://github.com/denglish7/three-amigos-pizza-app)
